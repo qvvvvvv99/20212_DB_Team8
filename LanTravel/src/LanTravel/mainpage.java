@@ -71,6 +71,7 @@ public class mainpage {
 		case 2:	// 로그인 성공할 시 userState 2(TRAVELER) or 3(ADMIN)으로 바꾸고 mainpage(conn, stmt) 호출
 			// test
 			userState = 2;	// TRAVELER
+			mainpage(conn, stmt);
 			break;
 		case 3:		// 이전
 			// 첫페이지 일때
