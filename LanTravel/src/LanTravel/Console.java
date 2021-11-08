@@ -234,8 +234,12 @@ public class Console {
 //				search = sc.next();
 			break;
 		case 7: // 포스트 쓰기
+			traveler.write_post(conn, stmt);
+			printMainMenu();
 			break;
 		case 8: // 북마크
+			traveler.list_bookmark(conn, stmt);
+			printMainMenu();
 			break;
 		case 9: // 종료
 			System.out.println("종료합니다.");
@@ -299,9 +303,9 @@ public class Console {
 
 			if (user == 2) { // Traveler
 				if (isWriter) { // 작성자인지
-					printPostSelection_traveler_writer();
+					printPostSelection_traveler_writer(pnum);
 				} else { // 비작성자
-					printPostSelection_traveler();
+					printPostSelection_traveler(pnum);
 				}
 			} else if (user == 3) { // Admin
 				printPostSelection_admin();
@@ -332,7 +336,7 @@ public class Console {
 		}
 	}
 
-	public void printPostSelection_traveler() {
+	public void printPostSelection_traveler(int pnum) {
 		System.out.println("1. 이전 화면  2. 댓글 작성  3. 댓글 보기  4. 평가  5. 신고  6. 북마크 등록/해제");
 		System.out.print("할 일을 선택하세요. ");
 		int menu = sc.nextInt();
@@ -355,12 +359,13 @@ public class Console {
 			// report insert
 			break;
 		case 6: // 북마크 등록/해제
-			// bookmark insert
+			traveler.enroll_bookmark(conn, stmt, pnum);
+			printPostSelection_traveler(pnum);
 			break;
 		}
 	}
 
-	public void printPostSelection_traveler_writer() {
+	public void printPostSelection_traveler_writer(int pnum) {
 		System.out.println("1. 이전 화면  2. 수정  3. 삭제  4. 댓글 작성  5. 댓글 보기  6. 북마크 등록/해제");
 		System.out.print("할 일을 선택하세요. ");
 		int menu = sc.nextInt();
@@ -383,7 +388,8 @@ public class Console {
 			// reply view
 			break;
 		case 6: // 북마크 등록/해제
-			// bookmark insert
+			traveler.enroll_bookmark(conn, stmt, pnum);
+			printPostSelection_traveler(pnum);
 			break;
 		}
 	}
