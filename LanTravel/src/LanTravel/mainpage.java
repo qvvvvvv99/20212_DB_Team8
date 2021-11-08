@@ -20,6 +20,9 @@ public class mainpage {
 	String search;	// 검색 할 단어 입력 받는 문자열
 	int[] postNum = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};	// 선택 할때 실제 pNum 저장할 문자열
 	
+	Guest guest;
+	Traveler traveler;
+	
 	// post 내용은 회원/비회원 구분없이 볼 수 있다. ADMIN계정 로그인시 안보임
 	public void mainpage(Connection conn, Statement stmt) {
 		this.conn = conn;
@@ -33,7 +36,7 @@ public class mainpage {
 			ps.setInt(1, (page - 1) * postsPerPage + 1);
 			ps.setInt(2, page * postsPerPage);
 			rs = ps.executeQuery();
-
+			
 			System.out.println(" num  |           name           |      city      |         time        ");
 			System.out.println("------------------------------------------------------------------------");
 			while (rs.next()) {
@@ -60,6 +63,7 @@ public class mainpage {
 	
 	// 비회원 용 메인메뉴 선택뷰
 	public void selectWork_ver_non() {
+		guest = new Guest();
 		System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
 		System.out.print("할 일을 선택하시오.");
 		num = sc.nextInt();
@@ -67,10 +71,23 @@ public class mainpage {
 
 		switch (num) {
 		case 1:
+			guest.join(conn, stmt);
+			mainpage(conn, stmt);
 			break;
 		case 2:	// 로그인 성공할 시 userState 2(TRAVELER) or 3(ADMIN)으로 바꾸고 mainpage(conn, stmt) 호출
-			// test
-			userState = 2;	// TRAVELER
+			boolean flag;
+			int Tnum;
+			
+			flag = guest.login(conn, stmt);
+			if(flag) {
+				userState = 2;	// TRAVELER
+				
+				Tnum = guest.getTnum();
+				
+				traveler = new Traveler();
+				traveler.setNum(Tnum);
+			}
+			
 			mainpage(conn, stmt);
 			break;
 		case 3:		// 이전
@@ -118,6 +135,8 @@ public class mainpage {
 
 		switch (num) {
 		case 1:
+			traveler.update(conn, stmt);
+			mainpage(conn, stmt);
 			break;
 		case 2:	// 로그아웃 -> userState = 1
 			userState = 1;
@@ -127,7 +146,7 @@ public class mainpage {
 			// 첫페이지 일때
 			if(page == 1) {
 				System.out.println("첫 장입니다.");
-				selectWork_ver_non();
+				selectWork_ver_mem();
 			}
 			else {
 				page--;
@@ -138,7 +157,7 @@ public class mainpage {
 			// --------------마지막페이지 일때 확인하는 법
 			if(count < 10) {
 				System.out.println("마지막장입니다.");
-				selectWork_ver_non();
+				selectWork_ver_mem();
 			}
 			else {
 				page++;
