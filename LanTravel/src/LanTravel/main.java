@@ -10,29 +10,12 @@ public class main {
 	public static final String USER_PASSWD ="comp322";
 	
 	public static void main(String[] args) {
-		Connection conn = null; // Connection object
-		Statement stmt = null;	// Statement object
+		Console cs = new Console();
 		
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-			System.out.println("Driver loading : Success!");
-		}catch(ClassNotFoundException e) {
-			System.err.println("error = " + e.getMessage());
-			System.exit(1);
-		}
+		cs.printMainMenu();
 		
-		try {
-			conn = DriverManager.getConnection(URL, USER_NAME, USER_PASSWD);
-			System.out.println("Oracle Connected.");
-			stmt = conn.createStatement();
-		}catch(SQLException ex) {
-			ex.printStackTrace();
-			System.err.println("Cannot get a connection: " + ex.getLocalizedMessage());
-			System.err.println("Cannot get a connection: " + ex.getMessage());
-			System.exit(1);
-		}
 		
-		mainpage mp = new mainpage();
-		mp.mainpage(conn, stmt);
+//		mainpage mp = new mainpage();
+//		mp.mainpage(conn, stmt);
 	}
 }
