@@ -745,77 +745,77 @@ public class Console {
 	}
 	
 	//북마크 리스트 출력
-		public void list_bookmark() {
-			ResultSet rs = null;
-			PreparedStatement ps = null;
-			String sql = null;
+	public void list_bookmark() {
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		String sql = null;
+		
+		int post_num = 0;
+		String name = "";
+		String city = "";
+		String written_time = "";
+		
+		int num;
+		int input;
+		boolean isexist = false;
+		int Tnum = traveler.getTnum();
+		
+		System.out.println("--------------------------------------------");
+		System.out.println("|                  북마크 목록                 |");
+		System.out.println("--------------------------------------------");
+		
+		try {
+			sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, Tnum);
+			rs = ps.executeQuery();
 			
-			int post_num = 0;
-			String name = "";
-			String city = "";
-			String written_time = "";
+			System.out.println(
+					" num  |                   name                   |         city          |         time        ");
+			System.out.println(
+					"-----------------------------------------------------------------------------------------------");
 			
-			int num;
-			int input;
-			boolean isexist = false;
-			int Tnum = traveler.getTnum();
+			while (rs.next()) {
+				post_num = rs.getInt(2);
+				name = rs.getString(3);
+				city = rs.getString(4);
+				written_time = rs.getString(5);
+				
+				System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", post_num, name, city, written_time);
+			}
 			
-			System.out.println("--------------------------------------------");
-			System.out.println("|                  북마크 목록                 |");
-			System.out.println("--------------------------------------------");
+			//임시 북마크 기능(console의 printPostSelection 매서드를 이용하는 쪽으로...)
+			System.out.println("1. 상세보기  2. 이전 페이지");
+			System.out.println("할 일을 입력하세요.");
+			num = sc.nextInt();
 			
-			try {
+			switch(num) {
+			case 1:
+				System.out.println("포스트 선택 모드");
+				System.out.println("포스트 번호를 입력하세요");
+				input = sc.nextInt();
+				
 				sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, Tnum);
 				rs = ps.executeQuery();
 				
-				System.out.println(
-						" num  |                   name                   |         city          |         time        ");
-				System.out.println(
-						"-----------------------------------------------------------------------------------------------");
-				
 				while (rs.next()) {
-					post_num = rs.getInt(2);
-					name = rs.getString(3);
-					city = rs.getString(4);
-					written_time = rs.getString(5);
-					
-					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", post_num, name, city, written_time);
+					if(input == rs.getInt(2)) isexist = true;
 				}
 				
-				//임시 북마크 기능(console의 printPostSelection 매서드를 이용하는 쪽으로...)
-				System.out.println("1. 상세보기  2. 이전 페이지");
-				System.out.println("할 일을 입력하세요.");
-				num = sc.nextInt();
+				if(isexist) printPost(input);
+				else System.out.println("잘못된 번호입니다.");
 				
-				switch(num) {
-				case 1:
-					System.out.println("포스트 선택 모드");
-					System.out.println("포스트 번호를 입력하세요");
-					input = sc.nextInt();
-					
-					sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
-					ps = conn.prepareStatement(sql);
-					ps.setInt(1, Tnum);
-					rs = ps.executeQuery();
-					
-					while (rs.next()) {
-						if(input == rs.getInt(2)) isexist = true;
-					}
-					
-					if(isexist) printPost(input);
-					else System.out.println("잘못된 번호입니다.");
-					
-					break;
-				case 2:
-					break;
-				}
-				ps.close();
-				rs.close();
-			} catch (SQLException e) {
-					// TODO Auto-generated catch block
-				e.printStackTrace();
+				break;
+			case 2:
+				break;
 			}
+			ps.close();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
 }
