@@ -10,6 +10,7 @@ import java.sql.SQLException;
 
 public class Console {
 	public static final int postsPerPage = 10;
+	public static final int replyPerPage = 10;
 	Database db = null;
 	Connection conn = null;
 	Statement stmt = null;
@@ -25,6 +26,7 @@ public class Console {
 	int mode; // 1: 일반, 2: 선택
 	boolean isWriter;
 	int searchPage = 1;	// 검색용 page 번호
+	int replyPage = 1;
 	int route;	// post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지 구분(1) -> post 상세보기에서 이전으로 돌아갈때 사용
 
 	public Console() {
@@ -329,7 +331,7 @@ public class Console {
 			} else if (user == 3) { // Admin
 				printPostSelection_admin();
 			} else { // Guest (user == 1)
-				printPostSelection_guest();
+				printPostSelection_guest(pnum);
 			}
 
 			ps.close();
@@ -339,7 +341,7 @@ public class Console {
 		}
 	}
 
-	public void printPostSelection_guest() {
+	public void printPostSelection_guest(int pnum) {
 		System.out.println("1. 이전 화면  2. 댓글 보기 ");
 		System.out.print("할 일을 선택하세요. ");
 		int menu = sc.nextInt();
@@ -353,7 +355,7 @@ public class Console {
 				printSearchPost();
 			break;
 		case 2: // 댓글보기
-			// reply view
+			printReply(pnum);
 			break;
 		}
 	}
@@ -375,7 +377,7 @@ public class Console {
 			// reply insert
 			break;
 		case 3: // 댓글보기
-			// reply view
+			printReply(pnum);
 			break;
 		case 4: // 평가
 			// rating insert
@@ -415,7 +417,7 @@ public class Console {
 			// reply insert
 			break;
 		case 5: // 댓글 보기
-			// reply view
+			printReply(pnum);
 			break;
 		case 6: // 북마크 등록/해제
 			traveler.enroll_bookmark(conn, stmt, pnum);
@@ -619,5 +621,98 @@ public class Console {
 			printSearchPost();
 			break;
 		}
+	}
+	
+	public void printReply(int pnum) {
+		printReplyTable(pnum);
+	}
+	
+	public void printReplyTable(int pnum) {
+		int TotalReply = 0; // 총 Reply 수
+		int lastReply = 0; // 마지막 Reply 수
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+
+		// totalReply, lastReply 계산
+		try {
+			String sql = "SELECT COUNT(*) FROM "
+					+ "(select t.nickname, r.text, r.written_time, r.p_reply_num "
+					+ "from reply r, traveler t "
+					+ "where  r.traveler_num = t.num "
+					+ "and r.post_num = ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			rs = ps.executeQuery();
+			if (rs.next())
+				TotalReply = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		lastReply = TotalReply / replyPerPage;
+		lastReply = (TotalReply % replyPerPage == 0) ? lastReply : lastReply + 1;
+
+		if (mode == 2) { // 선택 mode
+			System.out.println("선택 모드입니다.");
+		} else { // 일반 mode
+			// Page 표시
+			if (replyPage < 1) {
+				replyPage = 1;
+				System.out.println("page: " + replyPage + " / " + lastReply + "\t[첫 페이지입니다.]");
+			} else if (replyPage > lastReply) {
+				replyPage = lastReply;
+				System.out.println("page: " + replyPage + " / " + lastReply + "\t[마지막 페이지입니다.]");
+			} else {
+				System.out.println("page: " + replyPage + " / " + lastReply);
+			}
+		}
+		
+		if (mode == 2) { // 선택 mode
+			System.out.println("선택 모드입니다.");
+		} 
+		
+		try {
+			String sql = "select * from ( "
+					+ "select rownum no, np.* "
+					+ "from (select t.nickname, r.text, r.written_time, r.p_reply_num "
+					+ "from reply r, traveler t "
+					+ "where  r.traveler_num = t.num "
+					+ "and r.post_num = ? "
+					+ "and r.p_reply_num is null "
+					+ "order by r.written_time) np)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			rs = ps.executeQuery();
+
+			System.out.println(
+					" nickname                |                   time                                    ");
+			System.out.println("                        text                       ");
+			System.out.println(
+					"-----------------------------------------------------------------------------------------------");
+			int i = 1;
+			while (rs.next()) {
+				String name = rs.getString(2);
+				String text = rs.getString(3);
+				String w_time = rs.getString(4);
+				if (mode == 2) { // 선택 mode	
+					System.out.printf("%5d\t%-30s\t%s\n%s\n", i, name, w_time, text);
+					i++;
+				} else { // 일반 mode
+					System.out.printf("%-30s\t%s\n%s\n", name, w_time, text);
+				}
+			}// isWriter = True;
+
+			ps.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void printReplyMenu(int pnum) {
+		
+	}
+	
+	public void insertReply(int pnum) {
+		
 	}
 }
