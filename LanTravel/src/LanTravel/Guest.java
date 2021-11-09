@@ -14,6 +14,8 @@ public class Guest {
 	private String id;
 	private String pw;
 	private int Travel_num;
+	private int Admin_num;
+	private int type;
 	
 	public Guest() {
 		this.conn = null;
@@ -21,6 +23,8 @@ public class Guest {
 		id = null;
 		pw = null;
 		Travel_num = -1;
+		Admin_num = -1;
+		type = 1;
 	}
 	
 	public void join(Connection conn, Statement stmt) {
@@ -111,29 +115,59 @@ public class Guest {
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		String sql = null;
-		
-		System.out.print("아이디를 입력하세요: ");
-		id = sc.nextLine();
-		System.out.print("비밀번호를 입력하세요: ");
-		pw = sc.nextLine();
+
+		System.out.println("일반 로그인: 1  관리자 로그인: 2");
+		type = sc.nextInt();
+		sc.nextLine();
 		
 		try {
-			sql = "Select num from traveler where id = ? and pw = ?";
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, id);
-			ps.setString(2, pw);
-			rs = ps.executeQuery();
-	
-			if (rs.next()) {
-				Travel_num = rs.getInt(1);
-				System.out.println("로그인에 성공하였습니다.");
-				return true;
-			}
-			else {
-				System.out.println("로그인에 실패하였습니다.");
-				id = null;
-				pw = null;
-				return false;
+			switch(type) {
+			case 1:
+				System.out.println("일반 로그인");
+				System.out.print("아이디를 입력하세요: ");
+				id = sc.nextLine();
+				System.out.print("비밀번호를 입력하세요: ");
+				pw = sc.nextLine();
+				sql = "Select num from traveler where id = ? and pw = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, id);
+				ps.setString(2, pw);
+				rs = ps.executeQuery();
+		
+				if (rs.next()) {
+					Travel_num = rs.getInt(1);
+					System.out.println("로그인에 성공하였습니다.");
+					return true;
+				}
+				else {
+					System.out.println("로그인에 실패하였습니다.");
+					id = null;
+					pw = null;
+					return false;
+				}
+			case 2:
+				System.out.println("관리자 로그인");
+				System.out.print("아이디를 입력하세요: ");
+				id = sc.nextLine();
+				System.out.print("비밀번호를 입력하세요: ");
+				pw = sc.nextLine();
+				sql = "Select num from admin where id = ? and pw = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, id);
+				ps.setString(2, pw);
+				rs = ps.executeQuery();
+		
+				if (rs.next()) {
+					Admin_num = rs.getInt(1);
+					System.out.println("로그인에 성공하였습니다.");
+					return true;
+				}
+				else {
+					System.out.println("로그인에 실패하였습니다.");
+					id = null;
+					pw = null;
+					return false;
+				}
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -153,5 +187,13 @@ public class Guest {
 	
 	public int getTnum() {
 		return Travel_num;
+	}
+	
+	public int getType() {
+		return type;
+	}
+	
+	public int getAnum() {
+		return Admin_num;
 	}
 }

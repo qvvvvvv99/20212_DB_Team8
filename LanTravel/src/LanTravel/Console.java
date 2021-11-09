@@ -17,6 +17,7 @@ public class Console {
 
 	Guest guest;
 	Traveler traveler;
+	Admin admin;
 
 	Scanner sc = new Scanner(System.in);
 	int user; // 1: Guest, 2: Traveler, 3: Admin
@@ -171,14 +172,23 @@ public class Console {
 		case 2: // 로그인 성공할 시 user 2(TRAVELER) or 3(ADMIN)으로 바꾸고 printMainMenu() 호출
 			boolean isLogined;
 			int Tnum;
-
+			int Anum;
+			
 			isLogined = guest.login(conn, stmt);
 			if (isLogined) {
-				user = 2; // TRAVELER
-
-				Tnum = guest.getTnum();
-				traveler = new Traveler();
-				traveler.setNum(Tnum);
+				user = guest.getType() + 1; 
+				switch(user) {
+				case 2: // TRAVELER
+					Tnum = guest.getTnum();
+					traveler = new Traveler();
+					traveler.setNum(Tnum);
+					break;
+				case 3:
+					Anum = guest.getAnum();
+					admin = new Admin();
+					admin.setNum(Anum);
+					break;
+				}
 			}
 			printMainMenu();
 			break;
@@ -361,6 +371,8 @@ public class Console {
 			break;
 		case 5: // 신고
 			// report insert
+			traveler.report(conn, stmt, pnum, "P");
+			printPostSelection_traveler(pnum);
 			break;
 		case 6: // 북마크 등록/해제
 			traveler.enroll_bookmark(conn, stmt, pnum);

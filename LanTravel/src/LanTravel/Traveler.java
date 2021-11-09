@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Traveler {
@@ -260,14 +259,16 @@ public class Traveler {
 		
 		int num = 0;
 		int pnum = 0;
-		String start_date = "0000-00-00";
-		String end_date = "0000-00-00";
-		String text = "";
-		String name = "";
-		String country = "";
-		String city = "";
-		String picture = "";
-		String tag = "";
+		String start_date = null;
+		String end_date = null;
+		String text = null;
+		String name = null;
+		String country = null;
+		String city = null;
+		String picture = null;
+		String tag = null;
+		
+		int state = 0; //0.작성 1.등록 2.종료
 		
 		try {
 			sql = "select count(*) from post";
@@ -317,14 +318,155 @@ public class Traveler {
 					break;
 				case 5:
 					System.out.println("해시태그를 입력하세요.(띄어쓰기로 구분)");
+					tag = sc.nextLine();
 					break;
 				case 6:
+					state = 1;
 					break;
 				case 7:
+					state = 2;
 					break;
 				}
+				
+				if(state == 1) { //insert
+					//TODO null 여부 확인 후 insert
+					if(name==null) {
+						System.out.println("여행 장소가 비어 있습니다.");
+						state = 0;
+					}
+					else {
+						//아래 식에서 sysdate를 받아오지 못함. 
+						//2021-11-09 2시 16분에 작성하였다면, 0021-11-09 00:00:00 으로 insert
+						sql = "insert into post values(?, to_date(?,'yyyy-mm-dd'), to_date(?, 'yyyy-mm-dd'), ?, to_date(sysdate, 'yyyy-mm-dd hh24:mi:ss'), ?)";
+						ps = conn.prepareStatement(sql);
+						ps.setInt(1, pnum);
+						ps.setString(2, start_date);
+						ps.setString(3, end_date);
+						ps.setString(4, text);
+						ps.setInt(5, Tnum);
+						rs = ps.executeQuery();
+						
+						sql = "insert into post_locations values(?, ?, ?, ?)";
+						ps = conn.prepareStatement(sql);
+						ps.setInt(1, pnum);
+						ps.setString(2, name);
+						ps.setString(3, country);
+						ps.setString(4, city);
+						rs = ps.executeQuery();
+						
+						if(picture != null) { //사진 등록
+							String []pictokens = picture.split(" ");
+							int picnum = 0;
+							
+							for (int i=0; i<pictokens.length; i++) {
+								sql = "select count(*) from post_pictures";
+								ps = conn.prepareStatement(sql);
+								rs = ps.executeQuery();
+								
+								while (rs.next()) {
+									picnum = rs.getInt(1) + 1;
+								}
+								
+								sql = "insert into post_pictures values(?, ?, ?)";
+								ps = conn.prepareStatement(sql);
+								ps.setInt(1, pnum);
+								ps.setInt(2, picnum);
+								ps.setString(3, pictokens[i]);
+								rs = ps.executeQuery();
+							}
+						}
+						
+						if(tag != null) { //태그 등록
+							String []tagtokens = tag.split(" #");
+							int tagnum = 0;
+							
+							for (int i=0; i<tagtokens.length; i++) {
+								sql = "select count(*) from hashtag";
+								ps = conn.prepareStatement(sql);
+								rs = ps.executeQuery();
+								
+								while (rs.next()) {
+									tagnum = rs.getInt(1) + 1;
+								}
+								
+								sql = "insert into hashtag values(?, ?, ?)";
+								ps = conn.prepareStatement(sql);
+								ps.setInt(1, pnum);
+								ps.setInt(2, tagnum);
+								ps.setString(3, tagtokens[i]);
+								rs = ps.executeQuery();
+							}
+						}
+						
+						System.out.println("등록되었습니다.");
+						break;
+					}
+				}
+				
+				if(state == 2) { //end
+					System.out.println("종료합니다.");
+					break;
+				}
+			}		
+		} catch (SQLException e) {
+				// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	//신고
+	public void report(Connection conn, Statement stmt, int pnum, String type) {
+		this.conn = conn;
+		this.stmt = stmt;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		String sql = null;
+		
+		String reason = null;
+		int rep_num = 0;
+		
+		System.out.println("포스트 신고");
+		
+		try {
+			sql = "select count(*) from report";
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				rep_num = rs.getInt(1) + 1;
 			}
 			
+			while(reason == null) {
+				System.out.println("신고 사유를 입력하세요");
+				reason = sc.nextLine();
+				if(reason == null) System.out.println("신고 사유가 공란입니다.");
+			}
+			
+			sql = "insert into report values(?, ?, ?, ?, 1)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, rep_num);
+			ps.setString(2, type);
+			ps.setString(3, reason);
+			ps.setInt(4, pnum);
+			rs = ps.executeQuery();
+			//포스트 신고
+			if(type == "P") {
+				sql = "insert into record values(?, 0, ?)";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				ps.setInt(2, rep_num);
+				rs = ps.executeQuery();
+			}
+			//댓글 신고(미완료)
+			else if(type == "r") {
+				sql = "insert into record values(0, ?, ?)";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				ps.setInt(2, rep_num);
+				rs = ps.executeQuery();
+			}
+			
+			System.out.println("신고가 완료되었습니다.");
 			
 		} catch (SQLException e) {
 				// TODO Auto-generated catch block
