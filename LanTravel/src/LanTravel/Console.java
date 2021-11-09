@@ -13,6 +13,7 @@ public class Console {
 	Database db = null;
 	Connection conn = null;
 	Statement stmt = null;
+	String search;
 
 	Guest guest;
 	Traveler traveler;
@@ -193,7 +194,10 @@ public class Console {
 			mode = 2;
 			printMainMenu();
 			break;
-		case 6:
+		case 6:	// 검색
+			System.out.print("검색 내용을 입력하세요. ");
+			search = sc.next();
+			searchPost(search);
 			break;
 		case 7:
 			System.out.println("종료합니다.");
@@ -231,7 +235,7 @@ public class Console {
 			break;
 		case 6: // 검색
 			System.out.print("검색 내용을 입력하세요. ");
-//				search = sc.next();
+			search = sc.next();
 			break;
 		case 7: // 포스트 쓰기
 			traveler.write_post(conn, stmt);
@@ -411,6 +415,46 @@ public class Console {
 			System.out.println("게시물을 유지합니다.");
 			printMainMenu();
 			break;
+		}
+	}
+	
+	// 검색검색검색
+	public void searchPost(String str) {
+		ResultSet rs = null;
+
+		
+		// 검색내용 출력 수정하기
+		try {
+			String sql = "SELECT p.Start_date, p.End_date, p.Text, p.Written_time, pl.Name, pl.Country, pl.City, t.Nickname, t.num  "
+					+ "from post p, traveler t, post_locations pl " + "where p.traveler_num = t.num "
+					+ "and pl.post_num = p.post_num " + "and p.Post_num = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, str);
+			rs = ps.executeQuery();
+
+			while (rs.next()) {
+				String start_date = rs.getString(1);
+				String end_date = rs.getString(2);
+				String text = rs.getString(3);
+				String w_time = rs.getString(4);
+				String loc_name = rs.getString(5);
+				String loc_country = rs.getString(6);
+				String loc_city = rs.getString(7);
+				String nickname = rs.getString(8);
+				int tnum = rs.getInt(9); // 작성자인지 확인 용도
+				System.out.printf("작성자 : %s\n", nickname);
+				System.out.printf("장소 : %s %s %s\n", loc_country, loc_city, loc_name);
+				System.out.printf("여행기간 : %s ~ %s\n", start_date, end_date);
+				System.out.printf("작성 시간 : %s\n", w_time);
+				System.out.printf("%s\n", text);
+				// if(tnum == 현재로그인한 회원 번호) 비회원이면 0
+				// isWriter = True;
+			}
+
+			ps.close();
+			rs.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }
