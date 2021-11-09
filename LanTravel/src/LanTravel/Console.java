@@ -13,7 +13,7 @@ public class Console {
 	Database db = null;
 	Connection conn = null;
 	Statement stmt = null;
-	String search;
+	String searchStr;
 
 	Guest guest;
 	Traveler traveler;
@@ -24,6 +24,8 @@ public class Console {
 	int page;
 	int mode; // 1: 일반, 2: 선택
 	boolean isWriter;
+	int searchPage = 1;	// 검색용 page 번호
+	int route;	// post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지 구분(1) -> post 상세보기에서 이전으로 돌아갈때 사용
 
 	public Console() {
 		db = new Database();
@@ -106,6 +108,8 @@ public class Console {
 
 		// Post Table 표시
 		printPostTable();
+		
+		route = 1;
 
 		if (mode == 2) { // 선택 mode
 			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
@@ -206,8 +210,8 @@ public class Console {
 			break;
 		case 6:	// 검색
 			System.out.print("검색 내용을 입력하세요. ");
-			search = sc.next();
-			searchPost(search);
+			searchStr = sc.next();
+			printSearchPost();
 			break;
 		case 7:
 			System.out.println("종료합니다.");
@@ -245,7 +249,8 @@ public class Console {
 			break;
 		case 6: // 검색
 			System.out.print("검색 내용을 입력하세요. ");
-			search = sc.next();
+			searchStr = sc.next();
+			printSearchPost();
 			break;
 		case 7: // 포스트 쓰기
 			traveler.write_post(conn, stmt);
@@ -342,7 +347,10 @@ public class Console {
 
 		switch (menu) {
 		case 1: // 이전화면
-			printMainMenu();
+			if(route == 1)
+				printMainMenu();
+			else if(route == 0)
+				printSearchPost();
 			break;
 		case 2: // 댓글보기
 			// reply view
@@ -358,7 +366,10 @@ public class Console {
 
 		switch (menu) {
 		case 1: // 이전화면
-			printMainMenu();
+			if(route == 1)
+				printMainMenu();
+			else if(route == 0)
+				printSearchPost();
 			break;
 		case 2: // 댓글 작성
 			// reply insert
@@ -389,7 +400,10 @@ public class Console {
 
 		switch (menu) {
 		case 1: // 이전화면
-			printMainMenu();
+			if(route == 1)
+				printMainMenu();
+			else if(route == 0)
+				printSearchPost();
 			break;
 		case 2: // 수정
 			// post 수정 view
@@ -430,43 +444,180 @@ public class Console {
 		}
 	}
 	
-	// 검색검색검색
-	public void searchPost(String str) {
-		ResultSet rs = null;
-
+	// 검색
+	public void printSearchPost() {
+		printSearchPostTable();
+		route = 0;
 		
-		// 검색내용 출력 수정하기
+		if (mode == 2) { // 선택 mode
+			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
+			int no = sc.nextInt();
+			System.out.printf("\n\n");
+
+			if (no == 0) { // 취소
+				mode = 1;
+				printSearchPost();
+			} else { // Post 선택
+				try {
+					// pnum 추출
+					String sql = "SELECT post_num FROM ( "
+							+ "select rownum no, np.* "
+							+ "from ( SELECT distinct p.post_num, pl.name, pl.city, p.written_time "
+							+ "FROM post p, post_locations pl, hashtag h "
+							+ "WHERE p.post_num = pl.post_num "
+							+ "and h.post_num = p.post_num "
+							+ "and (p.text like ? or pl.name like ? or pl.country like ? or pl.city like ? or h.tag_name like ?) "
+							+ "ORDER BY p.written_time DESC ) np ) WHERE no = ?";
+					PreparedStatement ps = conn.prepareStatement(sql);
+					ps.setString(1, "%"+searchStr+"%");
+					ps.setString(2, "%"+searchStr+"%");
+					ps.setString(3, "%"+searchStr+"%");
+					ps.setString(4, "%"+searchStr+"%");
+					ps.setString(5, "%"+searchStr+"%");
+					ps.setInt(6, no + (searchPage - 1) * postsPerPage);
+					ResultSet rs = ps.executeQuery();
+
+					int pnum = 0;
+					if (rs.next()) {
+						pnum = rs.getInt(1);
+					}
+					mode = 1;
+
+					if (pnum == 0) { // 오류
+						System.out.println("잘못 선택되었습니다.");
+						printMainMenu();
+					} else { // Post 상세 표시
+						printPost(pnum);
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		else
+			printSearchPostMenu();
+	}
+	
+	public void printSearchPostTable() {
+		System.out.println("[ " + searchStr + " ] 검색 결과입니다.");
+		
+		int searchTotalPost = 0; // 총 Post 수
+		int searchlastPage = 0; // 마지막 Page
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+
+		// totalPost, lastPage 계산
 		try {
-			String sql = "SELECT p.Start_date, p.End_date, p.Text, p.Written_time, pl.Name, pl.Country, pl.City, t.Nickname, t.num  "
-					+ "from post p, traveler t, post_locations pl " + "where p.traveler_num = t.num "
-					+ "and pl.post_num = p.post_num " + "and p.Post_num = ?";
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, str);
+			String sql = "SELECT COUNT(*) FROM "
+					+ "(SELECT distinct p.post_num, pl.name, pl.city, p.written_time "
+					+ "FROM post p, post_locations pl, hashtag h "
+					+ "WHERE p.post_num = pl.post_num "
+					+ "and h.post_num = p.post_num "
+					+ "and (p.text like ? or pl.name like ? or pl.country like ? or pl.city like ? or h.tag_name like ?) "
+					+ "ORDER BY p.written_time DESC)";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, "%"+searchStr+"%");
+			ps.setString(2, "%"+searchStr+"%");
+			ps.setString(3, "%"+searchStr+"%");
+			ps.setString(4, "%"+searchStr+"%");
+			ps.setString(5, "%"+searchStr+"%");
+			rs = ps.executeQuery();
+			if (rs.next())
+				searchTotalPost = rs.getInt(1); // -1 : 0번 post
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		searchlastPage = searchTotalPost / postsPerPage;
+		searchlastPage = (searchTotalPost % postsPerPage == 0) ? searchlastPage : searchlastPage + 1;
+
+		if (mode == 2) { // 선택 mode
+			System.out.println("선택 모드입니다.");
+		} else { // 일반 mode
+			// Page 표시
+			if (searchPage < 1) {
+				searchPage = 1;
+				System.out.println("page: " + searchPage + " / " + searchlastPage + "\t[첫 페이지입니다.]");
+			} else if (searchPage > searchlastPage) {
+				searchPage = searchlastPage;
+				System.out.println("page: " + searchPage + " / " + searchlastPage + "\t[마지막 페이지입니다.]");
+			} else {
+				System.out.println("page: " + searchPage + " / " + searchlastPage);
+			}
+		}
+		
+		if (mode == 2) { // 선택 mode
+			System.out.println("선택 모드입니다.");
+		} 
+		
+		// post 10개씩 나오게 하기 위한 쿼리문 -> 동적쿼리여서 뷰를 만들 수 없는데 어떻게...?
+		try {
+			String sql = "SELECT * FROM ( "
+					+ "select rownum no, np.* "
+					+ "from ( SELECT distinct p.post_num, pl.name, pl.city, p.written_time "
+					+ "FROM post p, post_locations pl, hashtag h "
+					+ "WHERE p.post_num = pl.post_num "
+					+ "and h.post_num = p.post_num "
+					+ "and (p.text like ? or pl.name like ? or pl.country like ? or pl.city like ? or h.tag_name like ?) "
+					+ "ORDER BY p.written_time DESC ) np ) "
+					+ "WHERE no BETWEEN ? AND ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, "%"+searchStr+"%");
+			ps.setString(2, "%"+searchStr+"%");
+			ps.setString(3, "%"+searchStr+"%");
+			ps.setString(4, "%"+searchStr+"%");
+			ps.setString(5, "%"+searchStr+"%");
+			ps.setInt(6, (searchPage - 1) * postsPerPage + 1);
+			ps.setInt(7, searchPage * postsPerPage);
 			rs = ps.executeQuery();
 
+			System.out.println(
+					" num  |                   name                   |         city          |         time        ");
+			System.out.println(
+					"-----------------------------------------------------------------------------------------------");
+			int i = 1;
 			while (rs.next()) {
-				String start_date = rs.getString(1);
-				String end_date = rs.getString(2);
-				String text = rs.getString(3);
-				String w_time = rs.getString(4);
-				String loc_name = rs.getString(5);
-				String loc_country = rs.getString(6);
-				String loc_city = rs.getString(7);
-				String nickname = rs.getString(8);
-				int tnum = rs.getInt(9); // 작성자인지 확인 용도
-				System.out.printf("작성자 : %s\n", nickname);
-				System.out.printf("장소 : %s %s %s\n", loc_country, loc_city, loc_name);
-				System.out.printf("여행기간 : %s ~ %s\n", start_date, end_date);
-				System.out.printf("작성 시간 : %s\n", w_time);
-				System.out.printf("%s\n", text);
-				// if(tnum == 현재로그인한 회원 번호) 비회원이면 0
-				// isWriter = True;
-			}
+				int pnum = rs.getInt(2);
+				String name = rs.getString(3);
+				String city = rs.getString(4);
+				String time = rs.getString(5);
+				if (mode == 2) { // 선택 mode
+					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", i, name, city, time);
+					i++;
+				} else { // 일반 mode
+					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", pnum, name, city, time);
+				}
+			}// isWriter = True;
 
 			ps.close();
 			rs.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public void printSearchPostMenu() {
+		System.out.println("1. 선택  2. 이전 3. 이전 검색결과 4. 다음 검색결과");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 선택
+			mode = 2;
+			printSearchPost();
+			break;
+		case 2: // 이전
+			searchPage = 1;
+			printMainMenu();
+			break;
+		case 3:
+			searchPage--;
+			printSearchPost();
+			break;
+		case 4:
+			searchPage++;
+			printSearchPost();
+			break;
 		}
 	}
 }
