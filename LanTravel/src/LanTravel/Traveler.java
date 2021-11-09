@@ -130,83 +130,6 @@ public class Traveler {
 		}
 	}
 	
-	//북마크 리스트 출력
-	public void list_bookmark(Connection conn, Statement stmt) {
-		Console console = new Console(); //console의 printPost 매서드를 사용하기 위함. (db에 새로 접속하기 때문에 출력 관련 매서드는 다른 클래스를 만드는 것이 어떨지?) 
-		this.conn = conn;
-		this.stmt = stmt;
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		String sql = null;
-		
-		int post_num = 0;
-		String name = "";
-		String city = "";
-		String written_time = "";
-		
-		int num;
-		int input;
-		boolean isexist = false;
-		
-		System.out.println("--------------------------------------------");
-		System.out.println("|                  북마크 목록                 |");
-		System.out.println("--------------------------------------------");
-		
-		try {
-			sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, Tnum);
-			rs = ps.executeQuery();
-			
-			System.out.println(
-					" num  |                   name                   |         city          |         time        ");
-			System.out.println(
-					"-----------------------------------------------------------------------------------------------");
-			
-			while (rs.next()) {
-				post_num = rs.getInt(2);
-				name = rs.getString(3);
-				city = rs.getString(4);
-				written_time = rs.getString(5);
-				
-				System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", post_num, name, city, written_time);
-			}
-			
-			//임시 북마크 기능(console의 printPostSelection 매서드를 이용하는 쪽으로...)
-			System.out.println("1. 상세보기  2. 이전 페이지");
-			System.out.println("할 일을 입력하세요.");
-			num = sc.nextInt();
-			
-			switch(num) {
-			case 1:
-				System.out.println("포스트 선택 모드");
-				System.out.println("포스트 번호를 입력하세요");
-				input = sc.nextInt();
-				
-				sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
-				ps = conn.prepareStatement(sql);
-				ps.setInt(1, Tnum);
-				rs = ps.executeQuery();
-				
-				while (rs.next()) {
-					if(input == rs.getInt(2)) isexist = true;
-				}
-				
-				if(isexist) console.printPost(input);
-				else System.out.println("잘못된 번호입니다.");
-				
-				break;
-			case 2:
-				break;
-			}
-			
-		} catch (SQLException e) {
-				// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-	}
-	
 	//북마크 등록/해제
 	public void enroll_bookmark(Connection conn, Statement stmt, int pnum) {
 		this.conn = conn;
@@ -472,5 +395,109 @@ public class Traveler {
 				// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	//댓글 작성(대댓x)
+	public void reply_to_post(Connection conn, Statement stmt, int pnum) {
+		this.conn = conn;
+		this.stmt = stmt;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		String sql = null;
+		
+		String reply = null;
+		int rep_num = 0;
+		
+		System.out.println("댓글 작성");
+		
+		try {
+			sql = "select count(*) from reply";
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				rep_num = rs.getInt(1) + 1;
+			}
+			
+			while(reply == null) {
+				System.out.println("댓글을 입력하세요");
+				reply = sc.nextLine();
+				if(reply == null) System.out.println("댓글이 공란입니다.");
+			}
+			
+			sql = "insert into reply values(?, ?, to_date(sysdate,'yyyy-mm-dd hh24:mi:ss'), ?, null, ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, rep_num);
+			ps.setString(2, reply);
+			ps.setInt(3, Tnum);
+			ps.setInt(4, pnum);
+			rs = ps.executeQuery();
+			
+			System.out.println("댓글을 작성하였습니다.");
+			
+		} catch (SQLException e) {
+				// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	//평가
+	public void rating(Connection conn, Statement stmt, int pnum) {
+		this.conn = conn;
+		this.stmt = stmt;
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		String sql = null;
+		
+		int rate = 0;
+		boolean isuploaded = false;
+	
+		System.out.println("별점 작성");
+		
+		try {
+			sql = "select * from rating where post_num = ? and traveler_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			ps.setInt(2, Tnum);
+			rs = ps.executeQuery();
+			
+			if(rs.next()) {
+				System.out.println("이미 별점을 작성하였습니다.");
+			}
+			else {
+				while(!isuploaded) {
+					System.out.println("별점을 입력하세요.(1, 2, 3, 4, 5)");
+					rate = sc.nextInt();
+					sc.nextLine();
+					
+					switch(rate) {
+					case 1:
+					case 2:
+					case 3:
+					case 4:
+					case 5:
+						sql = "insert into rating values(?, ?, ?)";
+						ps = conn.prepareStatement(sql);
+						ps.setInt(1, pnum);
+						ps.setInt(2, Tnum);
+						ps.setInt(3, rate);
+						rs = ps.executeQuery();
+						System.out.println("별점이 반영되었습니다.");
+						isuploaded = true;
+						break;
+					default:
+						System.out.println("잘못된 값입니다.");
+						break;
+					}
+				}
+			}
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public int getTnum() {
+		return Tnum;
 	}
 }
