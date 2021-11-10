@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.Scanner;
+
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.SystemMenuBar;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -432,7 +435,9 @@ public class Console {
 		System.out.print("할 일을 선택하세요. ");
 		int menu = sc.nextInt();
 		System.out.printf("\n\n");
-
+		String sql;
+		String newStr;
+		
 		switch (menu) {
 		case 1: // 이전화면
 			if(route == 1)
@@ -441,11 +446,46 @@ public class Console {
 				printSearchPost();
 			break;
 		case 2: // 수정
-			// post 수정 view
+			System.out.println("수정 사항을 선택하시오.");
+			System.out.println("1. 내용 2. 장소명");
+			int n = sc.nextInt();
+			
+			switch(n) {
+			case 1 :
+				try {
+					System.out.println("내용 수정 : ");
+					newStr = sc.next();
+					sql = "update post set text = ? where post_num = ?";
+					PreparedStatement ps = conn.prepareStatement(sql);
+					ps.setString(1, newStr);
+					ps.setInt(2, pnum);
+					ResultSet rs = ps.executeQuery();
+					System.out.println("수정되었습니다.");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				printPost(pnum);
+				break;
+			case 2 :
+				try {
+					System.out.println("장소명 수정 : ");
+					newStr = sc.next();
+					sql = "update post_locations set name = ? where post_num = ?";
+					PreparedStatement ps = conn.prepareStatement(sql);
+					ps.setString(1, newStr);
+					ps.setInt(2, pnum);
+					ResultSet rs = ps.executeQuery();
+					System.out.println("수정되었습니다.");
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				printPost(pnum);
+				break;
+			}
 			break;
 		case 3: // 삭제
 			try {
-			String sql = "delete from post where post_num = ?";
+			sql = "delete from post where post_num = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			ResultSet rs = ps.executeQuery();
@@ -593,8 +633,7 @@ public class Console {
 		if (mode == 2) { // 선택 mode
 			System.out.println("선택 모드입니다.");
 		} 
-		
-		// post 10개씩 나오게 하기 위한 쿼리문 -> 동적쿼리여서 뷰를 만들 수 없는데 어떻게...?
+	
 		try {
 			String sql = "SELECT * FROM ( "
 					+ "select rownum no, np.* "
