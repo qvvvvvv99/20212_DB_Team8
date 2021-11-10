@@ -412,7 +412,8 @@ public class Console {
 			printReply(pnum);
 			break;
 		case 4: // 평가
-			// rating insert
+			traveler.rating(conn, stmt, pnum);
+			printPostSelection_traveler(pnum);
 			break;
 		case 5: // 신고
 			// report insert
@@ -443,17 +444,27 @@ public class Console {
 			// post 수정 view
 			break;
 		case 3: // 삭제
-			// post delete
+			try {
+			String sql = "delete from post where post_num = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			ResultSet rs = ps.executeQuery();
+			System.out.println("삭제되었습니다.");
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			printMainMenu();
 			break;
 		case 4: // 댓글 작성
-			// reply insert
+			traveler.reply_to_post(conn, stmt, pnum);
+			printPostSelection_traveler_writer(pnum);
 			break;
 		case 5: // 댓글 보기
 			printReply(pnum);
 			break;
 		case 6: // 북마크 등록/해제
 			traveler.enroll_bookmark(conn, stmt, pnum);
-			printPostSelection_traveler(pnum);
+			printPostSelection_traveler_writer(pnum);
 			break;
 		}
 	}
