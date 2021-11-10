@@ -1,4 +1,4 @@
-//traveler가 지니는 기능을 작성한 매서드의 클래스
+// traveler가 지니는 기능을 작성한 매서드의 클래스
 package LanTravel;
 
 import java.sql.Connection;
