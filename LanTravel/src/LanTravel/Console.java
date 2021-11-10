@@ -469,7 +469,8 @@ public class Console {
 
 		// Post Table 표시
 		try {
-			String sql = "SELECT * FROM post_view WHERE no BETWEEN ? AND ?";
+			String sql = "SELECT * FROM (SELECT ROWNUM no, np.* FROM (SELECT p.post_num, pl.name, pl.city, p.written_time FROM post p, post_locations pl "
+					+ "WHERE p.post_num = pl.post_num ORDER BY p.written_time DESC) np) WHERE no BETWEEN ? AND ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, (page - 1) * linePerPage + 1);
 			ps.setInt(2, page * linePerPage);
@@ -1159,7 +1160,7 @@ public class Console {
 					if (rs.next()) {
 						rnum = rs.getInt(1);
 						int writerNum = rs.getInt(2); // 작성자 확인 용도
-						
+
 						isReplyWriter = tnum == writerNum ? true : false;
 					}
 					mode = 1;
