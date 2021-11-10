@@ -15,9 +15,9 @@ public class Traveler {
 
 	private int num;
 
-	public Traveler() {
-		this.conn = null;
-		this.stmt = null;
+	public Traveler(Connection conn, Statement stmt) {
+		this.conn = conn;
+		this.stmt = stmt;
 		num = -1;
 	}
 
@@ -31,9 +31,9 @@ public class Traveler {
 
 	// 비밀번호 수정
 	public boolean updatePassword(String pw) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		String sql = null;
@@ -56,9 +56,9 @@ public class Traveler {
 
 	// 닉네임 수정
 	public boolean updateNickname(String nickname) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		String sql = null;
@@ -81,9 +81,9 @@ public class Traveler {
 
 	// 이메일 수정
 	public boolean updateEmail(String email) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		String sql = null;
@@ -106,9 +106,9 @@ public class Traveler {
 
 	// 북마크 등록/해제
 	public void enrollBookmark(int pnum) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -145,9 +145,9 @@ public class Traveler {
 	// 포스트 작성
 	public boolean writePost(String start_date, String end_date, String text, String name, String country, String city,
 			String picture, String tag) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -237,9 +237,9 @@ public class Traveler {
 
 	// 신고
 	public void reportPost(int pnum, String reason) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -283,9 +283,9 @@ public class Traveler {
 	}
 
 	public void reportReply(int rnum, String reason) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -330,9 +330,9 @@ public class Traveler {
 
 	// 댓글 작성
 	public void replyToPost(int pnum) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -380,9 +380,9 @@ public class Traveler {
 	
 	// 대댓글 작성
 		public void replyToReply(int pnum, int parentNum) {
-			Database db = new Database();
-			conn = db.getConnection();
-			stmt = db.getStatement();
+//			Database db = new Database();
+//			conn = db.getConnection();
+//			stmt = db.getStatement();
 			String sql = null;
 			PreparedStatement ps = null;
 			ResultSet rs = null;
@@ -431,9 +431,9 @@ public class Traveler {
 
 	// 평가
 	public void rating(int pnum) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;

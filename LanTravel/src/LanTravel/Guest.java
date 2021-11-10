@@ -17,9 +17,9 @@ public class Guest {
 	private int userType; // (1: guest), 2: traveler, 3: admin
 	private int num;
 
-	public Guest() {
-		this.conn = null;
-		this.stmt = null;
+	public Guest(Connection conn, Statement stmt) {
+		this.conn = conn;
+		this.stmt = stmt;
 		id = null;
 		pw = null;
 		userType = 1;
@@ -43,9 +43,9 @@ public class Guest {
 	}
 
 	public void join(String id, String pw, String nickname, String email) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -81,9 +81,9 @@ public class Guest {
 	}
 
 	public boolean loginTraveler(String id, String pw) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -110,9 +110,9 @@ public class Guest {
 	}
 
 	public boolean loginAdmin(String id, String pw) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;

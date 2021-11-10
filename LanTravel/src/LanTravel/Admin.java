@@ -13,9 +13,9 @@ public class Admin {
 	Statement stmt;
 	private int num;
 
-	public Admin() {
-		conn = null;
-		stmt = null;
+	public Admin(Connection conn, Statement stmt) {
+		this.conn = conn;
+		this.stmt = stmt;
 		num = 0;
 	}
 
@@ -25,9 +25,9 @@ public class Admin {
 
 	// 비밀번호 수정
 	public boolean updatePassword(String pw) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 		String sql = null;
@@ -49,9 +49,9 @@ public class Admin {
 	}
 
 	public void DeletePostReply(String type, int num) {
-		Database db = new Database();
-		conn = db.getConnection();
-		stmt = db.getStatement();
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		ResultSet rs1 = null;

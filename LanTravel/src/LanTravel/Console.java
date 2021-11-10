@@ -129,7 +129,7 @@ public class Console {
 				System.out.println("로그인에 성공하였습니다.");
 				userType = 2; // Traveler
 				num = guest.getNum();
-				traveler = new Traveler();
+				traveler = new Traveler(conn, stmt);
 				traveler.setNum(num);
 			} else {
 				System.out.println("로그인에 실패하였습니다.");
@@ -146,7 +146,7 @@ public class Console {
 				System.out.println("로그인에 성공하였습니다.");
 				userType = 3; // Admin
 				num = guest.getNum();
-				admin = new Admin();
+				admin = new Admin(conn, stmt);
 				admin.setNum(num);
 			} else {
 				System.out.println("로그인에 실패하였습니다.");
@@ -513,7 +513,7 @@ public class Console {
 
 	// 메인 메뉴 화면 - Guest
 	public void printMainMenu_guest() {
-		guest = new Guest();
+		guest = new Guest(conn, stmt);
 
 		System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
 		System.out.print("할 일을 선택하세요. ");
