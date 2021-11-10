@@ -662,7 +662,7 @@ public class Console {
 
 			if (no == 0) { // 취소
 				mode = 1;
-				printMainMenu();
+				printPost(pnum);
 			} else { // Reply 선택
 				try {
 					// reply_num 추출
@@ -687,13 +687,63 @@ public class Console {
 						System.out.println("잘못 선택되었습니다.");
 						printReply(pnum);
 					} else { // reply 선택
-						// 1. 비회원
-						// 1-1. 이전
-						// 2. 회원
-						// 2-1. 댓글 작성
-						// 2-2. 댓글 수정(자기거)
-						// 2-2. 댓글 삭제(자기거)
-						// 2-3. 신고
+						sql = "select t.nickname, r.text, r.written_time, t.num "
+								+ "from reply r, traveler t "
+								+ "where  r.traveler_num = t.num "
+								+ "and r.reply_num = ?";
+						ps = conn.prepareStatement(sql);
+						ps.setInt(1, rnum);
+						rs = ps.executeQuery();
+						
+						if (rs.next()) {
+							String name = rs.getString(1);
+							String rText = rs.getString(2);
+							String w_time = rs.getString(3);
+							int trav_num = rs.getInt(4);
+
+							System.out.printf("%-30s\t%s\n%s\n", name, w_time, rText);
+						}
+						
+						if(isWriter) {	
+							System.out.printf("1. 댓글 작성 2. 댓글 수정 3. 댓글 삭제 4. 이전");
+							int choice = sc.nextInt();
+							switch(choice) {
+							case 1:
+								//	traveler.reply_to_post(conn, stmt, pnum);
+								// 대댓글 설정
+							case 2:
+								String text = sc.next();
+								sql = "update reply set text = ? where reply_num = ?";
+								ps.setString(1, text);
+								ps.setInt(2, rnum);
+								rs = ps.executeQuery();
+								System.out.println("수정되었습니다.");
+								printReply(pnum);
+								break;
+							case 3: 
+								sql = "delete from reply where reply_num = ?";
+								ps.setInt(1, rnum);
+								rs = ps.executeQuery();
+								System.out.println("삭제되었습니다.");
+							case 4:
+								printReply(pnum);
+								break;
+							}
+						}
+						else {
+							System.out.printf("1. 댓글 작성 2. 댓글 신고 3. 이전");
+							int choice = sc.nextInt();
+							switch(choice) {
+							case 1:
+								//	traveler.reply_to_post(conn, stmt, pnum);
+								// 대댓글 설정
+							case 2:	// 댓글 신고
+								break;
+							case 3:
+								printReply(pnum);
+								break;
+							}
+						}
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -745,10 +795,6 @@ public class Console {
 				System.out.println("page: " + replyPage + " / " + lastReply);
 			}
 		}
-		
-		if (mode == 2) { // 선택 mode
-			System.out.println("선택 모드입니다.");
-		} 
 		
 		try {
 			String sql = "select * from ( "
