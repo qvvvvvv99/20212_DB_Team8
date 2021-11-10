@@ -653,6 +653,58 @@ public class Console {
 	
 	public void printReply(int pnum) {
 		printReplyTable(pnum);
+		
+		int rnum = 0;
+		if (mode == 2) { // 선택 mode
+			System.out.print("몇 번째 댓글를 선택하시겠습니까? (취소 : 0) ");
+			int no = sc.nextInt();
+			System.out.printf("\n\n");
+
+			if (no == 0) { // 취소
+				mode = 1;
+				printMainMenu();
+			} else { // Reply 선택
+				try {
+					// reply_num 추출
+					String sql = "select reply_num from ( "
+							+ "select rownum no, np.* "
+							+ "from (select t.nickname, r.text, r.written_time, r.p_reply_num, r.reply_num "
+							+ "from reply r, traveler t "
+							+ "where  r.traveler_num = t.num "
+							+ "and r.post_num = ? "
+							+ "order by r.written_time) np) where no = ?";
+					PreparedStatement ps = conn.prepareStatement(sql);
+					ps.setInt(1, pnum);
+					ps.setInt(2, no + (replyPage - 1) * postsPerPage);
+					ResultSet rs = ps.executeQuery();
+
+					if (rs.next()) {
+						rnum = rs.getInt(1);
+					}
+					mode = 1;
+
+					if (rnum == 0) { // 오류
+						System.out.println("잘못 선택되었습니다.");
+						printReply(pnum);
+					} else { // reply 선택
+						// 1. 비회원
+						// 1-1. 이전
+						// 2. 회원
+						// 2-1. 댓글 작성
+						// 2-2. 댓글 수정(자기거)
+						// 2-2. 댓글 삭제(자기거)
+						// 2-3. 신고
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} else { // 일반 mode
+			switch(user) {
+			case 1: printReplyMenu_guest(pnum);
+			case 2: printReplyMenu_traveler(pnum);
+			}
+		}
 	}
 	
 	public void printReplyTable(int pnum) {
@@ -705,7 +757,6 @@ public class Console {
 					+ "from reply r, traveler t "
 					+ "where  r.traveler_num = t.num "
 					+ "and r.post_num = ? "
-					+ "and r.p_reply_num is null "
 					+ "order by r.written_time) np)";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
@@ -721,12 +772,24 @@ public class Console {
 				String name = rs.getString(2);
 				String text = rs.getString(3);
 				String w_time = rs.getString(4);
-				if (mode == 2) { // 선택 mode	
-					System.out.printf("%5d\t%-30s\t%s\n%s\n", i, name, w_time, text);
-					i++;
-				} else { // 일반 mode
-					System.out.printf("%-30s\t%s\n%s\n", name, w_time, text);
+				int parentReplyNum = rs.getInt(5);
+				if(parentReplyNum == 0) {
+					if (mode == 2) { // 선택 mode	
+						System.out.printf("%3d|\t%-30s\t%s\n%s\n", i, name, w_time, text);
+						i++;
+					} else { // 일반 mode
+						System.out.printf("%-30s\t%s\n%s\n", name, w_time, text);
+					}
 				}
+				else {
+					if (mode == 2) { // 선택 mode	
+						System.out.printf("\t\t%3d|\t%-30s\t%s\n\t\t%s\n", i, name, w_time, text);
+						i++;
+					} else { // 일반 mode
+						System.out.printf("\t\t%-30s\t%s\n\t\t%s\n", name, w_time, text);
+					}
+				}
+				// 대댓글 구현
 			}// isWriter = True;
 
 			ps.close();
@@ -736,12 +799,52 @@ public class Console {
 		}
 	}
 	
-	public void printReplyMenu(int pnum) {
-		
+	public void printReplyMenu_traveler(int pnum) {
+		System.out.println("1. 선택  2. 글보기 3. 이전 댓글 4. 다음 댓글");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 선택
+			mode = 2;
+			printReply(pnum);
+			break;
+		case 2: // 이전
+			replyPage = 1;
+			printPost(pnum);
+			break;
+		case 3:
+			searchPage--;
+			printReply(pnum);
+			break;
+		case 4:
+			searchPage++;
+			printReply(pnum);
+			break;
+		}
 	}
 	
-	public void insertReply(int pnum) {
-		
+	public void printReplyMenu_guest(int pnum) {
+		System.out.println("1. 글보기 2. 이전 댓글 3. 다음 댓글");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 이전
+			replyPage = 1;
+			printPost(pnum);
+			break;
+		case 2:
+			searchPage--;
+			printReply(pnum);
+			break;
+		case 3:
+			searchPage++;
+			printReply(pnum);
+			break;
+		}
 	}
 	
 	//북마크 리스트 출력
