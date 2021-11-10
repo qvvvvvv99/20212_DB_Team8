@@ -1679,14 +1679,17 @@ public class Console {
 						type = rs.getString(3);
 						if (type.equals("P")) {
 							num = rs.getInt(4);
-							if (rs.getString(4) == null)
+							System.out.println("num " + num);
+							if (num == 0)
 								type = "R";
 						}
 						if (type.equals("R")) {
 							num = rs.getInt(6);
-							if (rs.getString(7) == null) {
+							System.out.println("num " + num);
+							if (num == 0) {
 								type = "P";
 								num = rs.getInt(4);
+								System.out.println("num " + num);
 							}
 						}
 					}
