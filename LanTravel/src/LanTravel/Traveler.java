@@ -194,12 +194,12 @@ public class Traveler {
 		int state = 0; //0.작성 1.등록 2.종료
 		
 		try {
-			sql = "select count(*) from post";
+			sql = "select max(post_num) from post";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			
 			while (rs.next()) {
-				pnum = rs.getInt(1);
+				pnum = rs.getInt(1) + 1;
 			}
 			
 			while(true) {
