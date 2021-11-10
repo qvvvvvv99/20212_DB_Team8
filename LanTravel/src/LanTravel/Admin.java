@@ -152,6 +152,38 @@ public class Admin {
 				
 				System.out.println("포스트가 삭제되었습니다.");
 			case "R":
+				sql = "select report_num from record where reply_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				rnum = 0;
+				
+				while (rs.next()) {
+					rnum = rs.getInt(1);
+					
+					sql = "delete from record where report_num = ?";
+					ps = conn.prepareStatement(sql);			
+					ps.setInt(1, rnum);
+					rs1 = ps.executeQuery();
+					
+					sql = "delete from report where report_num = ?";
+					ps = conn.prepareStatement(sql);			
+					ps.setInt(1, rnum);
+					rs2 = ps.executeQuery();
+				}
+				
+				sql = "delete from reply where p_reply_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				sql = "delete from reply where reply_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				System.out.println("댓글이 삭제되었습니다.");
 		}
 		
 		} catch (SQLException e) {

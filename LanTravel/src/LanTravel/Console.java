@@ -194,6 +194,7 @@ public class Console {
 					Anum = guest.getAnum();
 					admin = new Admin();
 					admin.setNum(Anum);
+					printReportMenu();
 					break;
 				}
 			}
@@ -1164,6 +1165,11 @@ public class Console {
 				if(type.equals("R")) {
 					num = rs.getInt(6);
 					text = rs.getString(7);
+					if(num==0) {
+						type = "P";
+						num = rs.getInt(4);
+						text = rs.getString(5);
+					}
 				}
 				if (mode == 2) { // 선택 mode
 					System.out.printf("%12d | %-1s\t|  %4d\t | %-40s| %s\n", i, type, num, reason ,text);
@@ -1236,7 +1242,9 @@ public class Console {
 						if(type.equals("P")) {
 							printPost(num);
 						}
-						//if(type == "R") 
+						if(type.equals("R")) {
+							printOneReply(num);
+						}
 					}
 				} catch (SQLException e) {
 					e.printStackTrace();
@@ -1245,6 +1253,37 @@ public class Console {
 		} else { // 일반 mode
 			// User별 메인 메뉴 표시
 			printMainMenu_admin();
+		}
+	}
+	
+	public void printOneReply(int num) {
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+		
+		try {
+			String sql = "Select t.nickname, r.text, r.written_time, r.post_num from reply r, traveler t where t.num = r.traveler_num and r.reply_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+		
+
+			while (rs.next()) {
+				String nickname = rs.getString(1);
+				String text = rs.getString(2);
+				String w_time = rs.getString(3);
+				int p_num = rs.getInt(4);
+
+				System.out.printf("작성자 : %s\n", nickname);
+				System.out.printf("작성 시간 : %s\n", w_time);
+				System.out.printf("%s\n", text);
+				System.out.printf("상위 포스트 : %d\n", p_num);
+				
+			}
+			
+			printPostSelection_admin(num);
+		}catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }
