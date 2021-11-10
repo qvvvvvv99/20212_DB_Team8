@@ -61,14 +61,22 @@ public class Admin {
 			
 			switch(num) {
 			case 1: //비밀번호 수정
-				System.out.println("새로운 비밀번호를 입력하세요 : ");
+				System.out.println("새로운 비밀번호를 입력하세요(취소: 0) : ");
 				input = sc.nextLine();
+				if(input.equals("0")) {
+					System.out.println("취소되었습니다.");
+					update(conn, stmt);
+					return;
+				}
 				
 				sql = "update admin set pw = ? where num = ?";
 				ps = conn.prepareStatement(sql);
 				ps.setString(1, input);
 				ps.setInt(2, Anum);
 				rs = ps.executeQuery();
+				
+				System.out.println("비밀번호가 변경되었습니다.");
+				
 				break;
 			
 			case 2:

@@ -70,20 +70,34 @@ public class Traveler {
 			
 			switch(num) {
 			case 1: //비밀번호 수정
-				System.out.println("새로운 비밀번호를 입력하세요 : ");
+				System.out.println("새로운 비밀번호를 입력하세요(취소: 0) : ");
 				input = sc.nextLine();
+				if(input.equals("0")) {
+					System.out.println("취소되었습니다.");
+					update(conn, stmt);
+					return;
+				}
 				
 				sql = "update traveler set pw = ? where num = ?";
 				ps = conn.prepareStatement(sql);
 				ps.setString(1, input);
 				ps.setInt(2, Tnum);
 				rs = ps.executeQuery();
+				
+				System.out.println("비밀번호가 수정되었습니다.");
 				break;
 				
 			case 2: //닉네임 수정
 				while(true) {
-					System.out.println("새로운 닉네임을 입력하세요 : ");
+					System.out.println("새로운 닉네임을 입력하세요 (취소: 0) : ");
 					input = sc.nextLine();
+					
+					if(input.equals("0")) {
+						System.out.println("취소되었습니다.");
+						update(conn, stmt);
+						return;
+					}
+					
 					sql = "Select nickname from traveler where nickname = ?";
 					ps = conn.prepareStatement(sql);
 					ps.setString(1, input);
@@ -101,17 +115,28 @@ public class Traveler {
 				ps.setInt(2, Tnum);
 				rs = ps.executeQuery();
 				
+				System.out.println("닉네임이 수정되었습니다.");
+				
 				break;
 				
 			case 3: //이메일 수정
-				System.out.println("새로운 이메일을 입력하세요 : ");
+				System.out.println("새로운 이메일을 입력하세요(취소: 0) : ");
 				input = sc.nextLine();
+				
+				if(input.equals("0")) {
+					System.out.println("취소되었습니다.");
+					update(conn, stmt);
+					return;
+				}
 				
 				sql = "update traveler set email = ? where num = ?";
 				ps = conn.prepareStatement(sql);
 				ps.setString(1, input);
 				ps.setInt(2, Tnum);
 				rs = ps.executeQuery();
+				
+				System.out.println("이메일이 수정되었습니다.");
+				
 				break;
 			
 			case 4:
@@ -360,8 +385,12 @@ public class Traveler {
 			}
 			
 			while(reason == null) {
-				System.out.println("신고 사유를 입력하세요");
+				System.out.println("신고 사유를 입력하세요(취소: 0)");
 				reason = sc.nextLine();
+				if(reason.equals("0")) {
+					System.out.println("취소되었습니다.");
+					return;
+				}
 				if(reason == null) System.out.println("신고 사유가 공란입니다.");
 			}
 			
@@ -408,7 +437,7 @@ public class Traveler {
 		String reply = null;
 		int rep_num = 0;
 		
-		System.out.println("댓글 작성");
+		System.out.println("댓글 작성 (취소: 0)");
 		
 		try {
 			sql = "select max(reply_num) from reply";
@@ -422,19 +451,25 @@ public class Traveler {
 			while(reply == null) {
 				System.out.println("댓글을 입력하세요");
 				reply = sc.nextLine();
+				if(reply.equals("0")) {
+					break;
+				}
 				if(reply == null) System.out.println("댓글이 공란입니다.");
 			}
+			if(reply.equals("0")) {
+				System.out.println("취소되었습니다.");
+			}
+			else {
+				sql = "insert into reply values(?, ?, to_date(sysdate,'yyyy-mm-dd hh24:mi:ss'), ?, null, ?)";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, rep_num);
+				ps.setString(2, reply);
+				ps.setInt(3, Tnum);
+				ps.setInt(4, pnum);
+				rs = ps.executeQuery();
 			
-			sql = "insert into reply values(?, ?, to_date(sysdate,'yyyy-mm-dd hh24:mi:ss'), ?, null, ?)";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, rep_num);
-			ps.setString(2, reply);
-			ps.setInt(3, Tnum);
-			ps.setInt(4, pnum);
-			rs = ps.executeQuery();
-			
-			System.out.println("댓글을 작성하였습니다.");
-			
+				System.out.println("댓글을 작성하였습니다.");
+			}
 		} catch (SQLException e) {
 				// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -466,11 +501,14 @@ public class Traveler {
 			}
 			else {
 				while(!isuploaded) {
-					System.out.println("별점을 입력하세요.(1, 2, 3, 4, 5)");
+					System.out.println("별점을 입력하세요.(1, 2, 3, 4, 5), (취소: 0)");
 					rate = sc.nextInt();
 					sc.nextLine();
 					
 					switch(rate) {
+					case 0:
+						System.out.println("취소되었습니다.");
+						return;
 					case 1:
 					case 2:
 					case 3:

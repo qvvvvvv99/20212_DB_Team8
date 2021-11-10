@@ -26,6 +26,7 @@ public class Console {
 	int searchPage = 1; // 검색용 page 번호
 	int replyPage = 1;
 	int reportPage = 1;
+	int bookmarkPage = 1;
 	int route; // post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지(1) 북마크에서 선택대어 왔는지(2) 구분 -> post
 				// 상세보기에서 이전으로 돌아갈때 사용
 	String type; //admin에서 타입이 R인지 P인지 구분용
@@ -302,6 +303,7 @@ public class Console {
 			break;
 		case 6: // 종료
 			System.out.println("종료합니다.");
+			System.exit(1);
 			break;
 		}
 	}
@@ -965,12 +967,12 @@ public class Console {
 			// Page 표시
 			if (searchPage < 1) {
 				searchPage = 1;
-				System.out.println("page: " + searchPage + " / " + searchLastPage + "\t[첫 페이지입니다.]");
+				System.out.println("page: " + bookmarkPage + " / " + searchLastPage + "\t[첫 페이지입니다.]");
 			} else if (searchPage > searchLastPage) {
 				searchPage = searchLastPage;
-				System.out.println("page: " + searchPage + " / " + searchLastPage + "\t[마지막 페이지입니다.]");
+				System.out.println("page: " + bookmarkPage + " / " + searchLastPage + "\t[마지막 페이지입니다.]");
 			} else {
-				System.out.println("page: " + searchPage + " / " + searchLastPage);
+				System.out.println("page: " + bookmarkPage + " / " + searchLastPage);
 			}
 		}
 
@@ -983,8 +985,8 @@ public class Console {
 					+ "where no between ? and ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, Tnum);
-			ps.setInt(2, (searchPage - 1) * linePerPage + 1);
-			ps.setInt(3, searchPage * linePerPage);
+			ps.setInt(2, (bookmarkPage - 1) * linePerPage + 1);
+			ps.setInt(3, bookmarkPage * linePerPage);
 			rs = ps.executeQuery();
 
 			System.out.println(
@@ -1039,9 +1041,9 @@ public class Console {
 							+ "where no between ? and ? " + "and no = ?";
 					PreparedStatement ps = conn.prepareStatement(sql);
 					ps.setInt(1, Tnum);
-					ps.setInt(2, (searchPage - 1) * linePerPage + 1);
-					ps.setInt(3, searchPage * linePerPage);
-					ps.setInt(4, no + (page - 1) * linePerPage);
+					ps.setInt(2, (bookmarkPage - 1) * linePerPage + 1);
+					ps.setInt(3, bookmarkPage * linePerPage);
+					ps.setInt(4, no + (bookmarkPage - 1) * linePerPage);
 					ResultSet rs = ps.executeQuery();
 
 					int pnum = 0;
