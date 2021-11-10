@@ -12,37 +12,430 @@ public class Console {
 	Database db = null;
 	Connection conn = null;
 	Statement stmt = null;
-	String searchStr;
 
 	Guest guest;
 	Traveler traveler;
 	Admin admin;
 
 	Scanner sc = new Scanner(System.in);
-	int user; // 1: Guest, 2: Traveler, 3: Admin
+	int userType; // 1: Guest, 2: Traveler, 3: Admin
+	int num; // (userType 1: -1), 2: tNum, 3: aNum
 	int page;
 	int mode; // 1: 일반, 2: 선택
-	boolean isWriter;
+	boolean isPostWriter;
+	boolean isReplyWriter;
 	int searchPage = 1; // 검색용 page 번호
 	int replyPage = 1;
 	int reportPage = 1;
 	int bookmarkPage = 1;
-	int route; // post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지(1) 북마크에서 선택대어 왔는지(2) 구분 -> post
-				// 상세보기에서 이전으로 돌아갈때 사용
-	String type; //admin에서 타입이 R인지 P인지 구분용
+	int parentPage; // post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지(1) 북마크에서 선택대어 왔는지(2) 구분 -> post
+					// 상세보기에서 이전으로 돌아갈때 사용
+	String searchStr = null;
+	String type; // admin에서 타입이 R인지 P인지 구분용
 
 	public Console() {
 		db = new Database();
 		conn = db.getConnection();
 		stmt = db.getStatement();
 
-		user = 1;
+		userType = 1;
 		page = 1;
 		mode = 1;
-		isWriter = false;
+		isPostWriter = false;
+		isReplyWriter = false;
 	}
 
-	// Post Table 표시
+	// 회원 가입 화면
+	public void printJoin() {
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String id = null;
+		String pw = null;
+		String nickname = null;
+		String email = null;
+
+		try {
+			sc.nextLine();
+			/**** 아이디 ****/
+			while (true) {
+				System.out.print("아이디를 입력하세요. ");
+				id = sc.nextLine();
+
+				sql = "SELECT id FROM traveler WHERE id = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, id);
+				rs = ps.executeQuery();
+
+				if (rs.next()) { // 중복 아이디가 존재하면 새로 받음
+					System.out.println("아이디가 존재합니다.");
+				} else
+					break;
+			}
+
+			/**** 비밀번호 ****/
+			System.out.print("비밀번호를 입력하세요. ");
+			pw = sc.nextLine();
+
+			/**** 닉네임 ****/
+			while (true) {
+				System.out.print("닉네임을 입력하세요. ");
+				nickname = sc.nextLine();
+				sql = "SELECT nickname FROM traveler WHERE nickname = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, nickname);
+				rs = ps.executeQuery();
+
+				if (rs.next()) {// 중복 닉네임이 존재하면 새로 받음
+					System.out.println("닉네임이 존재합니다.");
+				} else
+					break;
+			}
+
+			/**** 이메일 ****/
+			System.out.print("이메일을 입력하세요. ");
+			email = sc.nextLine();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		guest.join(id, pw, nickname, email);
+
+		System.out.println("회원가입이 완료되었습니다.");
+		System.out.println("--------------------------------");
+	}
+
+	// 로그인 화면 화면
+	public void printLogin() {
+		String id = null;
+		String pw = null;
+
+		System.out.println("1. 일반 로그인  2. 관리자 로그인");
+		int menu = sc.nextInt();
+		sc.nextLine();
+
+		switch (menu) {
+		case 1: // Traveler 로그인
+			System.out.println("[일반 로그인]");
+			System.out.print("아이디를 입력하세요: ");
+			id = sc.nextLine();
+			System.out.print("비밀번호를 입력하세요: ");
+			pw = sc.nextLine();
+
+			if (guest.loginTraveler(id, pw)) {
+				System.out.println("로그인에 성공하였습니다.");
+				userType = 2; // Traveler
+				num = guest.getNum();
+				traveler = new Traveler();
+				traveler.setNum(num);
+			} else {
+				System.out.println("로그인에 실패하였습니다.");
+			}
+			break;
+		case 2: // Admin 로그인
+			System.out.println("[관리자 로그인]");
+			System.out.print("아이디를 입력하세요: ");
+			id = sc.nextLine();
+			System.out.print("비밀번호를 입력하세요: ");
+			pw = sc.nextLine();
+
+			if (guest.loginAdmin(id, pw)) {
+				System.out.println("로그인에 성공하였습니다.");
+				userType = 3; // Admin
+				num = guest.getNum();
+				admin = new Admin();
+				admin.setNum(num);
+			} else {
+				System.out.println("로그인에 실패하였습니다.");
+			}
+			break;
+		}
+	}
+	// 회원 정보 수정 화면
+
+	// 회원 정보 수정 화면
+	public void printUpdate_traveler() {
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String id = null;
+		String pw = null;
+		String nickname = null;
+		String email = null;
+
+		int menu;
+
+		System.out.println("--------------------------------------------");
+		System.out.println("|                 회원정보수정                |");
+		System.out.println("--------------------------------------------");
+
+		try {
+			sql = "SELECT * FROM traveler WHERE num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				id = rs.getString(2);
+				pw = rs.getString(3);
+				nickname = rs.getString(4);
+				email = rs.getString(5);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("ID       : " + id);
+		System.out.println("PW       : " + pw);
+		System.out.println("nickname : " + nickname);
+		System.out.println("email    : " + email);
+		System.out.println("--------------------------------------------");
+		System.out.println("1. 비밀번호 수정  2. 닉네임 수정  3. 이메일 수정  4. 이전 화면");
+		System.out.println("할 일을 선택하시오.");
+		menu = sc.nextInt();
+		sc.nextLine();
+
+		switch (menu) {
+		case 1: // 비밀번호 수정
+			System.out.println("새로운 비밀번호를 입력하세요. (취소 : 0) : ");
+			String newPw = sc.nextLine();
+			if (newPw.equals("0")) {
+				System.out.println("취소되었습니다.");
+				printUpdate_traveler();
+				return;
+			}
+
+			if (traveler.updatePassword(newPw))
+				System.out.println("비밀번호가 수정되었습니다.");
+			else
+				System.out.println("오류!");
+			break;
+		case 2: // 닉네임 수정
+			String newNickname = null;
+
+			INPUT: while (true) {
+				System.out.println("새로운 닉네임을 입력하세요. (취소 : 0) : ");
+				newNickname = sc.nextLine();
+
+				if (newNickname.equals("0")) {
+					System.out.println("취소되었습니다.");
+					printUpdate_traveler();
+					return;
+				}
+				try {
+					sql = "SELECT nickname FROM traveler WHERE nickname = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setString(1, newNickname);
+					rs = ps.executeQuery();
+
+					if (rs.next()) { // 중복 아이디가 존재하면 새로 받음
+						System.out.println("닉네임이 존재합니다.");
+					} else
+						break INPUT;
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+
+			if (traveler.updateNickname(newNickname))
+				System.out.println("닉네임이 수정되었습니다.");
+			else
+				System.out.println("오류!");
+			break;
+		case 3: // 이메일 수정
+			System.out.println("새로운 이메일을 입력하세요. (취소 : 0) : ");
+			String newEmail = sc.nextLine();
+			if (newEmail.equals("0")) {
+				System.out.println("취소되었습니다.");
+				printUpdate_traveler();
+				return;
+			}
+
+			if (traveler.updateNickname(newEmail))
+				System.out.println("이메일이 수정되었습니다.");
+			else
+				System.out.println("오류!");
+			break;
+		case 4: // 이전 화면
+			break;
+		default:
+			System.out.println("잘못 입력하였습니다.");
+			break;
+		}
+	}
+
+	// 관리자 정보 수정 화면
+
+	// 관리자 정보 수정 화면
+	public void printUpdate_admin() {
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		String id = null;
+		String pw = null;
+		String nickname = null;
+		String email = null;
+
+		int menu;
+
+		System.out.println("--------------------------------------------");
+		System.out.println("|                 관리자정보수정              |");
+		System.out.println("--------------------------------------------");
+
+		try {
+			sql = "SELECT * FROM admin WHERE num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				id = rs.getString(2);
+				pw = rs.getString(3);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("ID       : " + id);
+		System.out.println("PW       : " + pw);
+		System.out.println("--------------------------------------------");
+		System.out.println("1. 비밀번호 수정  2. 이전 화면");
+		System.out.println("할 일을 선택하시오.");
+		menu = sc.nextInt();
+		sc.nextLine();
+
+		switch (menu) {
+		case 1: // 비밀번호 수정
+			System.out.println("새로운 비밀번호를 입력하세요. (취소 : 0) : ");
+			String newPw = sc.nextLine();
+			if (newPw.equals("0")) {
+				System.out.println("취소되었습니다.");
+				printUpdate_admin();
+				return;
+			}
+
+			if (admin.updatePassword(newPw))
+				System.out.println("비밀번호가 수정되었습니다.");
+			else
+				System.out.println("오류!");
+			break;
+		case 2: // 이전 화면
+			break;
+		default:
+			System.out.println("잘못 입력하였습니다.");
+			break;
+		}
+	}
+
+	// Post 작성 화면
+
+	// Post 작성 화면
+	public void printWritePost() {
+		int pnum = 0;
+		String start_date = null;
+		String end_date = null;
+		String text = null;
+		String name = null;
+		String country = null;
+		String city = null;
+		String picture = null;
+		String tag = null;
+
+		System.out.println("--------------------------------------------");
+		System.out.println("|                 포스트 작성                 |");
+		System.out.println("--------------------------------------------");
+
+		int state = 0; // 0: 작성, 1: 등록, 2: 종료
+
+		EXIT: while (true) {
+			System.out.println("장소: " + country + " " + city + " " + name);
+			System.out.println("여행 기간: " + start_date + " ~ " + end_date);
+			System.out.println("본문: " + text);
+			System.out.println("사진: " + picture);
+			System.out.println("태그: " + tag);
+
+			System.out.println("작성할 항목을 선택하세요.");
+			System.out.println("1. 장소  2. 여행 기간  3. 본문  4. 사진  5. 태그  6. 등록  7. 종료");
+			int menu = sc.nextInt();
+			sc.nextLine();
+
+			switch (menu) {
+			case 1:
+				System.out.println("여행 장소를 입력하세요.");
+				System.out.print("1. 국가: ");
+				country = sc.nextLine();
+				System.out.print("2. 도시: ");
+				city = sc.nextLine();
+				System.out.print("3. 이름: ");
+				name = sc.nextLine();
+				break;
+			case 2:
+				System.out.println("여행 기간을 입력하세요. (yyyy-mm-dd)");
+				System.out.print("1. 시작일: ");
+				start_date = sc.nextLine();
+				System.out.print("2. 종료일: ");
+				end_date = sc.nextLine();
+				break;
+			case 3:
+				System.out.println("본문을 입력하세요.");
+				text = sc.nextLine();
+				break;
+			case 4:
+				System.out.println("사진 경로를 입력하세요. (띄어쓰기로 구분)");
+				picture = sc.nextLine();
+				break;
+			case 5:
+				System.out.println("해시태그를 입력하세요. (띄어쓰기로 구분)");
+				tag = sc.nextLine();
+				break;
+			case 6:
+				state = 1; // 등록
+				break;
+			case 7:
+				state = 2; // 종료
+				break;
+			}
+
+			if (state == 1) { // 등록
+				if (name == null || name.isEmpty()) {
+					System.out.println("여행 장소가 비어 있습니다.");
+					state = 0;
+				} else {
+					if (traveler.writePost(start_date, end_date, text, name, country, city, picture, tag))
+						System.out.println("등록되었습니다.");
+					else
+						System.out.println("오류!");
+					break EXIT;
+				}
+			} else if (state == 2) { // 종료
+				System.out.println("종료합니다.");
+				break EXIT;
+			}
+		}
+	}
+
+	// 신고 화면
+	public void printReport(String type) {
+		String reason = null;
+
+		if (type.equalsIgnoreCase("P")) {
+			System.out.println("포스트 신고");
+			while (reason == null) {
+				System.out.println("신고 사유를 입력하세요 (취소 : 0)");
+				reason = sc.nextLine();
+				if (reason.equals("0")) {
+					System.out.println("취소되었습니다.");
+					return;
+				}
+				if (reason == null)
+					System.out.println("신고 사유가 공란입니다.");
+			}
+			traveler.reportPost(num, reason);
+		}
+	}
+
+	// Post Table 화면
 	public void printPostTable() {
 		int totalPost = 0; // 총 Post 수
 		int lastPage = 0; // 마지막 Page
@@ -107,13 +500,150 @@ public class Console {
 		}
 	}
 
+	// 메인 메뉴 화면 - Guest
+	// Guest 메인 메뉴
+	public void printMainMenu_guest() {
+		guest = new Guest();
+
+		System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 회원가입
+			printJoin();
+			printMainMenu();
+			break;
+		case 2: // 로그인 - 성공할 시 userType 2(TRAVELER) or 3(ADMIN)으로 바꾸고 printMainMenu() 호출
+			printLogin();
+			if (userType == 3) { // Admin
+				printReportMenu();
+			} else {
+				printMainMenu();
+			}
+			break;
+		case 3: // 이전
+			page--;
+			printMainMenu();
+			break;
+		case 4: // 다음
+			page++;
+			printMainMenu();
+			break;
+		case 5: // 선택
+			mode = 2;
+			printMainMenu();
+			break;
+		case 6: // 검색
+			System.out.print("검색 내용을 입력하세요. ");
+			searchStr = sc.next();
+			printSearchPost();
+			break;
+		case 7:
+			System.out.println("종료합니다.");
+			System.exit(1);
+			break;
+		}
+	}
+
+	// Traveler 메인 메뉴
+
+	// 메인 메뉴 화면 - Traveler
+	public void printMainMenu_traveler() {
+		System.out.println("1. 회원 정보 수정  2. 로그아웃  3. 이전  4. 다음  5. 선택  6. 검색  7. 포스트 쓰기  8. 북마크  9. 종료 ");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 회원 정보 수정
+			printUpdate_traveler();
+			printMainMenu();
+			break;
+		case 2: // 로그아웃 -> userType = 1
+			userType = 1; // Guest
+			printMainMenu();
+			break;
+		case 3: // 이전
+			page--;
+			printMainMenu();
+			break;
+		case 4: // 다음
+			page++;
+			printMainMenu();
+			break;
+		case 5: // 선택
+			mode = 2;
+			printMainMenu();
+			break;
+		case 6: // 검색
+			System.out.print("검색 내용을 입력하세요. ");
+			searchStr = sc.next();
+			printSearchPost();
+			break;
+		case 7: // 포스트 쓰기
+			printWritePost();
+			printMainMenu();
+			break;
+		case 8: // 북마크
+			printBookmarkMenu();
+			printMainMenu();
+			break;
+		case 9: // 종료
+			System.out.println("종료합니다.");
+			System.exit(1);
+			break;
+		}
+	}
+
+	// Admin 메인 메뉴
+
+	// 메인 메뉴 화면 - Admin
+	public void printMainMenu_admin() {
+		System.out.println("1. 회원 정보 수정  2. 로그아웃  3. 이전  4. 다음  5. 선택  6. 종료 ");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1:
+			printUpdate_admin();
+			printReportMenu();
+			break;
+		case 2: // 로그아웃 -> userType = 1
+			userType = 1; // Guest
+			printMainMenu();
+			break;
+		case 3: // 이전
+			reportPage--;
+			printReportMenu();
+			break;
+		case 4: // 다음
+			reportPage++;
+			printReportMenu();
+			break;
+		case 5: // 선택
+			mode = 2;
+			printReportMenu();
+			break;
+		case 6: // 종료
+			System.out.println("종료합니다.");
+			System.exit(1);
+			break;
+		}
+	}
+
+	// 메인 메뉴 화면
+
+	// 메인 메뉴 화면
 	public void printMainMenu() {
 		// TODO: ClearConsole 구현
 
-		// Post Table 표시
+		// Post Table 화면
 		printPostTable();
 
-		route = 1;
+		parentPage = 1;
 
 		if (mode == 2) { // 선택 mode
 			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
@@ -148,8 +678,8 @@ public class Console {
 				}
 			}
 		} else { // 일반 mode
-			// User별 메인 메뉴 표시
-			switch (user) {
+			// userType별 메인 메뉴 표시
+			switch (userType) {
 			case 1:
 				printMainMenu_guest();
 				break;
@@ -163,155 +693,10 @@ public class Console {
 		}
 	}
 
-	// Guest 메인 메뉴
-	public void printMainMenu_guest() {
-		guest = new Guest();
-
-		System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
-		System.out.print("할 일을 선택하세요. ");
-		int menu = sc.nextInt();
-		System.out.printf("\n\n");
-
-		switch (menu) {
-		case 1:
-			guest.join(conn, stmt);
-			printMainMenu();
-			break;
-		case 2: // 로그인 성공할 시 user 2(TRAVELER) or 3(ADMIN)으로 바꾸고 printMainMenu() 호출
-			boolean isLogined;
-			int Tnum;
-			int Anum;
-			
-			isLogined = guest.login(conn, stmt);
-			if (isLogined) {
-				user = guest.getType() + 1;
-				switch (user) {
-				case 2: // TRAVELER
-					Tnum = guest.getTnum();
-					traveler = new Traveler();
-					traveler.setNum(Tnum);
-					break;
-				case 3:
-					Anum = guest.getAnum();
-					admin = new Admin();
-					admin.setNum(Anum);
-					printReportMenu();
-					break;
-				}
-			}
-			printMainMenu();
-			break;
-		case 3: // 이전
-			page--;
-			printMainMenu();
-			break;
-		case 4: // 다음
-			page++;
-			printMainMenu();
-			break;
-		case 5: // 선택
-			mode = 2;
-			printMainMenu();
-			break;
-		case 6: // 검색
-			System.out.print("검색 내용을 입력하세요. ");
-			searchStr = sc.next();
-			printSearchPost();
-			break;
-		case 7:
-			System.out.println("종료합니다.");
-			System.exit(1);
-			break;
-		}
-	}
-
-	// Traveler 메인 메뉴
-	public void printMainMenu_traveler() {
-		System.out.println("1. 회원 정보 수정  2. 로그아웃  3. 이전  4. 다음  5. 선택  6. 검색  7. 포스트 쓰기  8. 북마크  9. 종료 ");
-		System.out.print("할 일을 선택하세요. ");
-		int menu = sc.nextInt();
-		System.out.printf("\n\n");
-
-		switch (menu) {
-		case 1:
-			traveler.update(conn, stmt);
-			printMainMenu();
-			break;
-		case 2: // 로그아웃 -> user = 1
-			user = 1;
-			printMainMenu();
-			break;
-		case 3: // 이전
-			page--;
-			printMainMenu();
-			break;
-		case 4: // 다음
-			page++;
-			printMainMenu();
-			break;
-		case 5: // 선택
-			mode = 2;
-			printMainMenu();
-			break;
-		case 6: // 검색
-			System.out.print("검색 내용을 입력하세요. ");
-			searchStr = sc.next();
-			printSearchPost();
-			break;
-		case 7: // 포스트 쓰기
-			traveler.write_post(conn, stmt);
-			printMainMenu();
-			break;
-		case 8: // 북마크
-			printBookmarkMenu();
-			printMainMenu();
-			break;
-		case 9: // 종료
-			System.out.println("종료합니다.");
-			System.exit(1);
-			break;
-		}
-	}
-
-	// admin 메인메뉴
-	public void printMainMenu_admin() {
-		System.out.println("1. 회원 정보 수정  2. 로그아웃  3. 이전  4. 다음  5.선택  6. 종료 ");
-		System.out.print("할 일을 선택하세요. ");
-		int menu = sc.nextInt();
-		System.out.printf("\n\n");
-
-		switch (menu) {
-		case 1:
-			admin.update(conn, stmt);
-			printReportMenu();
-			break;
-		case 2: // 로그아웃 -> user = 1
-			user = 1;
-			printMainMenu();
-			break;
-		case 3: // 이전
-			reportPage--;
-			printReportMenu();
-			break;
-		case 4: // 다음
-			reportPage++;
-			printReportMenu();
-			break;
-		case 5: // 선택
-			mode = 2;
-			printReportMenu();
-			break;
-		case 6: // 종료
-			System.out.println("종료합니다.");
-			System.exit(1);
-			break;
-		}
-	}
-
-	// Post 상세 표시
+	// Post 상세 표시 화면
 	public void printPost(int pnum) {
 		ResultSet rs = null;
-		int tnum = user == 2 ? traveler.getTnum() : -1;
+		int tnum = userType == 2 ? traveler.getNum() : -1;
 
 		try {
 			String sql = "SELECT p.Start_date, p.End_date, p.Text, p.Written_time, pl.Name, pl.Country, pl.City, t.Nickname, t.num  "
@@ -337,7 +722,7 @@ public class Console {
 				System.out.printf("작성 시간 : %s\n", w_time);
 				System.out.printf("%s\n", text);
 
-				isWriter = tnum == writerNum ? true : false;
+				isPostWriter = tnum == writerNum ? true : false;
 			}
 
 			sql = "SELECT h.tag_name " + "from post p, hashtag h " + "where h.post_num = p.post_num "
@@ -363,15 +748,15 @@ public class Console {
 			int score = rs.getInt(1);
 			System.out.println("별점 : " + score);
 
-			if (user == 2) { // Traveler
-				if (isWriter) { // 작성자
+			if (userType == 2) { // Traveler
+				if (isPostWriter) { // 작성자
 					printPostSelection_traveler_writer(pnum);
 				} else { // 비작성자
 					printPostSelection_traveler(pnum);
 				}
-			} else if (user == 3) { // Admin
+			} else if (userType == 3) { // Admin
 				printPostSelection_admin(pnum);
-			} else { // Guest (user == 1)
+			} else { // Guest (userType == 1)
 				printPostSelection_guest(pnum);
 			}
 
@@ -382,6 +767,7 @@ public class Console {
 		}
 	}
 
+	// Post 선택 화면 - Guest
 	public void printPostSelection_guest(int pnum) {
 		System.out.println("1. 이전 화면  2. 댓글 보기 ");
 		System.out.print("할 일을 선택하세요. ");
@@ -390,9 +776,9 @@ public class Console {
 
 		switch (menu) {
 		case 1: // 이전화면
-			if (route == 1)
+			if (parentPage == 1) // 메인
 				printMainMenu();
-			else if (route == 0)
+			else if (parentPage == 0) // 검색
 				printSearchPost();
 			break;
 		case 2: // 댓글보기
@@ -401,6 +787,7 @@ public class Console {
 		}
 	}
 
+	// Post 선택 화면 - Traveler(비작성자)
 	public void printPostSelection_traveler(int pnum) {
 		System.out.println("1. 이전 화면  2. 댓글 작성  3. 댓글 보기  4. 평가  5. 신고  6. 북마크 등록/해제");
 		System.out.print("할 일을 선택하세요. ");
@@ -409,37 +796,37 @@ public class Console {
 
 		switch (menu) {
 		case 1: // 이전화면
-			if (route == 1)
+			if (parentPage == 1) // 메인
 				printMainMenu();
-			else if (route == 0)
+			else if (parentPage == 0) // 검색
 				printSearchPost();
-			else if (route == 2)
+			else if (parentPage == 2) // 북마크
 				printBookmarkMenu();
 			break;
 		case 2: // 댓글 작성
 			// reply insert
-			traveler.reply_to_post(conn, stmt, pnum);
+			traveler.replyToPost(pnum);
 			printPostSelection_traveler(pnum);
 			break;
 		case 3: // 댓글보기
 			printReply(pnum);
 			break;
 		case 4: // 평가
-			traveler.rating(conn, stmt, pnum);
+			traveler.rating(pnum);
 			printPostSelection_traveler(pnum);
 			break;
 		case 5: // 신고
-			// report insert
-			traveler.report(conn, stmt, pnum, "P");
+			printReport("P");
 			printPostSelection_traveler(pnum);
 			break;
 		case 6: // 북마크 등록/해제
-			traveler.enroll_bookmark(conn, stmt, pnum);
+			traveler.enrollBookmark(pnum);
 			printPostSelection_traveler(pnum);
 			break;
 		}
 	}
 
+	// Post 선택 화면 - Traveler(작성자)
 	public void printPostSelection_traveler_writer(int pnum) {
 		System.out.println("1. 이전 화면  2. 수정  3. 삭제  4. 댓글 작성  5. 댓글 보기  6. 북마크 등록/해제");
 		System.out.print("할 일을 선택하세요. ");
@@ -451,9 +838,9 @@ public class Console {
 
 		switch (menu) {
 		case 1: // 이전화면
-			if (route == 1)
+			if (parentPage == 1)
 				printMainMenu();
-			else if (route == 0)
+			else if (parentPage == 0)
 				printSearchPost();
 			break;
 		case 2: // 수정
@@ -507,19 +894,21 @@ public class Console {
 			printMainMenu();
 			break;
 		case 4: // 댓글 작성
-			traveler.reply_to_post(conn, stmt, pnum);
+			traveler.replyToPost(pnum);
 			printPostSelection_traveler_writer(pnum);
 			break;
 		case 5: // 댓글 보기
 			printReply(pnum);
 			break;
 		case 6: // 북마크 등록/해제
-			traveler.enroll_bookmark(conn, stmt, pnum);
+			traveler.enrollBookmark(pnum);
 			printPostSelection_traveler_writer(pnum);
 			break;
 		}
 	}
 
+	// Post 선택 화면 - Admin
+	// Post 선택 - Admin
 	public void printPostSelection_admin(int num) {
 		System.out.println("1. 신고 목록  2. 삭제  3. 유지");
 		System.out.print("할 일을 선택하세요. ");
@@ -531,7 +920,7 @@ public class Console {
 			printReportMenu();
 			break;
 		case 2: // 삭제
-			admin.Delete_Post_reply(conn, stmt, type, num);
+			admin.DeletePostReply(type, num);
 			printReportMenu();
 			break;
 		case 3: // 유지
@@ -541,10 +930,10 @@ public class Console {
 		}
 	}
 
-	// 검색
+	// 검색 화면
 	public void printSearchPost() {
 		printSearchPostTable();
-		route = 0;
+		parentPage = 0;
 
 		if (mode == 2) { // 선택 mode
 			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
@@ -592,6 +981,7 @@ public class Console {
 			printSearchPostMenu();
 	}
 
+	// 검색 목록 화면
 	public void printSearchPostTable() {
 		System.out.println("[ " + searchStr + " ] 검색 결과입니다.");
 
@@ -615,7 +1005,7 @@ public class Console {
 			ps.setString(5, "%" + searchStr + "%");
 			rs = ps.executeQuery();
 			if (rs.next())
-				searchTotalPost = rs.getInt(1); // -1 : 0번 post
+				searchTotalPost = rs.getInt(1);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -683,8 +1073,9 @@ public class Console {
 		}
 	}
 
+	// 검색 메뉴 화면
 	public void printSearchPostMenu() {
-		System.out.println("1. 선택  2. 이전 3. 이전 검색결과 4. 다음 검색결과");
+		System.out.println("1. 선택  2. 이전  3. 이전 검색 결과  4. 다음 검색 결과");
 		System.out.print("할 일을 선택하세요. ");
 		int menu = sc.nextInt();
 		System.out.printf("\n\n");
@@ -709,12 +1100,44 @@ public class Console {
 		}
 	}
 
+	// 댓글(1개) 화면
+	public void printOneReply(int num) {
+		ResultSet rs = null;
+		PreparedStatement ps = null;
+
+		try {
+			String sql = "SELECT t.nickname, r.text, r.written_time, r.post_num FROM reply r, traveler t WHERE t.num = r.traveler_num AND r.reply_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				String nickname = rs.getString(1);
+				String text = rs.getString(2);
+				String w_time = rs.getString(3);
+				int p_num = rs.getInt(4);
+
+				System.out.printf("작성자 : %s\n", nickname);
+				System.out.printf("작성 시간 : %s\n", w_time);
+				System.out.printf("%s\n", text);
+				System.out.printf("상위 포스트 : %d\n", p_num);
+			}
+
+			printPostSelection_admin(num);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	// 댓글 화면
 	public void printReply(int pnum) {
+		int tnum = userType == 2 ? traveler.getNum() : -1;
+
 		printReplyTable(pnum);
 
 		int rnum = 0;
 		if (mode == 2) { // 선택 mode
-			System.out.print("몇 번째 댓글를 선택하시겠습니까? (취소 : 0) ");
+			System.out.print("몇 번째 댓글을 선택하시겠습니까? (취소 : 0) ");
 			int no = sc.nextInt();
 			System.out.printf("\n\n");
 
@@ -724,8 +1147,8 @@ public class Console {
 			} else { // Reply 선택
 				try {
 					// reply_num 추출
-					String sql = "select reply_num from ( " + "select rownum no, np.* "
-							+ "from (select t.nickname, r.text, r.written_time, r.p_reply_num, r.reply_num "
+					String sql = "select reply_num, num from ( " + "select rownum no, np.* "
+							+ "from (select t.num, t.nickname, r.text, r.written_time, r.p_reply_num, r.reply_num "
 							+ "from reply r, traveler t " + "where  r.traveler_num = t.num " + "and r.post_num = ? "
 							+ "order by r.written_time) np) where no = ?";
 					PreparedStatement ps = conn.prepareStatement(sql);
@@ -735,6 +1158,9 @@ public class Console {
 
 					if (rs.next()) {
 						rnum = rs.getInt(1);
+						int writerNum = rs.getInt(2); // 작성자 확인 용도
+						
+						isReplyWriter = tnum == writerNum ? true : false;
 					}
 					mode = 1;
 
@@ -754,19 +1180,23 @@ public class Console {
 							String w_time = rs.getString(3);
 							int trav_num = rs.getInt(4);
 
-							System.out.printf("%-30s\t%s\n%s\n", name, w_time, rText);
+							System.out.printf("%-30s\t%s\n[%s]\n", name, w_time, rText);
 						}
 
-						if (isWriter) {
-							System.out.printf("1. 댓글 작성  2. 댓글 수정  3. 댓글 삭제  4. 이전");
+						if (isReplyWriter) {
+							System.out.println("1. 댓글 작성  2. 댓글 수정  3. 댓글 삭제  4. 이전");
 							int choice = sc.nextInt();
+							sc.nextLine();
 							switch (choice) {
-							case 1:
-								// traveler.reply_to_post(conn, stmt, pnum);
-								// 대댓글 설정
+							case 1: // 대댓글
+								traveler.replyToReply(pnum, rnum);
+								printReply(pnum);
+								break;
 							case 2:
-								String text = sc.next();
-								sql = "update reply set text = ? where reply_num = ?";
+								System.out.println("댓글을 입력하세요.");
+								String text = sc.nextLine();
+								sql = "UPDATE reply SET text = ? WHERE reply_num = ?";
+								ps = conn.prepareStatement(sql);
 								ps.setString(1, text);
 								ps.setInt(2, rnum);
 								rs = ps.executeQuery();
@@ -774,21 +1204,25 @@ public class Console {
 								printReply(pnum);
 								break;
 							case 3:
-								sql = "delete from reply where reply_num = ?";
+								sql = "DELETE FROM reply WHERE reply_num = ?";
+								ps = conn.prepareStatement(sql);
 								ps.setInt(1, rnum);
 								rs = ps.executeQuery();
 								System.out.println("삭제되었습니다.");
+								printReply(pnum);
+								break;
 							case 4:
 								printReply(pnum);
 								break;
 							}
 						} else {
-							System.out.printf("1. 댓글 작성  2. 댓글 신고  3. 이전");
+							System.out.println("1. 댓글 작성  2. 댓글 신고  3. 이전");
 							int choice = sc.nextInt();
 							switch (choice) {
 							case 1:
-								// traveler.reply_to_post(conn, stmt, pnum);
-								// 대댓글 설정
+								traveler.replyToReply(pnum, rnum);
+								printReply(pnum);
+								break;
 							case 2: // 댓글 신고
 								break;
 							case 3:
@@ -802,7 +1236,7 @@ public class Console {
 				}
 			}
 		} else { // 일반 mode
-			switch (user) {
+			switch (userType) {
 			case 1:
 				printReplyMenu_guest(pnum);
 			case 2:
@@ -811,6 +1245,7 @@ public class Console {
 		}
 	}
 
+	// 댓글 목록 화면
 	public void printReplyTable(int pnum) {
 		int TotalReply = 0; // 총 Reply 수
 		int lastReply = 0; // 마지막 Reply 수
@@ -867,17 +1302,17 @@ public class Console {
 				int parentReplyNum = rs.getInt(5);
 				if (parentReplyNum == 0) {
 					if (mode == 2) { // 선택 mode
-						System.out.printf("%3d|\t%-30s\t%s\n%s\n", i, name, w_time, text);
+						System.out.printf("%3d|\t%-30s\t%s\n[%s]\n", i, name, w_time, text);
 						i++;
 					} else { // 일반 mode
-						System.out.printf("%-30s\t%s\n%s\n", name, w_time, text);
+						System.out.printf("%-30s\t%s\n[%s]\n", name, w_time, text);
 					}
 				} else {
 					if (mode == 2) { // 선택 mode
-						System.out.printf("\t\t%3d|\t%-30s\t%s\n\t\t%s\n", i, name, w_time, text);
+						System.out.printf("\t\t%3d|\t%-30s\t%s\n\t\t[%s]\n", i, name, w_time, text);
 						i++;
 					} else { // 일반 mode
-						System.out.printf("\t\t%-30s\t%s\n\t\t%s\n", name, w_time, text);
+						System.out.printf("\t\t%-30s\t%s\n\t\t[%s]\n", name, w_time, text);
 					}
 				}
 				// 대댓글 구현
@@ -890,6 +1325,7 @@ public class Console {
 		}
 	}
 
+	// 댓글 메뉴 화면 - Traveler
 	public void printReplyMenu_traveler(int pnum) {
 		System.out.println("1. 선택  2. 글 보기  3. 이전 댓글  4. 다음 댓글");
 		System.out.print("할 일을 선택하세요. ");
@@ -916,6 +1352,7 @@ public class Console {
 		}
 	}
 
+	// 댓글 메뉴 화면 - Guest
 	public void printReplyMenu_guest(int pnum) {
 		System.out.println("1. 글보기 2. 이전 댓글 3. 다음 댓글");
 		System.out.print("할 일을 선택하세요. ");
@@ -938,6 +1375,7 @@ public class Console {
 		}
 	}
 
+	// 북마크 목록 화면
 	public void printBookmarkTable() {
 		System.out.println("북마크 목록");
 
@@ -946,10 +1384,10 @@ public class Console {
 		ResultSet rs = null;
 		PreparedStatement ps = null;
 
-		int Tnum = traveler.getTnum();
+		int Tnum = traveler.getNum();
 		// totalPost, lastPage 계산
 		try {
-			String sql = "select count(*) from traveler_bookmarks where traveler_num = ?";
+			String sql = "SELECT COUNT(*) FROM traveler_bookmarks WHERE traveler_num = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, Tnum);
 			rs = ps.executeQuery();
@@ -1014,13 +1452,40 @@ public class Console {
 		}
 	}
 
+	// 북마크 메뉴 화면 - Traveler
+	public void printBookmarkMenu_traveler() {
+		System.out.println("1. 이전  2. 다음  3. 선택  4. 메인 메뉴");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 이전
+			page--;
+			printBookmarkMenu();
+			break;
+		case 2: // 다음
+			page++;
+			printBookmarkMenu();
+			break;
+		case 3: // 선택
+			mode = 2;
+			printBookmarkMenu();
+			break;
+		case 4: // 메인 메뉴
+			printMainMenu();
+			break;
+		}
+	}
+
+	// 북마크 메뉴 화면
 	public void printBookmarkMenu() {
 		// TODO: ClearConsole 구현
-		int Tnum = traveler.getTnum();
+		int Tnum = traveler.getNum();
 		// Post Table 표시
 		printBookmarkTable();
 
-		route = 2;
+		parentPage = 2;
 
 		if (mode == 2) { // 선택 mode
 			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
@@ -1063,39 +1528,15 @@ public class Console {
 				}
 			}
 		} else { // 일반 mode
-			// User별 메인 메뉴 표시
+			// userType별 메인 메뉴 표시
 			printBookmarkMenu_traveler();
 		}
 	}
 
-	public void printBookmarkMenu_traveler() {
-		System.out.println("1. 이전  2. 다음  3. 선택  4. 메인 메뉴");
-		System.out.print("할 일을 선택하세요. ");
-		int menu = sc.nextInt();
-		System.out.printf("\n\n");
-
-		switch (menu) {
-		case 1: // 이전
-			page--;
-			printBookmarkMenu();
-			break;
-		case 2: // 다음
-			page++;
-			printBookmarkMenu();
-			break;
-		case 3: // 선택
-			mode = 2;
-			printBookmarkMenu();
-			break;
-		case 4: // 메인 메뉴
-			printMainMenu();
-			break;
-		}
-	}
-
+	// 신고 목록 화면
 	public void printReportTable() {
 		System.out.println("신고 목록");
-		
+
 		int searchTotalPost = 0; // 총 Post 수
 		int searchlastPage = 0; // 마지막 Page
 		ResultSet rs = null;
@@ -1103,10 +1544,8 @@ public class Console {
 
 		// totalPost, lastPage 계산
 		try {
-			String sql = "select count(*) "
-					+ "from report r, record rc, post p, reply rp "
-					+ "where r.report_num = rc.report_num "
-					+ "and rc.post_num = p.post_num "
+			String sql = "select count(*) " + "from report r, record rc, post p, reply rp "
+					+ "where r.report_num = rc.report_num " + "and rc.post_num = p.post_num "
 					+ "and rp.reply_num = rc.reply_num ";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
@@ -1132,17 +1571,14 @@ public class Console {
 				System.out.println("page: " + reportPage + " / " + searchlastPage);
 			}
 		}
-		
+
 		// post 10개씩 나오게 하기 위한 쿼리문
 		try {
 			String sql = "select * from (select rownum no, np.* "
 					+ "from (select distinct r.report_num, r.type, p.post_num, p.text text1, rp.reply_num, rp.text text2, r.reason "
-					+ "from report r, record rc, post p, reply rp "
-					+ "where r.report_num = rc.report_num "
-					+ "and rc.post_num = p.post_num "
-					+ "and rp.reply_num = rc.reply_num "
-					+ "order by report_num desc) np) "
-					+ "where no between ? and ?";
+					+ "from report r, record rc, post p, reply rp " + "where r.report_num = rc.report_num "
+					+ "and rc.post_num = p.post_num " + "and rp.reply_num = rc.reply_num "
+					+ "order by report_num desc) np) " + "where no between ? and ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, (reportPage - 1) * linePerPage + 1);
 			ps.setInt(2, reportPage * linePerPage);
@@ -1158,28 +1594,29 @@ public class Console {
 			while (rs.next()) {
 				int rpnum = rs.getInt(2);
 				String type = rs.getString(3);
-				if(type.equals("P")) {
+				if (type.equals("P")) {
 					num = rs.getInt(4);
 					text = rs.getString(5);
-					if(num==0) type = "R";
+					if (num == 0)
+						type = "R";
 				}
 				String reason = rs.getString(8);
-				if(type.equals("R")) {
+				if (type.equals("R")) {
 					num = rs.getInt(6);
 					text = rs.getString(7);
-					if(num==0) {
+					if (num == 0) {
 						type = "P";
 						num = rs.getInt(4);
 						text = rs.getString(5);
 					}
 				}
 				if (mode == 2) { // 선택 mode
-					System.out.printf("%12d | %-1s\t|  %4d\t | %-40s| %s\n", i, type, num, reason ,text);
+					System.out.printf("%12d | %-1s\t|  %4d\t | %-40s| %s\n", i, type, num, reason, text);
 					i++;
 				} else { // 일반 mode
-					System.out.printf("%12d | %-1s\t|  %4d\t | %-40s| %s\n", rpnum, type, num, reason,text);
+					System.out.printf("%12d | %-1s\t|  %4d\t | %-40s| %s\n", rpnum, type, num, reason, text);
 				}
-			}// isWriter = True;
+			} // isWriter = True;
 
 			ps.close();
 			rs.close();
@@ -1188,11 +1625,12 @@ public class Console {
 		}
 	}
 
+	// 신고 메뉴 화면
 	public void printReportMenu() {
 		// TODO: ClearConsole 구현
-		// Post Table 표시
+		// Report Table 표시
 		printReportTable();
-		
+
 		if (mode == 2) { // 선택 mode
 			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
 			int no = sc.nextInt();
@@ -1206,13 +1644,9 @@ public class Console {
 					// pnum 추출
 					String sql = "select * from (select rownum no, np.* "
 							+ "from (select distinct r.report_num, r.type, p.post_num, p.text text1, rp.reply_num, rp.text text2 "
-							+ "from report r, record rc, post p, reply rp "
-							+ "where r.report_num = rc.report_num "
-							+ "and rc.post_num = p.post_num "
-							+ "and rp.reply_num = rc.reply_num "
-							+ "order by report_num desc) np) "
-							+ "where no between ? and ? "
-							+ "and no = ?";
+							+ "from report r, record rc, post p, reply rp " + "where r.report_num = rc.report_num "
+							+ "and rc.post_num = p.post_num " + "and rp.reply_num = rc.reply_num "
+							+ "order by report_num desc) np) " + "where no between ? and ? " + "and no = ?";
 					PreparedStatement ps = conn.prepareStatement(sql);
 					ps.setInt(1, (reportPage - 1) * linePerPage + 1);
 					ps.setInt(2, reportPage * linePerPage);
@@ -1223,13 +1657,14 @@ public class Console {
 					int num = 0;
 					if (rs.next()) {
 						type = rs.getString(3);
-						if(type.equals("P")) {
+						if (type.equals("P")) {
 							num = rs.getInt(4);
-							if(rs.getString(4) == null) type = "R";
+							if (rs.getString(4) == null)
+								type = "R";
 						}
-						if(type.equals("R")) {
+						if (type.equals("R")) {
 							num = rs.getInt(6);
-							if(rs.getString(7) == null) {
+							if (rs.getString(7) == null) {
 								type = "P";
 								num = rs.getInt(4);
 							}
@@ -1241,10 +1676,10 @@ public class Console {
 						System.out.println("잘못 선택되었습니다.");
 						printReportMenu();
 					} else { // Post 상세 표시
-						if(type.equals("P")) {
+						if (type.equalsIgnoreCase("P")) {
 							printPost(num);
 						}
-						if(type.equals("R")) {
+						if (type.equalsIgnoreCase("R")) {
 							printOneReply(num);
 						}
 					}
@@ -1253,39 +1688,8 @@ public class Console {
 				}
 			}
 		} else { // 일반 mode
-			// User별 메인 메뉴 표시
+			// userType별 메인 메뉴 표시
 			printMainMenu_admin();
-		}
-	}
-	
-	public void printOneReply(int num) {
-		ResultSet rs = null;
-		PreparedStatement ps = null;
-		
-		try {
-			String sql = "Select t.nickname, r.text, r.written_time, r.post_num from reply r, traveler t where t.num = r.traveler_num and r.reply_num = ?";
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, num);
-			rs = ps.executeQuery();
-		
-
-			while (rs.next()) {
-				String nickname = rs.getString(1);
-				String text = rs.getString(2);
-				String w_time = rs.getString(3);
-				int p_num = rs.getInt(4);
-
-				System.out.printf("작성자 : %s\n", nickname);
-				System.out.printf("작성 시간 : %s\n", w_time);
-				System.out.printf("%s\n", text);
-				System.out.printf("상위 포스트 : %d\n", p_num);
-				
-			}
-			
-			printPostSelection_admin(num);
-		}catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 }
