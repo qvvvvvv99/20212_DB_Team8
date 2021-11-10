@@ -27,7 +27,7 @@ public class Console {
 	boolean isWriter;
 	int searchPage = 1;	// 검색용 page 번호
 	int replyPage = 1;
-	int route;	// post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지 구분(1) -> post 상세보기에서 이전으로 돌아갈때 사용
+	int route;	// post 상세보기가 검색에서 선택되어 왔는지(0) 메인에서 선택되어 왔는지(1) 북마크에서 선택대어 왔는지(2) 구분 -> post 상세보기에서 이전으로 돌아갈때 사용
 
 	public Console() {
 		db = new Database();
@@ -259,7 +259,7 @@ public class Console {
 			printMainMenu();
 			break;
 		case 8: // 북마크
-			list_bookmark();
+			printBookmarkMenu();
 			printMainMenu();
 			break;
 		case 9: // 종료
@@ -398,6 +398,8 @@ public class Console {
 				printMainMenu();
 			else if(route == 0)
 				printSearchPost();
+			else if(route == 2)
+				printBookmarkMenu();
 			break;
 		case 2: // 댓글 작성
 			// reply insert
@@ -893,78 +895,164 @@ public class Console {
 		}
 	}
 	
-	//북마크 리스트 출력
-	public void list_bookmark() {
+	public void printBookmarkTable() {
+		System.out.println("북마크 목록");
+		
+		int searchTotalPost = 0; // 총 Post 수
+		int searchlastPage = 0; // 마지막 Page
 		ResultSet rs = null;
 		PreparedStatement ps = null;
-		String sql = null;
 		
-		int post_num = 0;
-		String name = "";
-		String city = "";
-		String written_time = "";
-		
-		int num;
-		int input;
-		boolean isexist = false;
 		int Tnum = traveler.getTnum();
-		
-		System.out.println("--------------------------------------------");
-		System.out.println("|                  북마크 목록                 |");
-		System.out.println("--------------------------------------------");
-		
+		// totalPost, lastPage 계산
 		try {
-			sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
+			String sql = "select count(*) from traveler_bookmarks where traveler_num = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, Tnum);
 			rs = ps.executeQuery();
-			
+			if (rs.next())
+				searchTotalPost = rs.getInt(1); // -1 : 0번 post
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		searchlastPage = searchTotalPost / postsPerPage;
+		searchlastPage = (searchTotalPost % postsPerPage == 0) ? searchlastPage : searchlastPage + 1;
+
+		if (mode == 2) { // 선택 mode
+			System.out.println("선택 모드입니다.");
+		} else { // 일반 mode
+			// Page 표시
+			if (searchPage < 1) {
+				searchPage = 1;
+				System.out.println("page: " + searchPage + " / " + searchlastPage + "\t[첫 페이지입니다.]");
+			} else if (searchPage > searchlastPage) {
+				searchPage = searchlastPage;
+				System.out.println("page: " + searchPage + " / " + searchlastPage + "\t[마지막 페이지입니다.]");
+			} else {
+				System.out.println("page: " + searchPage + " / " + searchlastPage);
+			}
+		}
+		
+		// post 10개씩 나오게 하기 위한 쿼리문
+		try {
+			String sql = "select * from (select rownum no, np.* "
+					+ "from (select distinct p.post_num, pl.name, pl.city, p.written_time "
+					+ "from post p, post_locations pl, traveler_bookmarks b "
+					+ "where p.post_num = pl.post_num "
+					+ "and b.bookmark = p.post_num "
+					+ "and b.traveler_num = ? "
+					+ "order by p.written_time desc) np)"
+					+ "where no between ? and ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, Tnum);
+			ps.setInt(2, (searchPage - 1) * postsPerPage + 1);
+			ps.setInt(3, searchPage * postsPerPage);
+			rs = ps.executeQuery();
+
 			System.out.println(
 					" num  |                   name                   |         city          |         time        ");
 			System.out.println(
 					"-----------------------------------------------------------------------------------------------");
-			
+			int i = 1;
 			while (rs.next()) {
-				post_num = rs.getInt(2);
-				name = rs.getString(3);
-				city = rs.getString(4);
-				written_time = rs.getString(5);
-				
-				System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", post_num, name, city, written_time);
-			}
-			
-			//임시 북마크 기능(console의 printPostSelection 매서드를 이용하는 쪽으로...)
-			System.out.println("1. 상세보기  2. 이전 페이지");
-			System.out.println("할 일을 입력하세요.");
-			num = sc.nextInt();
-			
-			switch(num) {
-			case 1:
-				System.out.println("포스트 선택 모드");
-				System.out.println("포스트 번호를 입력하세요");
-				input = sc.nextInt();
-				
-				sql = "select * from post_view p, (select bookmark from traveler_bookmarks where traveler_num = ?) b where b.bookmark = p.post_num";
-				ps = conn.prepareStatement(sql);
-				ps.setInt(1, Tnum);
-				rs = ps.executeQuery();
-				
-				while (rs.next()) {
-					if(input == rs.getInt(2)) isexist = true;
+				int pnum = rs.getInt(2);
+				String name = rs.getString(3);
+				String city = rs.getString(4);
+				String time = rs.getString(5);
+				if (mode == 2) { // 선택 mode
+					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", i, name, city, time);
+					i++;
+				} else { // 일반 mode
+					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", pnum, name, city, time);
 				}
-				
-				if(isexist) printPost(input);
-				else System.out.println("잘못된 번호입니다.");
-				
-				break;
-			case 2:
-				break;
-			}
+			}// isWriter = True;
+
 			ps.close();
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void printBookmarkMenu() {
+		// TODO: ClearConsole 구현
+		int Tnum = traveler.getTnum();
+		// Post Table 표시
+		printBookmarkTable();
+		
+		route = 2;
+
+		if (mode == 2) { // 선택 mode
+			System.out.print("몇 번째 포스트를 선택하시겠습니까? (취소 : 0) ");
+			int no = sc.nextInt();
+			System.out.printf("\n\n");
+
+			if (no == 0) { // 취소
+				mode = 1;
+				printBookmarkMenu();
+			} else { // Post 선택
+				try {
+					// pnum 추출
+					String sql = "select * from (select rownum no, np.* "
+							+ "from (select distinct p.post_num, pl.name, pl.city, p.written_time "
+							+ "from post p, post_locations pl, traveler_bookmarks b "
+							+ "where p.post_num = pl.post_num "
+							+ "and b.bookmark = p.post_num "
+							+ "and b.traveler_num = ? "
+							+ "order by p.written_time desc) np)"
+							+ "where no between ? and ? "
+							+ "and no = ?";
+					PreparedStatement ps = conn.prepareStatement(sql);
+					ps.setInt(1, Tnum);
+					ps.setInt(2, (searchPage - 1) * postsPerPage + 1);
+					ps.setInt(3, searchPage * postsPerPage);
+					ps.setInt(4, no + (page - 1) * postsPerPage);
+					ResultSet rs = ps.executeQuery();
+
+					int pnum = 0;
+					if (rs.next()) {
+						pnum = rs.getInt(2);
+					}
+					mode = 1;
+
+					if (pnum == 0) { // 오류
+						System.out.println("잘못 선택되었습니다.");
+						printBookmarkMenu();
+					} else { // Post 상세 표시
+						printPost(pnum);
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		} else { // 일반 mode
+			// User별 메인 메뉴 표시
+			printBookmarkMenu_traveler();
+		}
+	}
+	
+	public void printBookmarkMenu_traveler() {
+		System.out.println("1. 이전  2. 다음  3. 선택  4. 메인 메뉴");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
+
+		switch (menu) {
+		case 1: // 이전
+			page--;
+			printBookmarkMenu();
+			break;
+		case 2: // 다음
+			page++;
+			printBookmarkMenu();
+			break;
+		case 3: // 선택
+			mode = 2;
+			printBookmarkMenu();
+			break;
+		case 4: // 메인 메뉴
+			printMainMenu();
+			break;
 		}
 	}
 }
