@@ -660,7 +660,7 @@ public class Console {
 				} else { // 일반 mode
 					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", pnum, name, city, time);
 				}
-			} // isWriter = True;
+			}
 
 			ps.close();
 			rs.close();
@@ -867,7 +867,7 @@ public class Console {
 					}
 				}
 				// 대댓글 구현
-			} // isWriter = True;
+			}
 
 			ps.close();
 			rs.close();
@@ -991,7 +991,7 @@ public class Console {
 				} else { // 일반 mode
 					System.out.printf("%5d | %-30s\t | %-15s\t | %20s\n", pnum, name, city, time);
 				}
-			} // isWriter = True;
+			}
 
 			ps.close();
 			rs.close();
