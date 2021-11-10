@@ -162,64 +162,64 @@ public class Console {
 	}
 
 	// Guest 메인 메뉴
-		public void printMainMenu_guest() {
-			guest = new Guest();
+	public void printMainMenu_guest() {
+		guest = new Guest();
 
-			System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
-			System.out.print("할 일을 선택하세요. ");
-			int menu = sc.nextInt();
-			System.out.printf("\n\n");
+		System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
+		System.out.print("할 일을 선택하세요. ");
+		int menu = sc.nextInt();
+		System.out.printf("\n\n");
 
-			switch (menu) {
-			case 1:
-				guest.join(conn, stmt);
-				printMainMenu();
-				break;
-			case 2: // 로그인 성공할 시 user 2(TRAVELER) or 3(ADMIN)으로 바꾸고 printMainMenu() 호출
-				boolean isLogined;
-				int Tnum;
-				int Anum;
-				
-				isLogined = guest.login(conn, stmt);
-				if (isLogined) {
-					user = guest.getType() + 1; 
-					switch(user) {
-					case 2: // TRAVELER
-						Tnum = guest.getTnum();
-						traveler = new Traveler();
-						traveler.setNum(Tnum);
-						break;
-					case 3:
-						Anum = guest.getAnum();
-						admin = new Admin();
-						admin.setNum(Anum);
-						break;
-					}
+		switch (menu) {
+		case 1:
+			guest.join(conn, stmt);
+			printMainMenu();
+			break;
+		case 2: // 로그인 성공할 시 user 2(TRAVELER) or 3(ADMIN)으로 바꾸고 printMainMenu() 호출
+			boolean isLogined;
+			int Tnum;
+			int Anum;
+			
+			isLogined = guest.login(conn, stmt);
+			if (isLogined) {
+				user = guest.getType() + 1; 
+				switch(user) {
+				case 2: // TRAVELER
+					Tnum = guest.getTnum();
+					traveler = new Traveler();
+					traveler.setNum(Tnum);
+					break;
+				case 3:
+					Anum = guest.getAnum();
+					admin = new Admin();
+					admin.setNum(Anum);
+					break;
 				}
-				printMainMenu();
-				break;
-			case 3: // 이전
-				page--;
-				printMainMenu();
-				break;
-			case 4: // 다음
-				page++;
-				printMainMenu();
-				break;
-			case 5: // 선택
-				mode = 2;
-				printMainMenu();
-				break;
-			case 6:	// 검색
-				System.out.print("검색 내용을 입력하세요. ");
-				searchStr = sc.next();
-				printSearchPost();
-				break;
-			case 7:
-				System.out.println("종료합니다.");
-				break;
 			}
+			printMainMenu();
+			break;
+		case 3: // 이전
+			page--;
+			printMainMenu();
+			break;
+		case 4: // 다음
+			page++;
+			printMainMenu();
+			break;
+		case 5: // 선택
+			mode = 2;
+			printMainMenu();
+			break;
+		case 6:	// 검색
+			System.out.print("검색 내용을 입력하세요. ");
+			searchStr = sc.next();
+			printSearchPost();
+			break;
+		case 7:
+			System.out.println("종료합니다.");
+			break;
 		}
+	}
 
 	// Traveler 메인 메뉴
 	public void printMainMenu_traveler() {
@@ -410,7 +410,8 @@ public class Console {
 			printReply(pnum);
 			break;
 		case 4: // 평가
-			// rating insert
+			traveler.rating(conn, stmt, pnum);
+			printPostSelection_traveler(pnum);
 			break;
 		case 5: // 신고
 			// report insert
@@ -1009,4 +1010,6 @@ public class Console {
 			break;
 		}
 	}
+
+	
 }
