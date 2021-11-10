@@ -165,7 +165,7 @@ public class Traveler {
 			}
 
 			/**** Post 등록 ****/
-			sql = "INSERT INTO post VALUES(?, TO_DATE(?, 'rrrr-mm-dd'), TO_DATE(?, 'rrrr-mm-dd'), ?, TO_DATE(SYSDATE, 'rrrr-mm-dd hh24:mi:ss'), ?)";
+			sql = "INSERT INTO post VALUES(?, TO_DATE(?, 'rrrr-mm-dd'), TO_DATE(?, 'rrrr-mm-dd'), ?, SYSDATE, ?)";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			ps.setString(2, start_date);
@@ -327,7 +327,7 @@ public class Traveler {
 			if (reply.equals("0")) {
 				System.out.println("취소되었습니다.");
 			} else {
-				sql = "INSERT INTO reply VALUES(?, ?, TO_DATE(SYSDATE, 'rrrr-mm-dd hh24:mi:ss'), ?, null, ?)";
+				sql = "INSERT INTO reply VALUES(?, ?, SYSDATE, ?, null, ?)";
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, rep_num);
 				ps.setString(2, reply);
@@ -377,7 +377,7 @@ public class Traveler {
 				if (reply.equals("0")) {
 					System.out.println("취소되었습니다.");
 				} else {
-					sql = "INSERT INTO reply VALUES(?, ?, TO_DATE(SYSDATE, 'rrrr-mm-dd hh24:mi:ss'), ?, ?, ?)";
+					sql = "INSERT INTO reply VALUES(?, ?, SYSDATE, ?, ?, ?)";
 					ps = conn.prepareStatement(sql);
 					ps.setInt(1, rep_num);
 					ps.setString(2, reply);

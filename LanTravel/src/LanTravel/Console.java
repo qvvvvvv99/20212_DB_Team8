@@ -1195,7 +1195,7 @@ public class Console {
 							case 2:
 								System.out.println("댓글을 입력하세요.");
 								String text = sc.nextLine();
-								sql = "UPDATE reply SET text = ? WHERE reply_num = ?";
+								sql = "UPDATE reply SET text = ?, written_time = SYSDATE WHERE reply_num = ?";
 								ps = conn.prepareStatement(sql);
 								ps.setString(1, text);
 								ps.setInt(2, rnum);
@@ -1209,8 +1209,6 @@ public class Console {
 								ps.setInt(1, rnum);
 								rs = ps.executeQuery();
 								System.out.println("삭제되었습니다.");
-								printReply(pnum);
-								break;
 							case 4:
 								printReply(pnum);
 								break;
