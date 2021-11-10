@@ -250,7 +250,7 @@ public class Traveler {
 
 		try {
 			// 신고 번호 지정
-			sql = "SELECT count(*) FROM report";
+			sql = "SELECT max(report_num) FROM report";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			if (rs.next()) {
@@ -272,13 +272,49 @@ public class Traveler {
 			ps.setInt(2, rep_num);
 			rs = ps.executeQuery();
 
-			/****
-			 * 댓글 신고(미완료)
-			 * ---------------------------------------------------------------------------------
-			 ****/
+			rs.close();
+			ps.close();
+			System.out.println("신고가 완료되었습니다.");
+		} catch (
+
+		SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void reportReply(int rnum, String reason) {
+		Database db = new Database();
+		conn = db.getConnection();
+		stmt = db.getStatement();
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		int rep_num = 0;
+
+		System.out.println("댓글 신고");
+
+		try {
+			// 신고 번호 지정
+			sql = "SELECT max(report_num) FROM report";
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				rep_num = rs.getInt(1) + 1;
+			}
+
+			sql = "INSERT INTO report VALUES(?, ?, ?, ?, 1)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, rep_num);
+			ps.setString(2, "R");
+			ps.setString(3, reason);
+			ps.setInt(4, rnum);
+			rs = ps.executeQuery();
+
+			// 포스트 신고
 			sql = "INSERT INTO record VALUES(0, ?, ?)";
 			ps = conn.prepareStatement(sql);
-			ps.setInt(1, pnum);
+			ps.setInt(1, rnum);
 			ps.setInt(2, rep_num);
 			rs = ps.executeQuery();
 

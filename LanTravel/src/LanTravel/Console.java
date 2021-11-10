@@ -32,6 +32,8 @@ public class Console {
 					// 상세보기에서 이전으로 돌아갈때 사용
 	String searchStr = null;
 	String type; // admin에서 타입이 R인지 P인지 구분용
+	int pnum;
+	int rnum;
 
 	public Console() {
 		db = new Database();
@@ -418,7 +420,7 @@ public class Console {
 	// 신고 화면
 	public void printReport(String type) {
 		String reason = null;
-
+		
 		if (type.equalsIgnoreCase("P")) {
 			System.out.println("포스트 신고");
 			while (reason == null) {
@@ -431,7 +433,20 @@ public class Console {
 				if (reason == null)
 					System.out.println("신고 사유가 공란입니다.");
 			}
-			traveler.reportPost(num, reason);
+			traveler.reportPost(pnum, reason);
+		}if (type.equalsIgnoreCase("R")) {
+			System.out.println("댓글 신고");
+			while (reason == null) {
+				System.out.println("신고 사유를 입력하세요 (취소 : 0)");
+				reason = sc.nextLine();
+				if (reason.equals("0")) {
+					System.out.println("취소되었습니다.");
+					return;
+				}
+				if (reason == null)
+					System.out.println("신고 사유가 공란입니다.");
+			}
+			traveler.reportReply(rnum, reason);
 		}
 	}
 
@@ -793,7 +808,9 @@ public class Console {
 		System.out.println("1. 이전 화면  2. 댓글 작성  3. 댓글 보기  4. 평가  5. 신고  6. 북마크 등록/해제");
 		System.out.print("할 일을 선택하세요. ");
 		int menu = sc.nextInt();
+		sc.nextLine();
 		System.out.printf("\n\n");
+		this.pnum = pnum;
 
 		switch (menu) {
 		case 1: // 이전화면
@@ -1140,6 +1157,7 @@ public class Console {
 		if (mode == 2) { // 선택 mode
 			System.out.print("몇 번째 댓글을 선택하시겠습니까? (취소 : 0) ");
 			int no = sc.nextInt();
+			sc.nextLine();
 			System.out.printf("\n\n");
 
 			if (no == 0) { // 취소
@@ -1160,7 +1178,7 @@ public class Console {
 					if (rs.next()) {
 						rnum = rs.getInt(1);
 						int writerNum = rs.getInt(2); // 작성자 확인 용도
-
+						this.rnum = rnum;
 						isReplyWriter = tnum == writerNum ? true : false;
 					}
 					mode = 1;
@@ -1217,12 +1235,15 @@ public class Console {
 						} else {
 							System.out.println("1. 댓글 작성  2. 댓글 신고  3. 이전");
 							int choice = sc.nextInt();
+							sc.nextLine();
 							switch (choice) {
 							case 1:
 								traveler.replyToReply(pnum, rnum);
 								printReply(pnum);
 								break;
 							case 2: // 댓글 신고
+								printReport("R");
+								printReply(pnum);
 								break;
 							case 3:
 								printReply(pnum);
