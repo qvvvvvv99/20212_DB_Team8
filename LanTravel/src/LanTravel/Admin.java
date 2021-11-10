@@ -86,4 +86,77 @@ public class Admin {
 			e.printStackTrace();
 		}
 	}
+
+	public void Delete_Post_reply(Connection conn, Statement stmt, String type, int num)  {
+		this.conn = conn;
+		this.stmt = stmt;
+		ResultSet rs = null;
+		ResultSet rs1 = null;
+		ResultSet rs2 = null;
+		PreparedStatement ps = null;
+		String sql = null;
+		try {
+			switch(type) {
+			case "P":
+				
+				sql = "delete from reply where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				sql = "delete from rating where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				sql = "delete from post_pictures where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				sql = "delete from post_locations where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				sql = "delete from hashtag where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				sql = "select report_num from record where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				int rnum = 0;
+				
+				while (rs.next()) {
+					rnum = rs.getInt(1);
+					
+					sql = "delete from record where report_num = ?";
+					ps = conn.prepareStatement(sql);			
+					ps.setInt(1, rnum);
+					rs1 = ps.executeQuery();
+					
+					sql = "delete from report where report_num = ?";
+					ps = conn.prepareStatement(sql);			
+					ps.setInt(1, rnum);
+					rs2 = ps.executeQuery();
+				}
+				
+				sql = "delete from post where post_num = ?";
+				ps = conn.prepareStatement(sql);			
+				ps.setInt(1, num);
+				rs = ps.executeQuery();
+				
+				System.out.println("포스트가 삭제되었습니다.");
+			case "R":
+		}
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
