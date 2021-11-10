@@ -350,7 +350,7 @@ public class Console {
 			rs = ps.executeQuery();
 
 			rs.next();
-			int score = rs.getInt(1);
+			Double score = rs.getDouble(1);
 			System.out.println("º°Á¡ : " + score);
 
 			if (user == 2) { // Traveler
