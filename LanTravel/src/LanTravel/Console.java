@@ -217,6 +217,7 @@ public class Console {
 				break;
 			case 7:
 				System.out.println("종료합니다.");
+				System.exit(1);
 				break;
 			}
 		}
@@ -264,6 +265,7 @@ public class Console {
 			break;
 		case 9: // 종료
 			System.out.println("종료합니다.");
+			System.exit(1);
 			break;
 		}
 	}
