@@ -411,7 +411,7 @@ public class Traveler {
 		System.out.println("¥Ò±€ ¿€º∫");
 		
 		try {
-			sql = "select count(*) from reply";
+			sql = "select max(reply_num) from reply";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			
