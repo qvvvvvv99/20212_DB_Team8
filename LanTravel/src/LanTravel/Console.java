@@ -108,7 +108,7 @@ public class Console {
 		System.out.println("--------------------------------");
 	}
 
-	// 로그인 화면 화면
+	// 로그인 화면
 	public void printLogin() {
 		String id = null;
 		String pw = null;
@@ -129,7 +129,7 @@ public class Console {
 				System.out.println("로그인에 성공하였습니다.");
 				userType = 2; // Traveler
 				num = guest.getNum();
-				traveler = new Traveler();
+				traveler = new Traveler(conn, stmt);
 				traveler.setNum(num);
 			} else {
 				System.out.println("로그인에 실패하였습니다.");
@@ -146,7 +146,7 @@ public class Console {
 				System.out.println("로그인에 성공하였습니다.");
 				userType = 3; // Admin
 				num = guest.getNum();
-				admin = new Admin();
+				admin = new Admin(conn, stmt);
 				admin.setNum(num);
 			} else {
 				System.out.println("로그인에 실패하였습니다.");
@@ -154,7 +154,6 @@ public class Console {
 			break;
 		}
 	}
-	// 회원 정보 수정 화면
 
 	// 회원 정보 수정 화면
 	public void printUpdate_traveler() {
@@ -268,8 +267,6 @@ public class Console {
 	}
 
 	// 관리자 정보 수정 화면
-
-	// 관리자 정보 수정 화면
 	public void printUpdate_admin() {
 		String sql = null;
 		PreparedStatement ps = null;
@@ -329,8 +326,6 @@ public class Console {
 			break;
 		}
 	}
-
-	// Post 작성 화면
 
 	// Post 작성 화면
 	public void printWritePost() {
@@ -517,9 +512,8 @@ public class Console {
 	}
 
 	// 메인 메뉴 화면 - Guest
-	// Guest 메인 메뉴
 	public void printMainMenu_guest() {
-		guest = new Guest();
+		guest = new Guest(conn, stmt);
 
 		System.out.println("1. 가입  2. 로그인  3. 이전  4. 다음  5. 선택  6. 검색  7. 종료");
 		System.out.print("할 일을 선택하세요. ");
@@ -562,8 +556,6 @@ public class Console {
 			break;
 		}
 	}
-
-	// Traveler 메인 메뉴
 
 	// 메인 메뉴 화면 - Traveler
 	public void printMainMenu_traveler() {
@@ -613,8 +605,6 @@ public class Console {
 		}
 	}
 
-	// Admin 메인 메뉴
-
 	// 메인 메뉴 화면 - Admin
 	public void printMainMenu_admin() {
 		System.out.println("1. 회원 정보 수정  2. 로그아웃  3. 이전  4. 다음  5. 선택  6. 종료 ");
@@ -651,11 +641,7 @@ public class Console {
 	}
 
 	// 메인 메뉴 화면
-
-	// 메인 메뉴 화면
 	public void printMainMenu() {
-		// TODO: ClearConsole 구현
-
 		// Post Table 화면
 		printPostTable();
 
@@ -926,7 +912,6 @@ public class Console {
 	}
 
 	// Post 선택 화면 - Admin
-	// Post 선택 - Admin
 	public void printPostSelection_admin(int num) {
 		System.out.println("1. 신고 목록  2. 삭제  3. 유지");
 		System.out.print("할 일을 선택하세요. ");
@@ -1500,7 +1485,6 @@ public class Console {
 
 	// 북마크 메뉴 화면
 	public void printBookmarkMenu() {
-		// TODO: ClearConsole 구현
 		int Tnum = traveler.getNum();
 		// Post Table 표시
 		printBookmarkTable();
@@ -1647,7 +1631,6 @@ public class Console {
 
 	// 신고 메뉴 화면
 	public void printReportMenu() {
-		// TODO: ClearConsole 구현
 		// Report Table 표시
 		printReportTable();
 
