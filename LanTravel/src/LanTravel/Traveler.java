@@ -151,11 +151,13 @@ public class Traveler {
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
+		boolean isUploaded = false;
 
-		int num = 0;
 		int pnum = 0;
 
 		try {
+			conn.setAutoCommit(false); //트랜잭션 시작	
+			
 			// pnum 지정
 			sql = "SELECT MAX(post_num) FROM post";
 			ps = conn.prepareStatement(sql);
@@ -228,11 +230,25 @@ public class Traveler {
 					rs = ps.executeQuery();
 				}
 			}
-			return true;
-		} catch (SQLException e) {
+			conn.commit();
+			isUploaded = true;
+		}catch(Throwable e) {
+			if(conn!=null) {
+				try {
+					conn.rollback();
+				} catch(SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
 			e.printStackTrace();
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
-		return false;
+		return isUploaded;
 	}
 
 	// 신고
@@ -256,7 +272,9 @@ public class Traveler {
 			if (rs.next()) {
 				rep_num = rs.getInt(1) + 1;
 			}
-
+			
+			conn.setAutoCommit(false); //트랜잭션 시작
+			
 			sql = "INSERT INTO report VALUES(?, ?, ?, ?, 1)";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, rep_num);
@@ -274,12 +292,25 @@ public class Traveler {
 
 			rs.close();
 			ps.close();
+			
+			conn.commit(); //트랜잭션 종료
 			System.out.println("신고가 완료되었습니다.");
-		} catch (
-
-		SQLException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+				}catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}e.printStackTrace();
+		}finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
+		
 	}
 
 	public void reportReply(int rnum, String reason) {
@@ -302,6 +333,8 @@ public class Traveler {
 			if (rs.next()) {
 				rep_num = rs.getInt(1) + 1;
 			}
+			
+			conn.setAutoCommit(false);
 
 			sql = "INSERT INTO report VALUES(?, ?, ?, ?, 1)";
 			ps = conn.prepareStatement(sql);
@@ -320,11 +353,22 @@ public class Traveler {
 
 			rs.close();
 			ps.close();
+			conn.commit();
 			System.out.println("신고가 완료되었습니다.");
-		} catch (
-
-		SQLException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+				}catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}e.printStackTrace();
+		}finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 	}
 

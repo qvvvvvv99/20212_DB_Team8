@@ -61,6 +61,8 @@ public class Admin {
 		try {
 			switch (type) {
 			case "P":
+				
+				conn.setAutoCommit(false);
 
 				sql = "DELETE FROM reply WHERE post_num = ?";
 				ps = conn.prepareStatement(sql);
@@ -112,6 +114,8 @@ public class Admin {
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, num);
 				rs = ps.executeQuery();
+				
+				conn.commit();
 
 				System.out.println("포스트가 삭제되었습니다.");
 			case "R":
@@ -124,6 +128,8 @@ public class Admin {
 
 				while (rs.next()) {
 					rnum = rs.getInt(1);
+					
+					conn.setAutoCommit(false);
 
 					sql = "DELETE FROM record WHERE report_num = ?";
 					ps = conn.prepareStatement(sql);
@@ -145,12 +151,26 @@ public class Admin {
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, num);
 				rs = ps.executeQuery();
+				
+				conn.commit();
 
 				System.out.println("댓글이 삭제되었습니다.");
 			}
 
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+				}catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}e.printStackTrace();
+		}finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 	}
 }
