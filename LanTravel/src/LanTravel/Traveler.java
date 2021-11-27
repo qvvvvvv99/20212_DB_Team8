@@ -113,6 +113,8 @@ public class Traveler {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 
+		int bookmarkCount = 0;
+		
 		try {
 			sql = "SELECT * FROM traveler_bookmarks WHERE traveler_num = ? AND bookmark = ?";
 			ps = conn.prepareStatement(sql);
@@ -121,24 +123,84 @@ public class Traveler {
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
+				conn.setAutoCommit(false);
+				
 				sql = "DELETE FROM traveler_bookmarks WHERE traveler_num = ? AND bookmark = ?";
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, num);
 				ps.setInt(2, pnum);
 				rs = ps.executeQuery();
+				
+				bookmarkCount = 0;
+				
+				// 북마크 수 추출
+				sql = "select bookmark_count from post where post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					bookmarkCount = rs.getInt(1) - 1;
+				}
+						
+				sql = "update post set bookmark_count = ? where post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, bookmarkCount);
+				ps.setInt(2, pnum);
+				rs = ps.executeQuery();
+				
+				conn.commit();
+				
 				System.out.println("북마크가 해제되었습니다.");
 			} else {
+				
+				conn.setAutoCommit(false);
+				
 				sql = "INSERT INTO traveler_bookmarks VALUES(?, ?)";
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, num);
 				ps.setInt(2, pnum);
 				rs = ps.executeQuery();
+				
+				bookmarkCount = 0;
+					
+				// 북마크 수 추출
+				sql = "select bookmark_count from post where post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				if (rs.next()) {
+					bookmarkCount = rs.getInt(1) + 1;
+				}
+						
+				sql = "update post set bookmark_count = ? where post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, bookmarkCount);
+				ps.setInt(2, pnum);
+				rs = ps.executeQuery();
+				
+				conn.commit();
+						
 				System.out.println("북마크가 등록되었습니다.");
 			}
 			rs.close();
 			ps.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Throwable e) {
+			System.out.println("북마크 설정에 실패하였습니다.");
+			if(conn != null) {
+				try {
+					conn.rollback();
+				}catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}e.printStackTrace();
+		}finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
 		}
 	}
 
@@ -167,7 +229,7 @@ public class Traveler {
 			}
 
 			/**** Post 등록 ****/
-			sql = "INSERT INTO post VALUES(?, TO_DATE(?, 'rrrr-mm-dd'), TO_DATE(?, 'rrrr-mm-dd'), ?, SYSDATE, ?)";
+			sql = "INSERT INTO post VALUES(?, TO_DATE(?, 'rrrr-mm-dd'), TO_DATE(?, 'rrrr-mm-dd'), ?, SYSDATE, ?, 0, 0)";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			ps.setString(2, start_date);
@@ -423,7 +485,7 @@ public class Traveler {
 	}
 	
 	// 대댓글 작성
-		public void replyToReply(int pnum, int parentNum) {
+	public void replyToReply(int pnum, int parentNum) {
 //			Database db = new Database();
 //			conn = db.getConnection();
 //			stmt = db.getStatement();

@@ -673,6 +673,7 @@ public class Console {
 						System.out.println("잘못 선택되었습니다.");
 						printMainMenu();
 					} else { // Post 상세 표시
+						updateViews(pnum);
 						printPost(pnum);
 					}
 				} catch (SQLException e) {
@@ -701,10 +702,22 @@ public class Console {
 		int tnum = userType == 2 ? traveler.getNum() : -1;
 
 		try {
-			String sql = "SELECT p.Start_date, p.End_date, p.Text, p.Written_time, pl.Name, pl.Country, pl.City, t.Nickname, t.num  "
+			String sql = "SELECT views_count, bookmark_count FROM post where post_num = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			rs = ps.executeQuery();
+			
+			while (rs.next()) {
+				String countView = rs.getString(1);
+				String countBookmark = rs.getString(2);
+				System.out.printf("조회수 : %s\n", countView);
+				System.out.printf("북마크 수 : %s\n\n", countBookmark);
+			}
+			
+			sql = "SELECT p.Start_date, p.End_date, p.Text, p.Written_time, pl.Name, pl.Country, pl.City, t.Nickname, t.num  "
 					+ "from post p, traveler t, post_locations pl " + "where p.traveler_num = t.num "
 					+ "and pl.post_num = p.post_num " + "and p.Post_num = ?";
-			PreparedStatement ps = conn.prepareStatement(sql);
+			ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			rs = ps.executeQuery();
 
@@ -887,13 +900,79 @@ public class Console {
 			break;
 		case 3: // 삭제
 			try {
-				sql = "delete from post where post_num = ?";
+				ResultSet rs1 = null;
+				ResultSet rs2 = null;
+				
+				conn.setAutoCommit(false);
+
+				sql = "DELETE FROM reply WHERE post_num = ?";
 				PreparedStatement ps = conn.prepareStatement(sql);
 				ps.setInt(1, pnum);
 				ResultSet rs = ps.executeQuery();
-				System.out.println("삭제되었습니다.");
-			} catch (SQLException e) {
-				e.printStackTrace();
+
+				sql = "DELETE FROM rating WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM post_pictures WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM post_locations WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM hashtag WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				sql = "select report_num from record WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+
+				int rnum = 0;
+
+				while (rs.next()) {
+					rnum = rs.getInt(1);
+
+					sql = "DELETE FROM record WHERE report_num = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, rnum);
+					rs1 = ps.executeQuery();
+
+					sql = "DELETE FROM report WHERE report_num = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, rnum);
+					rs2 = ps.executeQuery();
+				}
+
+				sql = "DELETE FROM post WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, pnum);
+				rs = ps.executeQuery();
+				
+				conn.commit();
+
+				System.out.println("포스트가 삭제되었습니다.");
+			} catch (Throwable e) {
+				if(conn != null) {
+					try {
+						conn.rollback();
+					}catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}e.printStackTrace();
+			}finally {
+				try {
+					conn.setAutoCommit(true);
+				}catch(SQLException e2) {
+					e2.printStackTrace();
+				}
 			}
 			printMainMenu();
 			break;
@@ -974,6 +1053,7 @@ public class Console {
 						System.out.println("잘못 선택되었습니다.");
 						printMainMenu();
 					} else { // Post 상세 표시
+						updateViews(pnum);
 						printPost(pnum);
 					}
 				} catch (SQLException e) {
@@ -1525,6 +1605,7 @@ public class Console {
 						System.out.println("잘못 선택되었습니다.");
 						printBookmarkMenu();
 					} else { // Post 상세 표시
+						updateViews(pnum);
 						printPost(pnum);
 					}
 				} catch (SQLException e) {
@@ -1696,6 +1777,32 @@ public class Console {
 		} else { // 일반 mode
 			// userType별 메인 메뉴 표시
 			printMainMenu_admin();
+		}
+	}
+	
+	//조회수 계산
+	public void updateViews(int pnum) {
+		int viewCount = 0;
+		
+		try {
+			// 조회수 추출
+			String sql = "select views_count from post where post_num = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, pnum);
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				viewCount = rs.getInt(1) + 1;
+			}
+			
+			sql = "update post set views_count = ? where post_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, viewCount);
+			ps.setInt(2, pnum);
+			rs = ps.executeQuery();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }
