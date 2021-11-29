@@ -1,8 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8">
-    <title>회원 가입</title>
+    <title>íì ê°ì</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -18,7 +20,7 @@
         <h1 class="logo">
           <a href="index.html">
             <span>LanTravel</span>
-            <!-- logo image 추가 후 span에 class="hidden" 추가-->
+            <!-- logo image ì¶ê° í spanì class="hidden" ì¶ê°-->
           </a>
         </h1>
       </div>
@@ -41,40 +43,40 @@
       </nav>
     </header>
    <div class="register-form">
-      <h1>회원 가입을 환영합니다</h1>
+      <h1>íì ê°ìì íìí©ëë¤</h1>
       <form>
         <fieldset>
-          <legend>사용자 정보</legend>    
+          <legend>ì¬ì©ì ì ë³´</legend>    
           <ul>
             <li>
-              <label class="reg" for="uid">아이디 <em> * </em></label>
-              <input type="text" id="uid" class="text-field" autofocus placeholder="4자 ~ 10자 사이, 공백없이" required> 
+              <label class="reg" for="uid">ìì´ë <em> * </em></label>
+              <input type="text" id="uid" class="text-field" autofocus placeholder="4ì ~ 10ì ì¬ì´, ê³µë°±ìì´" required> 
             </li>
             <li>
-              <label class="reg" for="pwd1">비밀번호 <em> * </em></label>
-              <input type="password" id="pwd1" class="text-field" placeholder="문자와 숫자, 특수 기호 포함" required> 
+              <label class="reg" for="pwd1">ë¹ë°ë²í¸ <em> * </em></label>
+              <input type="password" id="pwd1" class="text-field" placeholder="ë¬¸ìì ì«ì, í¹ì ê¸°í¸ í¬í¨" required> 
             </li>        
             <li>
-              <label class="reg" for="pw2">비밀번호 확인 <em> * </em></label>
+              <label class="reg" for="pw2">ë¹ë°ë²í¸ íì¸ <em> * </em></label>
               <input type="password" id="pwd2" class="text-field" required> 
             </li>
             <li>
-              <label class="reg" for="umail">이메일 <em> * </em></label>
+              <label class="reg" for="umail">ì´ë©ì¼ <em> * </em></label>
               <input type="email" id="umail" class="text-field" required> 
             </li>
             <li>
-              <label class="reg" for="alias">닉네임 <em> * </em></label>
+              <label class="reg" for="alias">ëë¤ì <em> * </em></label>
               <input type="text" id="alias" class="text-field" required> 
             </li>
             <li>
-              <label class="reg" for="tel">전화번호</label>
+              <label class="reg" for="tel">ì íë²í¸</label>
               <input type="tel" id="tel" class="text-field"> 
             </li>
           </ul>      
         </fieldset>
         <div>
-          <input type="submit" value="가입하기" class="reg-btn">
-          <input type="reset" value="초기화" class="reg-btn">
+          <input type="submit" value="ê°ìíê¸°" class="reg-btn">
+          <input type="reset" value="ì´ê¸°í" class="reg-btn">
         </div>
       </form> 
       </div>   

@@ -1,7 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>게시물 작성</title>
+  <title>ê²ìë¬¼ ìì±</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,7 +20,7 @@
         <h1 class="logo">
           <a href="index.html">
             <span>LanTravel</span>
-            <!-- logo image 추가 후 span에 class="hidden" 추가-->
+            <!-- logo image ì¶ê° í spanì class="hidden" ì¶ê°-->
           </a>
         </h1>
       </div>
@@ -41,7 +43,7 @@
       </nav>
     </header>
 
-   <h2>게시물 올리기</h2>
+   <h2>ê²ìë¬¼ ì¬ë¦¬ê¸°</h2>
 
    <div class="upload-form">
    <form>
@@ -49,45 +51,45 @@
     <tbody>
       <tr>
         <td>
-        <textarea id="content" cols="80" rows="4" placeholder="게시글을 입력하세요."></textarea>
+        <textarea id="content" cols="80" rows="4" placeholder="ê²ìê¸ì ìë ¥íì¸ì."></textarea>
         </td>
       </tr>
        <tr>
         <td>
-        <textarea id="hash" cols="80" rows="1" placeholder="해시태그 입력하세요."></textarea>
+        <textarea id="hash" cols="80" rows="1" placeholder="í´ìíê·¸ ìë ¥íì¸ì."></textarea>
         </td>
       </tr>
       <tr>
         <td>
          <input type='file' id='btnAtt' multiple='multiple' />
-         <div id='att_zone' data-placeholder='파일을 첨부 하려면 파일 선택 버튼을 클릭하거나 파일을 드래그앤드롭 하세요'></div>
+         <div id='att_zone' data-placeholder='íì¼ì ì²¨ë¶ íë ¤ë©´ íì¼ ì í ë²í¼ì í´ë¦­íê±°ë íì¼ì ëëê·¸ì¤ëë¡­ íì¸ì'></div>
          </div>
         </td>
       </tr> 
       <tr>
          <td>
-            시작날짜 &nbsp
+            ììë ì§ &nbsp
             <input type="date" name="startDate">
             &nbsp &nbsp &nbsp
-            종료날짜 &nbsp
+            ì¢ë£ë ì§ &nbsp
              <input type="date" name="endDate">
          </td>
       </tr>  
       <tr>
          <td>
-            국가명 &nbsp
+            êµ­ê°ëª &nbsp
             <input type="text" name="country">
             &nbsp &nbsp &nbsp
-            도시명 &nbsp
+            ëìëª &nbsp
              <input type="text" name="city">
               &nbsp &nbsp &nbsp
-            장소명 &nbsp
+            ì¥ìëª &nbsp
              <input type="text" name="place" required>
          </td>
       </tr>  
     </tbody>        
    </table>
-    <input type="submit" value="게시하기" class="upload-btn">
+    <input type="submit" value="ê²ìíê¸°" class="upload-btn">
    </form>
    </div>
       <footer>

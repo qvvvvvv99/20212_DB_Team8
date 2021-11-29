@@ -1,8 +1,10 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <title>회원 정보수정</title>
+    <title>íì ì ë³´ìì </title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -18,7 +20,7 @@
         <h1 class="logo">
           <a href="index.html">
             <span>LanTravel</span>
-            <!-- logo image 추가 후 span에 class="hidden" 추가-->
+            <!-- logo image ì¶ê° í spanì class="hidden" ì¶ê°-->
           </a>
         </h1>
       </div>
@@ -41,36 +43,36 @@
       </nav>
     </header>
     <div class="update-form">
-      <h1>회원 정보 수정하기</h1>
+      <h1>íì ì ë³´ ìì íê¸°</h1>
       <form>
         <fieldset>
-          <legend>사용자 정보</legend>
+          <legend>ì¬ì©ì ì ë³´</legend>
           <table class="updateTable">
             <tr>
-              <th>아이디</th>
-              <td>아이디</td>
+              <th>ìì´ë</th>
+              <td>ìì´ë</td>
             </tr>
             <tr>
-              <th>닉네임</th>
-              <td><input type="text" value="닉네임" name="alias" required /></td>
+              <th>ëë¤ì</th>
+              <td><input type="text" value="ëë¤ì" name="alias" required /></td>
             </tr>
             <tr>
-              <th>패스워드</th>
-              <td><input type="password" value="패스워드" name="pass1" required /></td>
+              <th>í¨ì¤ìë</th>
+              <td><input type="password" value="í¨ì¤ìë" name="pass1" required /></td>
             </tr>
             <tr>
-              <th>이메일</th>
-              <td><input type="email" value="이메일" name="email" required /></td>
+              <th>ì´ë©ì¼</th>
+              <td><input type="email" value="ì´ë©ì¼" name="email" required /></td>
             </tr>
             <tr>
-              <th>전화번호</th>
-              <td><input type="tel" value="전화번호" name="tel" required /></td>
+              <th>ì íë²í¸</th>
+              <td><input type="tel" value="ì íë²í¸" name="tel" required /></td>
             </tr>
           </table>
         </fieldset>
         <div>
-          <input type="submit" value="수정하기" class="update-btn" />
-          <button type="button" onclick="location.href='login.html'" class="update-btn">돌아가기</button>
+          <input type="submit" value="ìì íê¸°" class="update-btn" />
+          <button type="button" onclick="location.href='login.html'" class="update-btn">ëìê°ê¸°</button>
         </div>
       </form>
     </div>

@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="ko">
   <head>
@@ -17,7 +19,7 @@
         <h1 class="logo">
           <a href="index.html">
             <span>LanTravel</span>
-            <!-- logo image 추가 후 span에 class="hidden" 추가-->
+            <!-- logo image ì¶ê° í spanì class="hidden" ì¶ê°-->
           </a>
         </h1>
       </div>
@@ -60,17 +62,17 @@
           </p>
         </section>
         <section class="replies">
-          <h3>댓글 5개</h3>
+          <h3>ëê¸ 5ê°</h3>
           <div class="my-reply">
-            <textarea placeholder="댓글 작성" name="reply-text" id="reply-text" maxlength="4000"></textarea>
+            <textarea placeholder="ëê¸ ìì±" name="reply-text" id="reply-text" maxlength="4000"></textarea>
             <div class="reply-buttons">
-              <button class="cancel">취소</button>
-              <button class="write">작성</button>
+              <button class="cancel">ì·¨ì</button>
+              <button class="write">ìì±</button>
             </div>
           </div>
           <div class="reply">
             <div class="reply-head">
-              <div class="reply-writer">작성자</div>
+              <div class="reply-writer">ìì±ì</div>
             </div>
             <div class="reply-body">
               <p>
@@ -81,12 +83,12 @@
             </div>
             <div class="reply-tail">
               <div class="reply-time">2021.02.15. Sun. 09:38:27</div>
-              <button class="reply-btn">답글</button>
-              <button class="report-btn open-report-modal">신고</button>
+              <button class="reply-btn">ëµê¸</button>
+              <button class="report-btn open-report-modal">ì ê³ </button>
             </div>
             <div class="reply">
               <div class="reply-head">
-                <div class="reply-writer">작성자</div>
+                <div class="reply-writer">ìì±ì</div>
               </div>
               <div class="reply-body">
                 <p>
@@ -97,12 +99,12 @@
               </div>
               <div class="reply-tail">
                 <div class="reply-time">2021.02.15. Sun. 09:38:27</div>
-                <button class="reply-btn">답글</button>
-                <button class="report-btn open-report-modal">신고</button>
+                <button class="reply-btn">ëµê¸</button>
+                <button class="report-btn open-report-modal">ì ê³ </button>
               </div>
               <div class="reply">
                 <div class="reply-head">
-                  <div class="reply-writer">작성자</div>
+                  <div class="reply-writer">ìì±ì</div>
                 </div>
                 <div class="reply-body">
                   <p>
@@ -113,15 +115,15 @@
                 </div>
                 <div class="reply-tail">
                   <div class="reply-time">2021.02.15. Sun. 09:38:27</div>
-                  <button class="reply-btn">답글</button>
-                  <button class="report-btn open-report-modal">신고</button>
+                  <button class="reply-btn">ëµê¸</button>
+                  <button class="report-btn open-report-modal">ì ê³ </button>
                 </div>
               </div>
             </div>
           </div>
           <div class="reply">
             <div class="reply-head">
-              <div class="reply-writer">작성자</div>
+              <div class="reply-writer">ìì±ì</div>
             </div>
             <div class="reply-body">
               <p>
@@ -132,13 +134,13 @@
             </div>
             <div class="reply-tail">
               <div class="reply-time">2021.02.15. Sun. 09:38:27</div>
-              <button class="reply-btn">답글</button>
-              <button class="report-btn open-report-modal">신고</button>
+              <button class="reply-btn">ëµê¸</button>
+              <button class="report-btn open-report-modal">ì ê³ </button>
             </div>
           </div>
           <div class="reply">
             <div class="reply-head">
-              <div class="reply-writer">작성자</div>
+              <div class="reply-writer">ìì±ì</div>
             </div>
             <div class="reply-body">
               <p>
@@ -149,16 +151,16 @@
             </div>
             <div class="reply-tail">
               <div class="reply-time">2021.02.15. Sun. 09:38:27</div>
-              <button class="reply-btn">답글</button>
-              <button class="report-btn open-report-modal">신고</button>
+              <button class="reply-btn">ëµê¸</button>
+              <button class="report-btn open-report-modal">ì ê³ </button>
             </div>
           </div>
         </section>
       </article>
       <article class="detail">
         <section class="travel-info">
-          <h2 class="title">안면도</h2>
-          <div class="location">대한민국 태안군</div>
+          <h2 class="title">ìë©´ë</h2>
+          <div class="location">ëíë¯¼êµ­ íìêµ°</div>
           <div class="period">2021.02.14. Sun. ~ 2021.02.16. Tue.</div>
         </section>
         <section class="counts-action">
@@ -195,7 +197,7 @@
           </div>
           <div class="written">
             <a class="writer">Nickname</a>
-            <div class="written-time">2021. 11. 24. Wed. 18:27:33 작성</div>
+            <div class="written-time">2021. 11. 24. Wed. 18:27:33 ìì±</div>
           </div>
         </section>
       </article>
@@ -205,17 +207,17 @@
           <div class="modal-content">
             <div class="share-ex"></div>
             <div class="share-buttons">
-              <button class="cancel close-modal">취소</button>
+              <button class="cancel close-modal">ì·¨ì</button>
             </div>
           </div>
         </section>
         <section class="report modal hidden">
           <div class="modal-overlay"></div>
           <div class="modal-content">
-            <textarea placeholder="신고 작성" name="report-text" id="report-text" maxlength="4000"></textarea>
+            <textarea placeholder="ì ê³  ìì±" name="report-text" id="report-text" maxlength="4000"></textarea>
             <div class="report-buttons">
-              <button class="cancel close-modal">취소</button>
-              <button class="write close-modal">작성</button>
+              <button class="cancel close-modal">ì·¨ì</button>
+              <button class="write close-modal">ìì±</button>
             </div>
           </div>
         </section>

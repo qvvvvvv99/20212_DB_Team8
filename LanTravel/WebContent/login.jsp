@@ -1,7 +1,9 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>로그인</title>
+  <title>ë¡ê·¸ì¸</title>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -18,7 +20,7 @@
         <h1 class="logo">
           <a href="index.html">
             <span>LanTravel</span>
-            <!-- logo image 추가 후 span에 class="hidden" 추가-->
+            <!-- logo image ì¶ê° í spanì class="hidden" ì¶ê°-->
           </a>
         </h1>
       </div>
@@ -42,13 +44,13 @@
     </header>
   <div class="login-form">
     <form>
-      <input type="text" name="id" class="text-field" placeholder="아이디">
-      <input type="password" name="password" class="text-field" placeholder="비밀번호">
-      <input type="submit" value="로그인" class="submit-btn">
+      <input type="text" name="id" class="text-field" placeholder="ìì´ë">
+      <input type="password" name="password" class="text-field" placeholder="ë¹ë°ë²í¸">
+      <input type="submit" value="ë¡ê·¸ì¸" class="submit-btn">
     </form>
  
     <div class="links">
-      <a href="register.html">회원가입</a>
+      <a href="register.html">íìê°ì</a>
     </div>
  
   </div>
