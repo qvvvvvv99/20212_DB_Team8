@@ -19,7 +19,7 @@
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
-				<a href="index.html"> <span>LanTravel</span> <!-- logo image ì¶ê° í spanì class="hidden" ì¶ê°-->
+				<a href="index.html"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
 				</a>
 			</h1>
 		</div>
@@ -44,20 +44,20 @@
 					<i class="fas fa-search"></i>
 				</div>
 				<input class="search-box" type="search" name="search"
-					placeholder="ê²ì" aria-label="Search" />
+					placeholder="검색" aria-label="Search" />
 				<div class="divider"></div>
 				<div class="dropdown">
 					<div class="dropdown-button">
-						<div class="search-type">ì¥ì</div>
+						<div class="search-type">장소</div>
 						<i class="fas fa-angle-down"></i>
 					</div>
 					<div class="dropdown-options">
 						<input type="radio" name="sType" id="location" value="location"
-							checked /> <label for="location" class="option-item">ì¥ì</label>
+							checked /> <label for="location" class="option-item">장소</label>
 						<input type="radio" name="sType" id="writer" value="writer" /> <label
-							for="writer" class="option-item">ìì±ì</label> <input
-							type="radio" name="sType" id="opt3" value="opt3" /> <label
-							for="opt3" class="option-item">opt3</label>
+							for="writer" class="option-item">작성자</label> <input type="radio"
+							name="sType" id="opt3" value="opt3" /> <label for="opt3"
+							class="option-item">opt3</label>
 					</div>
 				</div>
 			</form>
