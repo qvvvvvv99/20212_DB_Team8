@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.text.*, java.sql.*" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,26 +22,26 @@
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
-				<a href="index.html"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
 				</a>
 			</h1>
 		</div>
 		<!-- menu -->
 		<nav>
 			<ul class="menu">
-				<li class="menu-item"><a href="login.html"><i
+				<li class="menu-item"><a href="login.jsp"><i
 						class="fas fa-sign-in-alt"></i></a></li>
 				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
 				</li>
 				<li class="menu-item"><a href="#"><i class="fas fa-user"></i></a>
 				</li>
-				<li class="menu-item"><a href="upload_post.html"><i
+				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
 			</ul>
 		</nav>
 	</header>
 
-	<h2>게시물 올리기</h2>
+	<h2>게시물 작성</h2>
 
 	<div class="upload-form">
 		<form>
@@ -55,7 +56,7 @@
 								placeholder="해시태그 입력하세요."></textarea></td>
 					</tr>
 					<tr>
-						<td><input type='file' id='btnAtt' multiple='multiple' />
+						<td><input type='file' id='btnAtt' multiple='multiple' required/>
 							<div id='att_zone'
 								data-placeholder='파일을 첨부 하려면 파일 선택 버튼을 클릭하거나 파일을 드래그앤드롭 하세요'></div>
 							</div></td>
@@ -74,7 +75,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<input type="submit" value="게시하기" class="upload-btn">
+			<button class="upload-btn">게시하기</button>
 		</form>
 	</div>
 	<footer>
@@ -82,4 +83,5 @@
 	</footer>
 	<script src="scripts/write.js"></script>
 </body>
+
 </html>

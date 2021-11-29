@@ -97,12 +97,3 @@
      }
    }
  )('att_zone', 'btnAtt')
-
-
- //hashtag 추출
- var hash = document.querySelector('#hash');
- var hashRes = document.querySelector('#hash_result')
- var res = hash.split(" ");
- for ( var i in res ) {
-   hashRes.write(res[i] + '<br/>');
-}

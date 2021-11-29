@@ -21,20 +21,20 @@
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
-				<a href="index.html"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
 				</a>
 			</h1>
 		</div>
 		<!-- menu -->
 		<nav>
 			<ul class="menu">
-				<li class="menu-item"><a href="login.html"><i
+				<li class="menu-item"><a href="login.jsp"><i
 						class="fas fa-sign-in-alt"></i></a></li>
 				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
 				</li>
 				<li class="menu-item"><a href="#"><i class="fas fa-user"></i></a>
 				</li>
-				<li class="menu-item"><a href="upload_post.html"><i
+				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
 			</ul>
 		</nav>
@@ -68,8 +68,8 @@
 				</table>
 			</fieldset>
 			<div>
-				<input type="submit" value="수정하기" class="update-btn" />
-				<button type="button" onclick="location.href='login.html'"
+				<button class="update-btn">수정하기</button>
+				<button onclick="location.href='login.jsp'"
 					class="update-btn">돌아가기</button>
 			</div>
 		</form>
