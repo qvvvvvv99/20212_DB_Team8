@@ -1786,7 +1786,7 @@ public class Console {
 		
 		try {
 			// 조회수 추출
-			String sql = "select views_count from post where post_num = ?";
+			String sql = "select views_count from post where post_num = ? for update wait 5";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			ResultSet rs = ps.executeQuery();
