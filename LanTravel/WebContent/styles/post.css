@@ -17,7 +17,7 @@ textarea {
 	border: 1px solid #ddd;
 	border-radius: 8px;
 }
-
+ 
 textarea:focus {
 	border: 1px solid #9e9ea7;
 }
@@ -105,6 +105,7 @@ main>.post>.slide>.pictures>li {
 	aspect-ratio: 16/9;
 	list-style: none;
 	float: left;
+	text-align: center;
 }
 
 main>.post>.slide>.pictures>li>img {
@@ -122,6 +123,7 @@ main>.post>.slide>button {
 	outline: none;
 	background-color: transparent;
 	opacity: 0;
+	text-shadow: -1px 0 #fff, 0 1px #fff, 1px 0 #fff, 0 -1px #fff;
 }
 
 main>.post>.slide:hover>button {

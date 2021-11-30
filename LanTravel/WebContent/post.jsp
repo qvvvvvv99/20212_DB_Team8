@@ -1,7 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList"%>
 <%@ page import="post.Post"%>
 <%@ page import="post.PostDAO"%>
+<%@ page import="post.Location"%>
+<%@ page import="post.LocationDAO"%>
+<%@ page import="post.Picture"%>
+<%@ page import="post.PictureDAO"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -32,8 +37,8 @@
 						class="fas fa-sign-in-alt"></i></a></li>
 				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
 				</li>
-				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
-				</li>
+				<li class="menu-item"><a href="user.jsp"><i
+						class="fas fa-user"></i></a></li>
 				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
 			</ul>
@@ -41,7 +46,6 @@
 	</header>
 	<main>
 		<%
-		System.out.println(request.getParameter("postNum"));
 		if (request.getParameter("postNum") == null) {
 			out.println("<script>location.href = 'index.jsp';</script>");
 			return;
@@ -51,7 +55,6 @@
 			out.println("<script>location.href = 'index.jsp';</script>");
 			return;
 		}
-		System.out.println(postNum);
 		PostDAO postDao = new PostDAO();
 		Post post = postDao.getPost(postNum);
 		postDao.increaseViewCnt(postNum);
@@ -59,19 +62,30 @@
 		%>
 		<article class="post">
 			<section class="slide">
+			<%
+			ArrayList<Picture> pictures = new PictureDAO().getPictures(postNum);
+			%>
 				<ul class="pictures">
-					<li>1<img src="" alt="" /></li>
-					<li>2<img src="" alt="" /></li>
-					<li>3<img src="" alt="" /></li>
-					<li>4<img src="" alt="" /></li>
-					<li>5<img src="" alt="" /></li>
+					<%
+					for (Picture picture : pictures) {
+					%>
+					<li><img src=<%= picture.getLink() %> alt="" /></li>
+					<%
+					}
+					%>
 				</ul>
+				<%
+				if (pictures.size() > 1) {
+				%>
 				<button class="prev">
 					<i class="fas fa-angle-left"></i>
 				</button>
 				<button class="next">
 					<i class="fas fa-angle-right"></i>
 				</button>
+				<%
+				}
+				%>
 			</section>
 			<section class="writing">
 				<p><%=post.getText()%></p>
@@ -106,11 +120,16 @@
 		</article>
 		<article class="detail">
 			<section class="travel-info">
-				<h2 class="title">안면도</h2>
-				<div class="location">대한민국 태안군</div>
-				<div class="period"><%=post.getStartDate()%>
-					~
-					<%=post.getEndDate()%></div>
+				<%
+				ArrayList<Location> locations = new LocationDAO().getLocations(postNum);
+				for (Location location : locations) {
+				%>
+				<h2 class="title"><%=location.getName()%></h2>
+				<div class="location"><%=(location.getCountry() + " " + location.getCity()).trim()%></div>
+				<%
+				}
+				%>
+				<div class="period"><%=post.getStartDate() + " ~ " + post.getEndDate()%></div>
 			</section>
 			<section class="counts-action">
 				<div>

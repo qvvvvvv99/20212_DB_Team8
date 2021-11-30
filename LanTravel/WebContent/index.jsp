@@ -3,6 +3,10 @@
 <%@ page import="java.util.ArrayList"%>
 <%@ page import="post.Post"%>
 <%@ page import="post.PostDAO"%>
+<%@ page import="post.Location"%>
+<%@ page import="post.LocationDAO"%>
+<%@ page import="post.Picture"%>
+<%@ page import="post.PictureDAO"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -87,13 +91,27 @@
 				int scroll = 1; // temp
 				ArrayList<Post> postList = new PostDAO().getList(scroll);
 				for (Post post : postList) {
+					int postNum = post.getNum();
+					ArrayList<Picture> pictures = new PictureDAO().getPictures(postNum);
 				%>
 				<li class="box">
-					<a href="post.jsp?postNum=<%= post.getNum() %>">
-						<img class="thumbnail" />
+					<a href="post.jsp?postNum=<%= postNum %>">
+						<img class="thumbnail" src=<%= (pictures.size() > 0) ? pictures.get(0).getLink() : "" %> />
 					</a>
 					<div class="details">
-						<span class="title"><%= "LocName" %></span> <!-- TODO: getLocName 추가 > getNum 대체 -->
+						<span class="title">
+					<%
+					ArrayList<Location> locations = new LocationDAO().getLocations(postNum);
+					int idx = 0;
+					int lastIdx = locations.size() - 1;
+					for (Location location : locations) {
+					%>
+						<%= location.getName() + ((idx < lastIdx) ? ", " : "") %>
+					<%
+						idx++;
+					}
+					%>
+						</span> <!-- TODO: getLocName 추가 > getNum 대체 -->
 						<div class="cnt">
 							<div class="fav-cnt">
 								<i class="fas fa-heart"></i> <span><%= post.getBookmarkCnt() %></span>

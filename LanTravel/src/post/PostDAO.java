@@ -105,7 +105,31 @@ public class PostDAO {
 	}
 	
 	public int increaseViewCnt(int num) {
-		String sql = "UPDATE post SET view_count = view_count + 1 WHERE post_num = ?";
+		int viewCount = 0;
+		try {
+			// 조회 수 추출
+			String sql = "SELECT view_count FROM post WHERE post_num = ? FOR UPDATE WAIT 5";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				viewCount = rs.getInt(1) + 1;
+			}
+			
+			// 조회 수 증가
+			sql = "UPDATE post SET view_count = ? WHERE post_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, viewCount);
+			ps.setInt(2, num);
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
+	}
+
+	public int increaseFavoriteCnt(int num) {
+		String sql = "UPDATE post SET favorite_count = favorite_count + 1 WHERE post_num = ?";
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, num);
@@ -116,6 +140,18 @@ public class PostDAO {
 		return -1; // DB 오류
 	}
 
+	public int decreaseFavoriteCnt(int num) {
+		String sql = "UPDATE post SET favorite_count = favorite_count - 1 WHERE post_num = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
+	}
+	
 	// TODO: 작성 필요
 	public int writePost(String startDate, String endDate, String text, int tNum) {
 		String sql = "INSERT into post VALUE(?, ?, ?, ?, ?, ?, 0, 0)";
