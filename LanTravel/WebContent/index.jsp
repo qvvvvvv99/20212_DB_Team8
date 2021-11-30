@@ -42,7 +42,7 @@
 						class="fas fa-sign-in-alt"></i></a></li>
 				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
 				</li>
-				<li class="menu-item"><a href="#"><i class="fas fa-user"></i></a>
+				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
 				</li>
 				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
