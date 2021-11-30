@@ -6,10 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-
-import post.Post;
-import post.Tag;
 
 public class UserDAO {
 	private Connection conn = null;
@@ -42,6 +38,9 @@ public class UserDAO {
 	}
 	
 	public boolean loginTraveler(String id, String pw) {
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -67,6 +66,7 @@ public class UserDAO {
 	}
 	
 	public int join(User user) {
+
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -74,26 +74,26 @@ public class UserDAO {
 		int tnum = -1;
 
 		try {
-			sql = "SELECT * FROM traveler WHERE id = ?";
+			sql = "SELECT * FROM traveler WHERE id = ? for update wait 5";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, user.getId());
 			rs = ps.executeQuery();
 			
-			if(rs.next()) return -1; //ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ßºï¿½
+			if(rs.next()) return -1; //¾ÆÀÌµð Áßº¹
 			
 			sql = "SELECT * FROM traveler WHERE nickname = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, user.getNickname());
 			rs = ps.executeQuery();
 			
-			if(rs.next()) return -2; //ï¿½Ð³ï¿½ï¿½ï¿½ ï¿½ßºï¿½
+			if(rs.next()) return -2; //´Ð³×ÀÓ Áßº¹
 			
-			// tuple ï¿½ï¿½ï¿½ï¿½ count
+			// tuple °³¼ö count
 			sql = "SELECT COUNT(*) FROM traveler";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 
-			// tnum ï¿½ï¿½ï¿½ï¿½
+			// tnum ÁöÁ¤
 			if (rs.next()) {
 				tnum = rs.getInt(1) + 1;
 			}
@@ -118,23 +118,60 @@ public class UserDAO {
 		return 0;
 	}
 	
-	public User getUser(int num) {
-		String sql = "SELECT id, pw, nickname, email FROM traveler WHERE num = ?";
+	public User getUser(String id) {	
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		User user = null;
+		
 		try {
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setInt(1, num);
+			sql = "SELECT id, pw, email, nickname FROM traveler WHERE id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
 			rs = ps.executeQuery();
+
 			if (rs.next()) {
-				User user = new User();
-				user.setId(rs.getString(1));
-				user.setPw(rs.getString(2));
-				user.setNickname(rs.getString(3));
-				user.setEmail(rs.getString(4));
+				user = new User(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4));
 				return user;
+			} else {
+				return null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return user;
+	}
+	
+	public int updateTraveler(User user) {	
+		System.out.println(user.getId());
+		System.out.println(user.getPw());
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			sql = "SELECT nickname FROM traveler WHERE nickname = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, user.getNickname());
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return -1;
+			}
+			
+			sql = "UPDATE traveler SET pw = ?, email = ?, nickname = ? WHERE id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, user.getPw());
+			ps.setString(2, user.getEmail());
+			ps.setString(3, user.getNickname());
+			ps.setString(4, user.getId());
+			rs = ps.executeQuery();
+
+			return 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

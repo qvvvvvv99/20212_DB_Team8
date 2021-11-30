@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import = "user.UserDAO"%>
+<%@ page import = "user.User"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,9 +23,14 @@
 		request.setCharacterEncoding("UTF-8");
 
 		int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
+		String id = null;
 	
 		if (session.getAttribute("userType") != null) {
 			userType = (int) session.getAttribute("userType");
+		}
+		
+		if (session.getAttribute("id") != null) {
+			id = (String) session.getAttribute("id");
 		}
 	
 	%>
@@ -58,25 +65,34 @@
 		<form>
 			<fieldset>
 				<table class="updateTable">
+				<% 
+					String nickname;
+					String pw;
+					String email;
+					
+					UserDAO userdao = new UserDAO();
+					User user = null;
+					user = userdao.getUser(id);
+					
+					nickname = user.getNickname();
+					pw = user.getPw();
+					email = user.getEmail();
+				%>
 					<tr>
 						<th>아이디</th>
-						<td>아이디</td>
+						<td><%=id %></td>
 					</tr>
 					<tr>
 						<th>닉네임</th>
-						<td>아이디</td>
+						<td><%=nickname %></td>
 					</tr>
 					<tr>
 						<th>패스워드</th>
-						<td>패스워드</td>
+						<td><%=pw %></td>
 					</tr>
 					<tr>
 						<th>이메일</th>
-						<td>이메일</td>
-					</tr>
-					<tr>
-						<th>전화번호</th>
-						<td>전화번호</td>
+						<td><%=email %></td>
 					</tr>
 				</table>
 			</fieldset>

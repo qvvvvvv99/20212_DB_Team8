@@ -9,6 +9,13 @@ public class User {
 	
 	public User() {
 	}
+	
+	public User(String id, String pw, String email, String nickname) {
+		this.id = id;
+		this.pw = pw;
+		this.nickname = nickname;
+		this.email = email;
+	}
 
 	public String getId() {
 		return id;

@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import = "java.io.PrintWriter"%>
+<%@ page import = "user.*"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -21,12 +23,29 @@
 		request.setCharacterEncoding("UTF-8");
 
 		int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
+		String id = null;
 	
 		if (session.getAttribute("userType") != null) {
 			userType = (int) session.getAttribute("userType");
 		}
+		
+		if (session.getAttribute("id") != null) {
+			id = (String) session.getAttribute("id");
+		}
 	
 	%>
+	
+	<%
+		if (session.getAttribute("id") == null) { 
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('세션이 만료되었습니다.')");
+			script.println("location.href = 'index.jsp'");
+			script.println("</script>");
+		}
+	%>
+		
+	
 	<header>
 		<!-- logo -->
 		<div class="logo-area">
@@ -55,35 +74,44 @@
 	</header>
 	<div class="update-form">
 		<h1>회원 정보 수정하기</h1>
-		<form>
+		<form method = "post" action = "userUpdateAction.jsp">
 			<fieldset>
 				<legend>사용자 정보</legend>
 				<table class="updateTable">
+				<% 
+					String nickname;
+					String pw;
+					String email;
+					
+					UserDAO userdao = new UserDAO();
+					User user = null;
+					user = userdao.getUser(id);
+					
+					nickname = user.getNickname();
+					pw = user.getPw();
+					email = user.getEmail();
+				%>
 					<tr>
 						<th>아이디</th>
-						<td>아이디</td>
+						<td><%=id %></td>
 					</tr>
 					<tr>
 						<th>닉네임</th>
-						<td><input type="text" value="닉네임" name="alias" required /></td>
+						<td><input type="text" value="<%=nickname %>" name="nickname" required /></td>
 					</tr>
 					<tr>
 						<th>패스워드</th>
-						<td><input type="password" value="패스워드" name="pass1" required /></td>
+						<td><input type="password" value="<%=pw %>" name="pw" required /></td>
 					</tr>
 					<tr>
 						<th>이메일</th>
-						<td><input type="email" value="이메일" name="email" required /></td>
-					</tr>
-					<tr>
-						<th>전화번호</th>
-						<td><input type="tel" value="전화번호" name="tel" required /></td>
+						<td><input type="email" value="<%=email %>" name="email" required /></td>
 					</tr>
 				</table>
 			</fieldset>
 			<div>
 				<button class="update-btn">수정하기</button>
-				<button onclick="location.href='user.jsp'"
+				<button type = "button" onclick="location.href='user.jsp'"
 					class="update-btn">돌아가기</button>
 			</div>
 		</form>
