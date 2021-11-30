@@ -26,6 +26,7 @@
 	if (session.getAttribute("userType") != null) {
 		userType = (int) session.getAttribute("userType");
 	}
+	
 	%>
 	<header>
 		<!-- logo -->
@@ -36,16 +37,21 @@
 			</h1>
 		</div>
 		<!-- menu -->
+		
 		<nav>
 			<ul class="menu">
+			<% if(userType==1) {%>
 				<li class="menu-item"><a href="login.jsp"><i
 						class="fas fa-sign-in-alt"></i></a></li>
+			<%} %>
+			<% if(userType==2) {%>
 				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
 				</li>
 				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
 				</li>
 				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
+			<%} %>
 			</ul>
 		</nav>
 	</header>

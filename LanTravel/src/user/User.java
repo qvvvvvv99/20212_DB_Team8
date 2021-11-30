@@ -3,6 +3,7 @@ package user;
 public class User {
 	private String id;
 	private String pw;
+	private String pwc;
 	private String nickname;
 	private String email;
 	
@@ -23,6 +24,14 @@ public class User {
 
 	public void setPw(String pw) {
 		this.pw = pw;
+	}
+	
+	public String getPwc() {
+		return pwc;
+	}
+
+	public void setPwc(String pwc) {
+		this.pwc = pwc;
 	}
 
 	public String getNickname() {

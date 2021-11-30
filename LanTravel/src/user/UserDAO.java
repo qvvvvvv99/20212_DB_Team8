@@ -64,4 +64,57 @@ public class UserDAO {
 		}
 		return false;
 	}
+	
+	public int join(User user) {
+
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		int tnum = -1;
+
+		try {
+			sql = "SELECT * FROM traveler WHERE id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, user.getId());
+			rs = ps.executeQuery();
+			
+			if(rs.next()) return -1; //아이디 중복
+			
+			sql = "SELECT * FROM traveler WHERE nickname = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, user.getNickname());
+			rs = ps.executeQuery();
+			
+			if(rs.next()) return -2; //닉네임 중복
+			
+			// tuple 개수 count
+			sql = "SELECT COUNT(*) FROM traveler";
+			ps = conn.prepareStatement(sql);
+			rs = ps.executeQuery();
+
+			// tnum 지정
+			if (rs.next()) {
+				tnum = rs.getInt(1) + 1;
+			}
+			
+			// input
+			sql = "INSERT INTO traveler VALUES(?, ?, ?, ?, ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, tnum);
+			ps.setString(2, user.getId());
+			ps.setString(3, user.getPw());
+			ps.setString(4, user.getNickname());
+			ps.setString(5, user.getEmail());
+			rs = ps.executeQuery();
+
+			ps.close();
+			rs.close();
+			
+			return 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

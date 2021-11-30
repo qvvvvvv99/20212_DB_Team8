@@ -17,6 +17,16 @@
 	rel="stylesheet">
 </head>
 <body>
+	<%
+	request.setCharacterEncoding("UTF-8");
+
+	int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
+
+	if (session.getAttribute("userType") != null) {
+		userType = (int) session.getAttribute("userType");
+	}
+	
+	%>
 	<header>
 		<!-- logo -->
 		<div class="logo-area">
@@ -28,38 +38,42 @@
 		<!-- menu -->
 		<nav>
 			<ul class="menu">
-				<li class="menu-item"><a href="login.jsp"><i
-						class="fas fa-sign-in-alt"></i></a></li>
-				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
-				</li>
-				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
-				</li>
-				<li class="menu-item"><a href="write.jsp"><i
-						class="fas fa-pen-nib"></i></a></li>
+				<% if(userType==1) {%>
+					<li class="menu-item"><a href="login.jsp"><i
+							class="fas fa-sign-in-alt"></i></a></li>
+				<%} %>
+				<% if(userType==2) {%>
+					<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
+					</li>
+					<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
+					</li>
+					<li class="menu-item"><a href="write.jsp"><i
+							class="fas fa-pen-nib"></i></a></li>
+				<%} %>
 			</ul>
 		</nav>
 	</header>
 	<div class="register-form">
 		<h1>회원 가입을 환영합니다</h1>
-		<form>
+		<form method = "post" action = "registerAction.jsp">
 			<fieldset>
 				<legend>사용자 정보</legend>
 				<ul>
-					<li><label class="reg" for="uid">아이디 <em> * </em></label> <input
-						type="text" id="uid" class="text-field" autofocus
+					<li><label class="reg" for="id">아이디 <em> * </em></label> <input
+						type="text" name="id" class="text-field" autofocus
 						placeholder="4자 ~ 10자 사이, 공백없이" required></li>
-					<li><label class="reg" for="pwd1">비밀번호 <em> * </em></label> <input
-						type="password" id="pwd1" class="text-field"
+					<li><label class="reg" for="pw">비밀번호 <em> * </em></label> <input
+						type="password" name="pw" class="text-field"
 						placeholder="문자와 숫자, 특수 기호 포함" required></li>
-					<li><label class="reg" for="pw2">비밀번호 확인 <em> * </em></label>
-						<input type="password" id="pwd2" class="text-field" required>
+					<li><label class="reg" for="pwc">비밀번호 확인 <em> * </em></label>
+						<input type="password" name="pwc" class="text-field" required>
 					</li>
-					<li><label class="reg" for="umail">이메일 <em> * </em></label> <input
-						type="email" id="umail" class="text-field" required></li>
-					<li><label class="reg" for="alias">닉네임 <em> * </em></label> <input
-						type="text" id="alias" class="text-field" required></li>
+					<li><label class="reg" for="email">이메일 <em> * </em></label> <input
+						type="email" name="email" class="text-field" required></li>
+					<li><label class="reg" for="nickname">닉네임 <em> * </em></label> <input
+						type="text" name="nickname" class="text-field" required></li>
 					<li><label class="reg" for="tel">전화번호</label> <input
-						type="tel" id="tel" class="text-field"></li>
+						type="tel" name="tel" class="text-field"></li>
 				</ul>
 			</fieldset>
 			<div>

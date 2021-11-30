@@ -18,11 +18,12 @@
 		UserDAO userDAO = new UserDAO();
 		boolean result = userDAO.loginTraveler(user.getId(), user.getPw());
 		if (result){
+			session.setAttribute("id", user.getId());
+			session.setAttribute("userType", 2);
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("location.href = 'index.jsp'");
 			script.println("</script>");
-			// 상단에 로그인 모양 없애기
 		}
 		else if (!result){
 			PrintWriter script = response.getWriter();
