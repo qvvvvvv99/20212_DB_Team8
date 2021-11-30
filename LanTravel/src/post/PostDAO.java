@@ -117,7 +117,19 @@ public class PostDAO {
 	}
 
 	// TODO: 작성 필요
-	public int writePost() {
-		return 0;
+	public int writePost(String startDate, String endDate, String text, int tNum) {
+		String sql = "INSERT into post VALUE(?, ?, ?, ?, ?, ?, 0, 0)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, getNextNum());
+			ps.setString(2, startDate);
+			ps.setString(3, endDate);
+			ps.setString(4, text);
+			ps.setString(5, getCurrTime());
+			ps.setInt(6, tNum);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
 	}
 }

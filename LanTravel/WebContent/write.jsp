@@ -58,15 +58,15 @@
 	<h2>게시물 작성</h2>
 
 	<div class="upload-form">
-		<form>
+		<form method="post" action="writeAction.jsp">
 			<table class="uploadTable">
 				<tbody>
 					<tr>
-						<td><textarea id="content" cols="80" rows="4"
+						<td><textarea name="content" cols="80" rows="4"
 								placeholder="게시글을 입력하세요."></textarea></td>
 					</tr>
 					<tr>
-						<td><textarea id="hash" cols="80" rows="1"
+						<td><textarea name="hash" cols="80" rows="1"
 								placeholder="해시태그 입력하세요."></textarea></td>
 					</tr>
 					<tr>
@@ -89,7 +89,7 @@
 					</tr>
 				</tbody>
 			</table>
-			<button class="upload-btn">게시하기</button>
+			<input type="submit" class="upload-btn" value="게시하기">
 		</form>
 	</div>
 	<footer>
