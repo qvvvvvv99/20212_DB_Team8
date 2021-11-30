@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-<title>로그인</title>
-<meta charset="utf-8">
+<meta charset="UTF-8" />
+<title>회원 정보수정</title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
@@ -12,9 +12,9 @@
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
 <link rel="stylesheet"
 	href="https://spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css" />
-<link rel="stylesheet" href="styles/login.css">
+<link rel="stylesheet" href="styles/user.css" />
 <link href="https://fonts.googleapis.com/earlyaccess/notosanskr.css"
-	rel="stylesheet">
+	rel="stylesheet" />
 </head>
 <body>
 	<header>
@@ -39,17 +39,40 @@
 			</ul>
 		</nav>
 	</header>
-	<div class="login-form">
-		<form method = "post" action = "loginAction.jsp">
-			<input type="text" name="id" class="text-field" placeholder="아이디" required>
-			<input type="password" name="pw" class="text-field"placeholder="비밀번호" required>
-			<input type="submit" value="로그인" class="submit-btn">
+	<div class="update-form">
+		<h1>회원 정보 수정하기</h1>
+		<form>
+			<fieldset>
+				<legend>사용자 정보</legend>
+				<table class="updateTable">
+					<tr>
+						<th>아이디</th>
+						<td>아이디</td>
+					</tr>
+					<tr>
+						<th>닉네임</th>
+						<td><input type="text" value="닉네임" name="alias" required /></td>
+					</tr>
+					<tr>
+						<th>패스워드</th>
+						<td><input type="password" value="패스워드" name="pass1" required /></td>
+					</tr>
+					<tr>
+						<th>이메일</th>
+						<td><input type="email" value="이메일" name="email" required /></td>
+					</tr>
+					<tr>
+						<th>전화번호</th>
+						<td><input type="tel" value="전화번호" name="tel" required /></td>
+					</tr>
+				</table>
+			</fieldset>
+			<div>
+				<button class="update-btn">수정하기</button>
+				<button onclick="location.href='user.jsp'"
+					class="update-btn">돌아가기</button>
+			</div>
 		</form>
-
-		<div class="links">
-			<a href="register.jsp">회원가입</a>
-		</div>
-
 	</div>
 	<footer>
 		<p>Database(COMP322005) Team8 &copy; 2021</p>

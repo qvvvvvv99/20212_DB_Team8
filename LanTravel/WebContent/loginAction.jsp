@@ -22,6 +22,7 @@
 			script.println("<script>");
 			script.println("location.href = 'index.jsp'");
 			script.println("</script>");
+			// 상단에 로그인 모양 없애기
 		}
 		else if (!result){
 			PrintWriter script = response.getWriter();
