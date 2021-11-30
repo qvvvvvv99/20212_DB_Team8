@@ -702,7 +702,7 @@ public class Console {
 		int tnum = userType == 2 ? traveler.getNum() : -1;
 
 		try {
-			String sql = "SELECT views_count, bookmark_count FROM post where post_num = ?";
+			String sql = "SELECT view_count, bookmark_count FROM post where post_num = ?";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			rs = ps.executeQuery();
@@ -1786,7 +1786,7 @@ public class Console {
 		
 		try {
 			// 조회수 추출
-			String sql = "select views_count from post where post_num = ? for update wait 5";
+			String sql = "select view_count from post where post_num = ? for update wait 5";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, pnum);
 			ResultSet rs = ps.executeQuery();
@@ -1795,7 +1795,7 @@ public class Console {
 				viewCount = rs.getInt(1) + 1;
 			}
 			
-			sql = "update post set views_count = ? where post_num = ?";
+			sql = "update post set view_count = ? where post_num = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, viewCount);
 			ps.setInt(2, pnum);

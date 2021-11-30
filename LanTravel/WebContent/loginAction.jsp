@@ -15,11 +15,15 @@
 </head>
 <body>
 	<%
+
 		UserDAO userDAO = new UserDAO();
+		String Tnum;
 		boolean result = userDAO.loginTraveler(user.getId(), user.getPw());
 		if (result){
 			session.setAttribute("id", user.getId());
 			session.setAttribute("userType", 2);
+			Tnum = userDAO.getUserNum(user.getId());
+			session.setAttribute("Tnum", Tnum);
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("location.href = 'index.jsp'");

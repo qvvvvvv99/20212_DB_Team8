@@ -57,6 +57,8 @@
 		<form method = "post" action = "loginAction.jsp">
 			<input type="text" name="id" class="text-field" placeholder="아이디" required>
 			<input type="password" name="pw" class="text-field"placeholder="비밀번호" required>
+			<input type="radio" name="status" value="traveler" checked>traveler
+			<input type="radio" name="status" value="admin">admin
 			<input type="submit" value="로그인" class="submit-btn">
 		</form>
 

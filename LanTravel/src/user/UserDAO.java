@@ -174,4 +174,25 @@ public class UserDAO {
 		}
 		return 0;
 	}
+	
+	public String getUserNum(String id) {
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			sql = "SELECT nickname FROM traveler WHERE nickname = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
