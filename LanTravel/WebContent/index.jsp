@@ -1,5 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page import="post.Post"%>
+<%@ page import="post.PostDAO"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -15,6 +18,15 @@
 <link rel="stylesheet" href="styles/index.css" />
 </head>
 <body>
+	<%
+	request.setCharacterEncoding("UTF-8");
+
+	int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
+
+	if (session.getAttribute("userType") != null) {
+		userType = (int) session.getAttribute("userType");
+	}
+	%>
 	<header>
 		<!-- logo -->
 		<div class="logo-area">
@@ -28,12 +40,12 @@
 			<ul class="menu">
 				<li class="menu-item"><a href="login.jsp"><i
 						class="fas fa-sign-in-alt"></i></a></li>
-				<li class="menu-item"><a href="user.jsp"><i class="fas fa-heart"></i></a>
+				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
 				</li>
 				<li class="menu-item"><a href="#"><i class="fas fa-user"></i></a>
 				</li>
-				<li class="menu-item"><a href="write.jsp"><i class="fas fa-pen-nib"></i></a>
-				</li>
+				<li class="menu-item"><a href="write.jsp"><i
+						class="fas fa-pen-nib"></i></a></li>
 			</ul>
 		</nav>
 	</header>
@@ -65,306 +77,30 @@
 		<section id="posts">
 			align
 			<ol class="container">
-				<li class="box"><img class="thumbnail" />
+				<%
+				int scroll = 1; // temp
+				ArrayList<Post> postList = new PostDAO().getList(scroll);
+				for (Post post : postList) {
+				%>
+				<li class="box">
+					<a href="post.jsp?postNum=<%= post.getNum() %>">
+						<img class="thumbnail" />
+					</a>
 					<div class="details">
-						<span class="title">Title</span>
+						<span class="title"><%= "LocName" %></span> <!-- TODO: getLocName 추가 > getNum 대체 -->
 						<div class="cnt">
 							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
+								<i class="fas fa-heart"></i> <span><%= post.getBookmarkCnt() %></span>
 							</div>
 							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
+								<i class="fas fa-eye"></i> <span><%= post.getViewCnt() %></span>
 							</div>
 						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
-				<li class="box"><img class="thumbnail" />
-					<div class="details">
-						<span class="title">Title</span>
-						<div class="cnt">
-							<div class="fav-cnt">
-								<i class="fas fa-heart"></i> <span>5k</span>
-							</div>
-							<div class="view-cnt">
-								<i class="fas fa-eye"></i> <span>58.1k</span>
-							</div>
-						</div>
-					</div></li>
+					</div>
+				</li>
+				<%
+				}
+				%>
 			</ol>
 		</section>
 		<div id="padding"></div>

@@ -234,7 +234,7 @@ main>section#posts>.container>.box {
 	list-style: none;
 }
 
-main>section#posts>.container>.box>.thumbnail {
+main>section#posts>.container>.box>a>.thumbnail {
 	width: 100%;
 	aspect-ratio: 4/3;
 	background-color: #c4c4c4;
