@@ -6,11 +6,16 @@ public class Post {
 	private int num;
 	private Date startDate;
 	private Date endDate;
+	private String content;
 	private String text;
 	private Date writtenTime;
 	private int travelerNum;
 	private int viewCnt;
 	private int bookmarkCnt;
+	
+	public Post() {
+		
+	}
 
 	public Post(int num, int viewCnt, int bookmarkCnt) {
 		super();
@@ -30,6 +35,14 @@ public class Post {
 		this.travelerNum = travelerNum;
 		this.viewCnt = viewCnt;
 		this.bookmarkCnt = bookmarkCnt;
+	}
+	
+	public String getContent() {
+		return content;
+	}
+	
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public int getNum() {
