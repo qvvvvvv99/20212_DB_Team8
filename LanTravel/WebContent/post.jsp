@@ -1,12 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList"%>
+<%@ page import="user.User"%>
+<%@ page import="user.UserDAO"%>
 <%@ page import="post.Post"%>
 <%@ page import="post.PostDAO"%>
 <%@ page import="post.Location"%>
 <%@ page import="post.LocationDAO"%>
 <%@ page import="post.Picture"%>
 <%@ page import="post.PictureDAO"%>
+<%@ page import="post.Tag"%>
+<%@ page import="post.TagDAO"%>
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -159,12 +163,21 @@
 			</section>
 			<section class="post-info">
 				<div class="tags">
-					<div class="tag">Tag1</div>
-					<div class="tag">Tag2</div>
-					<div class="tag">Tag3</div>
+				<%
+				ArrayList<Tag> tags = new TagDAO().getTags(postNum);
+				for (Tag tag : tags) {
+				%>
+					<div class="tag"><%= tag.getName() %></div>
+				<%
+				}
+				%>
 				</div>
 				<div class="written">
-					<a class="writer">Nickname</a>
+				<%
+				User user = new User();
+				user = new UserDAO().getUser(post.getTravelerNum());
+				%>
+					<a class="writer"><%= user.getNickname() %></a>
 					<div class="written-time"><%=post.getWrittenTime()%></div>
 				</div>
 			</section>

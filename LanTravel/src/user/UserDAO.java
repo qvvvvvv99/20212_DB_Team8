@@ -6,6 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import post.Post;
+import post.Tag;
 
 public class UserDAO {
 	private Connection conn = null;
@@ -38,9 +42,6 @@ public class UserDAO {
 	}
 	
 	public boolean loginTraveler(String id, String pw) {
-//		Database db = new Database();
-//		conn = db.getConnection();
-//		stmt = db.getStatement();
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -66,7 +67,6 @@ public class UserDAO {
 	}
 	
 	public int join(User user) {
-
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -79,21 +79,21 @@ public class UserDAO {
 			ps.setString(1, user.getId());
 			rs = ps.executeQuery();
 			
-			if(rs.next()) return -1; //¾ÆÀÌµð Áßº¹
+			if(rs.next()) return -1; //ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ßºï¿½
 			
 			sql = "SELECT * FROM traveler WHERE nickname = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, user.getNickname());
 			rs = ps.executeQuery();
 			
-			if(rs.next()) return -2; //´Ð³×ÀÓ Áßº¹
+			if(rs.next()) return -2; //ï¿½Ð³ï¿½ï¿½ï¿½ ï¿½ßºï¿½
 			
-			// tuple °³¼ö count
+			// tuple ï¿½ï¿½ï¿½ï¿½ count
 			sql = "SELECT COUNT(*) FROM traveler";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 
-			// tnum ÁöÁ¤
+			// tnum ï¿½ï¿½ï¿½ï¿½
 			if (rs.next()) {
 				tnum = rs.getInt(1) + 1;
 			}
@@ -116,5 +116,25 @@ public class UserDAO {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	public User getUser(int num) {
+		String sql = "SELECT id, pw, nickname, email FROM traveler WHERE num = ?";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				User user = new User();
+				user.setId(rs.getString(1));
+				user.setPw(rs.getString(2));
+				user.setNickname(rs.getString(3));
+				user.setEmail(rs.getString(4));
+				return user;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
