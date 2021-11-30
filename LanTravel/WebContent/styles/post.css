@@ -1,413 +1,417 @@
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 .hidden {
-  display: none !important;
+	display: none !important;
 }
 
 textarea {
-  width: 100%;
-  font-size: 14px;
-  padding: 8px;
-  outline: none;
-  resize: none;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+	width: 100%;
+	font-size: 14px;
+	padding: 8px;
+	outline: none;
+	resize: none;
+	border: 1px solid #ddd;
+	border-radius: 8px;
 }
 
 textarea:focus {
-  border: 1px solid #9e9ea7;
+	border: 1px solid #9e9ea7;
 }
 
 textarea::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 
 body {
-  position: relative;
-  font-family: "Spoqa Han Sans", "Noto Sans KR", sans-serif;
-  min-height: 100vh;
+	position: relative;
+	font-family: "Spoqa Han Sans", "Noto Sans KR", sans-serif;
+	min-height: 100vh;
 }
 
 /* header */
 header {
-  display: flex;
-  position: sticky;
-  justify-content: space-between;
-  top: 0;
-  z-index: 1;
-  width: 100%;
-  height: 80px;
-  align-items: center;
-  padding: 0 72px;
-  background-color: #fff;
-  box-shadow: 0 3px 7px 1px rgb(0 0 0 / 12%);
-  margin-bottom: 32px;
+	display: flex;
+	position: sticky;
+	justify-content: space-between;
+	top: 0;
+	z-index: 1;
+	width: 100%;
+	height: 80px;
+	align-items: center;
+	padding: 0 72px;
+	background-color: #fff;
+	box-shadow: 0 3px 7px 1px rgb(0 0 0/ 12%);
+	margin-bottom: 32px;
 }
 
-header > .logo-area {
-  cursor: pointer;
+header>.logo-area {
+	cursor: pointer;
 }
 
-header > nav > .menu {
-  list-style: none;
+header>nav>.menu {
+	list-style: none;
 }
 
-header > nav > .menu > .menu-item {
-  display: inline-block;
-  font-size: 24px;
-  padding: 0px 20px;
+header>nav>.menu>.menu-item {
+	display: inline-block;
+	font-size: 24px;
+	padding: 0px 20px;
 }
 
-header > nav > .menu > .menu-item > a {
-  color: #505050;
+header>nav>.menu>.menu-item>a {
+	color: #505050;
 }
 
-header > nav > .menu > .menu-item > a:hover {
-  color: #9e9ea7;
-  transition: all 0.1s ease;
+header>nav>.menu>.menu-item>a:hover {
+	color: #9e9ea7;
+	transition: all 0.1s ease;
 }
 
 /* main */
 main {
-  display: grid;
-  justify-content: center;
-  grid-template-columns: 1100px 388px;
-  gap: 32px;
+	display: grid;
+	justify-content: center;
+	grid-template-columns: 1100px 388px;
+	gap: 32px;
 }
 
-main > .post {
-  display: flex;
-  position: relative;
-  flex-direction: column;
+main>.post {
+	display: flex;
+	position: relative;
+	flex-direction: column;
 }
 
-main > .post > .slide {
-  position: relative;
-  width: 1100px;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  margin-bottom: 32px;
+main>.post>.slide {
+	position: relative;
+	width: 1100px;
+	aspect-ratio: 16/9;
+	overflow: hidden;
+	margin-bottom: 32px;
 }
 
-main > .post > .slide > .pictures {
-  position: absolute;
-  top: 0;
-  left: 0;
-  transition: left 0.5s ease-out;
+main>.post>.slide>.pictures {
+	position: absolute;
+	top: 0;
+	left: 0;
+	transition: left 0.5s ease-out;
 }
 
-main > .post > .slide > .pictures > li {
-  width: 1100px;
-  aspect-ratio: 16 / 9;
-  list-style: none;
-  float: left;
+main>.post>.slide>.pictures>li {
+	width: 1100px;
+	aspect-ratio: 16/9;
+	list-style: none;
+	float: left;
 }
 
-main > .post > .slide > .pictures > li > img {
-  width: auto;
-  height: 100%;
-  background-color: #505050;
+main>.post>.slide>.pictures>li>img {
+	width: auto;
+	height: 100%;
+	background-color: #505050;
 }
 
-main > .post > .slide > button {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 50px;
-  border: none;
-  outline: none;
-  background-color: transparent;
-  opacity: 0;
+main>.post>.slide>button {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 50px;
+	border: none;
+	outline: none;
+	background-color: transparent;
+	opacity: 0;
 }
 
-main > .post > .slide:hover > button {
-  opacity: 1;
+main>.post>.slide:hover>button {
+	opacity: 1;
 }
 
-main > .post > .slide > button.prev {
-  left: 30px;
+main>.post>.slide>button.prev {
+	left: 30px;
 }
 
-main > .post > .slide > button.next {
-  right: 30px;
+main>.post>.slide>button.next {
+	right: 30px;
 }
 
-main > .post > .writing {
-  margin-bottom: 32px;
+main>.post>.writing {
+	margin-bottom: 32px;
 }
 
-main > .post > .replies > h3 {
-  margin-bottom: 16px;
+main>.post>.replies>h3 {
+	margin-bottom: 16px;
 }
 
-main > .post > .replies:before {
-  display: block;
-  width: 100%;
-  height: 1px;
-  content: "";
-  background-color: #ddd;
-  margin: 16px 0;
+main>.post>.replies:before {
+	display: block;
+	width: 100%;
+	height: 1px;
+	content: "";
+	background-color: #ddd;
+	margin: 16px 0;
 }
 
-main > .post > .replies .my-reply {
-  width: 100%;
-  margin-bottom: 16px;
+main>.post>.replies .my-reply {
+	width: 100%;
+	margin-bottom: 16px;
 }
 
-main > .post > .replies .my-reply > textarea {
-  height: 36px;
+main>.post>.replies .my-reply>textarea {
+	height: 36px;
 }
 
-main > .post > .replies .my-reply > textarea ~ .reply-buttons {
-  display: none;
+main>.post>.replies .my-reply>textarea ~ .reply-buttons {
+	display: none;
 }
 
-main > .post > .replies .my-reply > .reply-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+main>.post>.replies .my-reply>.reply-buttons {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
 }
 
-main > .post > .replies .my-reply > .reply-buttons > button {
-  border: none;
-  border-radius: 8px;
-  outline: none;
-  background-color: transparent;
-  padding: 4px 8px;
+main>.post>.replies .my-reply>.reply-buttons>button {
+	border: none;
+	border-radius: 8px;
+	outline: none;
+	background-color: transparent;
+	padding: 4px 8px;
 }
 
-main > .post > .replies .my-reply > .reply-buttons > button.cancel {
-  color: #9e9ea7;
+main>.post>.replies .my-reply>.reply-buttons>button.cancel {
+	color: #9e9ea7;
 }
 
-main > .post > .replies .my-reply > .reply-buttons > button.cancel:hover {
-  color: #505050;
+main>.post>.replies .my-reply>.reply-buttons>button.cancel:hover {
+	color: #505050;
 }
 
-main > .post > .replies .my-reply > .reply-buttons > button.write {
-  background-color: #ddd;
+main>.post>.replies .my-reply>.reply-buttons>button.write {
+	background-color: #ddd;
 }
 
-main > .post > .replies .my-reply > .reply-buttons > button.write:hover {
-  background-color: #9e9ea7;
+main>.post>.replies .my-reply>.reply-buttons>button.write:hover {
+	background-color: #9e9ea7;
 }
 
-main > .post > .replies .reply {
-  position: relative;
-  margin-bottom: 16px;
+main>.post>.replies .reply {
+	position: relative;
+	margin-bottom: 16px;
 }
 
-main > .post > .replies .reply > *:not(:last-child) {
-  margin-bottom: 5px;
+main>.post>.replies .reply>*:not(:last-child) {
+	margin-bottom: 5px;
 }
 
-main > .post > .replies .reply > .reply-head {
-  display: flex;
-  gap: 8px;
+main>.post>.replies .reply>.reply-head {
+	display: flex;
+	gap: 8px;
 }
 
-main > .post > .replies .reply > .reply-head > .reply-writer {
-  font-weight: 700;
-  font-size: 13px;
+main>.post>.replies .reply>.reply-head>.reply-writer {
+	font-weight: 700;
+	font-size: 13px;
 }
 
-main > .post > .replies .reply > .reply-body > p {
-  font-size: 14px;
+main>.post>.replies .reply>.reply-body>p {
+	font-size: 14px;
 }
 
-main > .post > .replies .reply > .reply-tail {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 8px;
+main>.post>.replies .reply>.reply-tail {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 8px;
 }
 
-main > .post > .replies .reply > .reply-tail > .reply-time {
-  font-size: 13px;
-  color: #505050;
+main>.post>.replies .reply>.reply-tail>.reply-time {
+	font-size: 13px;
+	color: #505050;
 }
 
-main > .post > .replies .reply > .reply-tail > button {
-  border-width: 0;
-  background-color: transparent;
-  border-radius: 8px;
-  outline: none;
-  padding: 2px 4px;
+main>.post>.replies .reply>.reply-tail>button {
+	border-width: 0;
+	background-color: transparent;
+	border-radius: 8px;
+	outline: none;
+	padding: 2px 4px;
 }
 
-main > .post > .replies .reply > .reply-tail > button:hover {
-  background-color: #ddd;
+main>.post>.replies .reply>.reply-tail>button:hover {
+	background-color: #ddd;
 }
 
-main > .post > .replies .reply > .reply-tail > button:active {
-  background-color: #9e9ea7;
+main>.post>.replies .reply>.reply-tail>button:active {
+	background-color: #9e9ea7;
 }
 
-main > .post > .replies .reply > .reply {
-  margin-left: 30px;
+main>.post>.replies .reply>.reply {
+	margin-left: 30px;
 }
 
-main > .post > .replies .reply > .reply:before {
-  position: absolute;
-  left: -30px;
-  content: "└";
+main>.post>.replies .reply>.reply:before {
+	position: absolute;
+	left: -30px;
+	content: "└";
 }
 
-main > .detail {
-  position: relative;
-  font-size: 14px;
+main>.detail {
+	position: relative;
+	font-size: 14px;
 }
 
-main > .detail > section:not(:last-child)::after {
-  display: block;
-  width: 100%;
-  height: 1px;
-  content: "";
-  background-color: #ddd;
-  margin: 16px 0;
+main>.detail>section:not(:last-child)::after {
+	display: block;
+	width: 100%;
+	height: 1px;
+	content: "";
+	background-color: #ddd;
+	margin: 16px 0;
 }
 
-main > .detail > .travel-info > .title {
-  font-weight: 700;
-  font-size: 26px;
+main>.detail>.travel-info>.title {
+	font-weight: 700;
+	font-size: 26px;
 }
 
-main > .detail > .travel-info > .location {
-  color: #505050;
+main>.detail>.travel-info>.location {
+	color: #505050;
 }
 
-main > .detail > .travel-info > .period {
-  color: #505050;
+main>.detail>.travel-info>.period {
+	color: #505050;
 }
 
-main > .detail > .counts-action > div {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
+main>.detail>.counts-action>div {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
 }
 
-main > .detail > .counts-action > div > section {
-  width: 45%;
+main>.detail>.counts-action>div>section {
+	width: 45%;
 }
 
-main > .detail > .counts-action > div > section:not(:last-child) {
-  border-right: 1px solid #ddd;
+main>.detail>.counts-action>div>section:not(:last-child) {
+	border-right: 1px solid #ddd;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div {
-  display: flex;
-  justify-content: space-evenly;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div {
+	display: flex;
+	justify-content: space-evenly;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div > div {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div>div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div > :is(.favorite, .share-btn, .report-btn) {
-  cursor: pointer;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div>:is(.favorite,
+	.share-btn, .report-btn) {
+	cursor: pointer;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div i {
-  font-size: 26px;
-  color: #505050;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div i {
+	font-size: 26px;
+	color: #505050;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div > .favorite:hover > i {
-  color: #ff533f;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div>.favorite:hover>i
+	{
+	color: #ff533f;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div > .share-btn:hover > i {
-  color: #9e9ea7;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div>.share-btn:hover>i
+	{
+	color: #9e9ea7;
 }
 
-main > .detail > .counts-action > div > :is(.counts, .actions) > div > .report-btn:hover > i {
-  color: #1a73e8;
+main>.detail>.counts-action>div>:is(.counts, .actions)>div>.report-btn:hover>i
+	{
+	color: #1a73e8;
 }
 
-main > .detail > .post-info > *:not(:last-child) {
-  margin-bottom: 16px;
+main>.detail>.post-info>*:not(:last-child) {
+	margin-bottom: 16px;
 }
 
-main > .detail > .post-info > .tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+main>.detail>.post-info>.tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
 }
 
-main > .detail > .post-info > .tags > .tag {
-  cursor: pointer;
-  font-size: 14px;
-  padding: 7px 10px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  color: #000;
+main>.detail>.post-info>.tags>.tag {
+	cursor: pointer;
+	font-size: 14px;
+	padding: 7px 10px;
+	border: 1px solid #ddd;
+	border-radius: 8px;
+	color: #000;
 }
 
-main > .detail > .post-info > .tags > .tag:hover {
-  background-color: #ddd;
+main>.detail>.post-info>.tags>.tag:hover {
+	background-color: #ddd;
 }
 
-main > .modals {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 10;
-  width: 100%;
-  height: 100%;
+main>.modals {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 10;
+	width: 100%;
+	height: 100%;
 }
 
-main > .modals > .modal {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: inherit;
-  height: inherit;
+main>.modals>.modal {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: inherit;
+	height: inherit;
 }
 
-main > .modals > .modal > .modal-overlay {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+main>.modals>.modal>.modal-overlay {
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.6);
 }
 
-main > .modals > .modal > .modal-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 500px;
-  height: 300px;
-  background: #fff;
-  padding: 32px;
+main>.modals>.modal>.modal-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 500px;
+	height: 300px;
+	background: #fff;
+	padding: 32px;
 }
 
-main > #padding {
-  height: 32px;
+main>#padding {
+	height: 32px;
 }
 
 /* footer */
 footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 40px;
-  background: #505050;
-  text-align: center;
-  color: #fff;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 40px;
+	background: #505050;
+	text-align: center;
+	color: #fff;
 }
 
-footer > p {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 12px;
+footer>p {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 12px;
 }
