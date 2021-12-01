@@ -56,12 +56,16 @@
 				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
 			<%} %>
+			<% if(userType==3) {%>
+				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
+				</li>
+			<%} %>
 			</ul>
 		</nav>
 	</header>
 	<main>
 		<section id="search">
-			<form class="search-form" action="/index.jsp" method="get">
+			<form class="search-form" action="searchPost.jsp" method="get">
 				<div class="icon">
 					<i class="fas fa-search"></i>
 				</div>
@@ -77,9 +81,7 @@
 						<input type="radio" name="sType" id="location" value="location"
 							checked /> <label for="location" class="option-item">장소</label>
 						<input type="radio" name="sType" id="writer" value="writer" /> <label
-							for="writer" class="option-item">작성자</label> <input type="radio"
-							name="sType" id="opt3" value="opt3" /> <label for="opt3"
-							class="option-item">opt3</label>
+							for="writer" class="option-item">작성자</label>
 					</div>
 				</div>
 			</form>

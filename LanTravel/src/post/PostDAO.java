@@ -270,4 +270,50 @@ public class PostDAO {
 			}
 		} return 0;
 	}
+	
+	public ArrayList<Post> getSearchList(int scroll, String search, String sType) {
+		System.out.println(sType);
+		final int limit = 30;
+		ArrayList<Post> list = new ArrayList<Post>();
+		switch(sType) {
+		case "location":
+			String sql = "SELECT * FROM ( SELECT post_num, view_count, bookmark_count FROM post WHERE post_num < ? AND text like ? ORDER BY post_num DESC ) WHERE ROWNUM <= ?";
+			
+			try {
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ps.setInt(1, getNextNum() - (scroll - 1) * limit);
+				ps.setString(2, "%" + search + "%");
+				ps.setInt(3, limit);
+				rs = ps.executeQuery();
+				while (rs.next()) {
+					// post_num, view_count, bookmark_count
+					Post post = new Post(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+					list.add(post);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		case "writer":
+			sql = "SELECT * FROM ( SELECT post_num, view_count, bookmark_count FROM post WHERE post_num < ? AND traveler_num in (SELECT num FROM traveler WHERE nickname LIKE ?) ORDER BY post_num DESC ) WHERE ROWNUM <= ?";
+			
+			try {
+				PreparedStatement ps = conn.prepareStatement(sql);
+				ps.setInt(1, getNextNum() - (scroll - 1) * limit);
+				ps.setString(2, "%" + search + "%");
+				ps.setInt(3, limit);
+				rs = ps.executeQuery();
+				while (rs.next()) {
+					// post_num, view_count, bookmark_count
+					Post post = new Post(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+					list.add(post);
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			break;
+		}
+
+		return list;		
+	}
 }
