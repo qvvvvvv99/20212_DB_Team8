@@ -69,12 +69,24 @@
 						<td><textarea name="hash" cols="80" rows="1"
 								placeholder="해시태그 입력하세요."></textarea></td>
 					</tr>
-					<tr>
-						<td><input type='file' id='btnAtt'class="ex_file" name="ex_file" onchange="fileUpload()"  multipl required/>
-							<div id='att_zone'
-								data-placeholder='파일을 첨부 하려면 파일 선택 버튼을 클릭하거나 파일을 드래그앤드롭 하세요'></div>
-							</div></td>
-					</tr>
+					     <tr>
+				        <td>
+				         <input type='file' id='btnAtt' name='image1' required/>
+				         <input type='file' id='btnAtt' name='image2'/>
+				        </td>
+				      </tr>
+				      <tr>
+				        <td>
+				         <input type='file' id='btnAtt' name='image3'/>
+				         <input type='file' id='btnAtt' name='image4'/>
+				        </td>
+				      </tr>
+				      <tr>
+				        <td>
+				         <input type='file' id='btnAtt' name='image5'/>
+				          <input type='file' id='btnAtt' name='image6'/>
+				         </td>
+				      </tr>
 					<tr>
 						<td>시작날짜 &nbsp <input type="date" name="startDate">
 							&nbsp &nbsp &nbsp 종료날짜 &nbsp <input type="date" name="endDate">
@@ -97,18 +109,15 @@
 	</footer>
 	<script src="scripts/write.js"></script>
 	<script type="text/javascript">
-	function fileUpload(){
-		var fileInput = document.getElementsByClassName("ex_file");
-
-		for( var i=0; i<fileInput.length; i++ ){
-			if( fileInput[i].files.length > 0 ){
-				for( var j = 0; j < fileInput[i].files.length; j++ ){
-					console.log(fileInput[i].files[j].name); // 파일명 출력
-				}
-			}
-		}
-
-	}
+	window.onload = function(){
+        target = document.getElementById('btnAtt');
+        target.addEventListener('change', function(){
+            fileList = "";
+            for(i = 0; i < target.files.length; i++){
+                fileList += target.files[i].name + '<br>';
+            }
+        });
+    }
 </script>
 </body>
 

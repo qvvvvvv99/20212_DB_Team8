@@ -56,4 +56,32 @@ public class PictureDAO {
 		}
 		return list;
 	}
+	
+	public int getNextPictureNum() {
+		String sql = "SELECT NVL(MAX(pic_number), 0) FROM post_pictures";
+		try {
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return rs.getInt(1) + 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
+	}
+	
+	public void writePicture(PostDAO post, String fname){
+		String sql = "INSERT into post_pictures VALUES(?, ?, ?)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, post.getNextNum()-1);
+			ps.setInt(2, getNextPictureNum());
+			ps.setString(3, fname);
+			ps.executeUpdate();
+			return;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return; // DB 오류
+	}
 }

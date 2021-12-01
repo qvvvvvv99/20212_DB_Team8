@@ -4,7 +4,9 @@
 <%@ page import = "post.PostDAO"%>
 <%@ page import = "post.LocationDAO"%>
 <%@ page import = "post.TagDAO"%>
+<%@ page import = "post.PictureDAO"%>
 <%@ page import = "java.io.PrintWriter"%>
+<%@ page import = "java.io.File" %>
 <% request.setCharacterEncoding("UTF-8");%>
 
 <jsp:useBean id = "post" class = "post.Post" scope = "page" />
@@ -45,6 +47,18 @@
 				 hashAry[i] = hashAry[i].replace("#", "");
 		         tagDAO.writeTag(postDAO, hashAry[i]);
 		     }
+		}
+		
+		for(int i = 1; i <= 6; i++){
+			String fileName = request.getParameter("image"+i);
+			if(fileName != ""){
+				File f = new File(fileName);
+				fileName = f.getName();
+				fileName = "images/pictures/"+fileName;
+				System.out.println(fileName);
+				PictureDAO pictureDAO = new PictureDAO();
+				pictureDAO.writePicture(postDAO, fileName);
+			}	
 		}
 		
 		// DB 오류
