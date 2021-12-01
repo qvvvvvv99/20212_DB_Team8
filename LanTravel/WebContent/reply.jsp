@@ -93,8 +93,8 @@
 							<td colspan = "2"><%=reply.getNum() %></td>
 						</tr>
 						<tr>
-							<td style = "width: 30%;">작성자 번호</td>
-							<td colspan = "2"><%=reply.getTravelerNum() %></td>
+							<td style = "width: 30%;">작성자</td>
+							<td colspan = "2"><%=reply.getTravelerNickname() %></td>
 						</tr>
 						<tr>
 							<td style = "width: 30%;">작성일</td>

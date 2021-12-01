@@ -1,2 +1,4 @@
 eclipse.preferences.version=1
+encoding//src/post/PostDAO.java=UTF-8
+encoding//src/post/ReplyDAO.java=UTF-8
 encoding//src/post/ReportDAO.java=UTF-8

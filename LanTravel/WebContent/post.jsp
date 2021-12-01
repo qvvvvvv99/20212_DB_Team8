@@ -1,10 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ page import="java.util.ArrayList"%>
+<%@ page import="java.util.Stack"%>
 <%@ page import="user.User"%>
 <%@ page import="user.UserDAO"%>
 <%@ page import="post.Post"%>
 <%@ page import="post.PostDAO"%>
+<%@ page import="post.Reply"%>
+<%@ page import="post.ReplyDAO"%>
 <%@ page import="post.Location"%>
 <%@ page import="post.LocationDAO"%>
 <%@ page import="post.Picture"%>
@@ -110,31 +113,47 @@
 				<p><%=post.getText()%></p>
 			</section>
 			<section class="replies">
-				<h3>댓글 5개</h3>
+			<%
+			ArrayList<Reply> replies = new ReplyDAO().getReplies(postNum);
+			%>
+				<h3>댓글 <%= replies.size() %>개</h3>
 				<div class="my-reply">
 					<textarea placeholder="댓글 작성" name="reply-text" id="reply-text"
 						maxlength="4000"></textarea>
 					<div class="reply-buttons">
 						<button class="cancel">취소</button>
-						<button class="write">작성</button>
+						<button class="write" onclick="writeReply();">작성</button>
 					</div>
 				</div>
-				<div class="reply">
+				<%
+				for (Reply reply : replies) {
+					int rNum = reply.getNum();
+					int depth = new ReplyDAO().calcDepth(rNum);
+					System.out.println(depth);
+				%>
+				<div class="reply" style="margin-left: <%= 30 * depth %>px;">
+					<%
+					if (depth > 0) {
+					%>
+					<div class="indentation">└</div>
+					<%
+					}
+					%>
 					<div class="reply-head">
-						<div class="reply-writer">작성자</div>
+						<div class="reply-writer"><%= reply.getTravelerNickname() %></div>
 					</div>
 					<div class="reply-body">
-						<p>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-							Corporis, nihil illo provident exercitationem assumenda, eveniet
-							minima debitis est blanditiis labore nisi sit dolores repellat.
-							Recusandae in officiis placeat! Voluptatibus, deleniti.</p>
+						<p><%= reply.getText() %></p>
 					</div>
 					<div class="reply-tail">
-						<div class="reply-time">2021.02.15. Sun. 09:38:27</div>
+						<div class="reply-time"><%= reply.getWrittenTime() %></div>
 						<button class="reply-btn">답글</button>
 						<button class="report-btn open-report-modal">신고</button>
 					</div>
 				</div>
+				<%
+				}
+				%>
 			</section>
 		</article>
 		<article class="detail">
