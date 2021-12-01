@@ -85,6 +85,7 @@
 			out.println("<script>location.href = 'index.jsp';</script>");
 			return;
 		}
+		session.setAttribute("postNum", postNum);
 		PostDAO postDao = new PostDAO();
 		Post post = postDao.getPost(postNum);
 		postDao.increaseViewCnt(postNum);
