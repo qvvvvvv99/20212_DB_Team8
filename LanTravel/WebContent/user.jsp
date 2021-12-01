@@ -131,6 +131,8 @@
 			<div>
 				<button type="button" class="update-btn" onclick="location.href='userUpdate.jsp'">
 				회원정보 수정하기</button>
+				<button type="button" class="update-btn" onclick="location.href='logoutAction.jsp'">
+				로그아웃</button>
 			</div>
 		</form>
 	</div>
