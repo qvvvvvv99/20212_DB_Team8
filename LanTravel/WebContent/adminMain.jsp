@@ -96,7 +96,8 @@
 									<%= list.get(i).getReason() %></a></td>
 							<%} %>
 							<%if (list.get(i).getType().equals("R")){ %>
-							<td><%= list.get(i).getReason() %></td> <!-- 댓글 view로 이동 -->
+							<td><a href="reply.jsp?replyNum=<%= list.get(i).getPr_num() %>">
+								<%= list.get(i).getReason() %></td> <!-- 댓글 view로 이동 -->
 							<%} %>
 							<td><%= list.get(i).getTraveler_num() %></td>
 						</tr>

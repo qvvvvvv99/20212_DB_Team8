@@ -48,7 +48,7 @@ public class ReplyDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null; // DB 오류
+		return null; // DB �삤瑜�
 	}
 	
 	public int getNextNum() {
@@ -61,7 +61,7 @@ public class ReplyDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // DB 오류
+		return -1; // DB �삤瑜�
 	}
 	
 	public ArrayList<Reply> getList(int postNum) {
@@ -80,5 +80,106 @@ public class ReplyDAO {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public Reply getReply(int replyNum) {
+		String sql = "SELECT text, written_time, traveler_num, p_reply_num, post_num FROM reply WHERE reply_num = ?";
+		Reply reply = null;
+		
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, replyNum);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				// reply_num, text, written_time, traveler_num, p_reply_num
+				reply = new Reply(replyNum, rs.getString(1), rs.getDate(2), rs.getInt(3), rs.getInt(4));
+			}
+			reply.setPostNum(rs.getInt(5));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return reply;
+	}
+	
+	public int deleteReply(int replyNum) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ResultSet rs1 = null;
+		ResultSet rs2 = null;
+		String sql = null;
+
+		try {
+			conn.setAutoCommit(false);
+			sql = "select * from record where reply_num in (select reply_num from reply where p_reply_num = ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, replyNum);
+			rs = ps.executeQuery();
+
+			int rnum = 0;
+
+			while (rs.next()) {
+				rnum = rs.getInt(1);
+
+				sql = "DELETE FROM record WHERE report_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, rnum);
+				rs1 = ps.executeQuery();
+
+				sql = "DELETE FROM report WHERE report_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, rnum);
+				rs2 = ps.executeQuery();
+			}
+				sql = "select report_num from record WHERE reply_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, replyNum);
+				rs = ps.executeQuery();
+
+				rnum = 0;
+
+				while (rs.next()) {
+					rnum = rs.getInt(1);				
+
+					sql = "DELETE FROM record WHERE report_num = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, rnum);
+					rs1 = ps.executeQuery();
+
+					sql = "DELETE FROM report WHERE report_num = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, rnum);
+					rs2 = ps.executeQuery();
+				}
+
+				sql = "DELETE FROM reply WHERE p_reply_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, replyNum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM reply WHERE reply_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, replyNum);
+				rs = ps.executeQuery();
+				
+				conn.commit();
+
+				return 1;
+			
+
+		} catch (Throwable e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+				}catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}e.printStackTrace();
+		}finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
+		}return 0;
 	}
 }
