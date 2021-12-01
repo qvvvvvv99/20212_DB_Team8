@@ -146,7 +146,7 @@ public class UserDAO {
 		return 0;
 	}
 	
-	public User getUser(String id) {	
+	public User getUser(int num) {	
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -154,9 +154,9 @@ public class UserDAO {
 		User user = null;
 		
 		try {
-			sql = "SELECT id, pw, email, nickname FROM traveler WHERE id = ?";
+			sql = "SELECT id, pw, email, nickname FROM traveler WHERE num = ?";
 			ps = conn.prepareStatement(sql);
-			ps.setString(1, id);
+			ps.setInt(1, num);
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
