@@ -66,7 +66,7 @@ public class PostDAO {
 	}
 
 	public ArrayList<Post> getList(int scroll) {
-		final int limit = 30;
+		final int limit = 50;
 		String sql = "SELECT * FROM ( SELECT post_num, view_count, bookmark_count FROM post WHERE post_num < ? ORDER BY post_num DESC ) WHERE ROWNUM <= ?";
 		ArrayList<Post> list = new ArrayList<Post>();
 		try {
