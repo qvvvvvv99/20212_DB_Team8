@@ -32,7 +32,10 @@
 		if (session.getAttribute("id") != null) {
 			id = (String) session.getAttribute("id");
 		}
-	
+		int Tnum = 0;
+		if(session.getAttribute("Tnum") != null){
+			Tnum = (int)session.getAttribute("Tnum");
+		}
 	%>
 	
 	<%
@@ -95,7 +98,7 @@
 					
 					UserDAO userdao = new UserDAO();
 					User user = null;
-					user = userdao.getUser(id);
+					user = userdao.getUser(Tnum);
 					
 					nickname = user.getNickname();
 					pw = user.getPw();
