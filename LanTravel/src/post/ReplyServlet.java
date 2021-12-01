@@ -29,8 +29,8 @@ public class ReplyServlet extends HttpServlet {
 		StringBuffer result = new StringBuffer("");
 		result.append("{\result\":[");
 		ReplyDAO replyDao = new ReplyDAO();
-		ArrayList<Reply> replyList = replyDao.getList(pNum);
-		for (Reply reply : replyList) {
+		ArrayList<Reply> replies = replyDao.getReplies(pNum);
+		for (Reply reply : replies) {
 			result.append("[{\"value\": \"" + reply.getNum() + "\"},");
 			result.append("{\"value\": \"" + reply.getParentNum() + "\"},");
 			result.append("{\"value\": \"" + reply.getText() + "\"},");

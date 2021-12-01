@@ -64,8 +64,8 @@ public class ReplyDAO {
 		return -1; // DB 오류
 	}
 	
-	public ArrayList<Reply> getList(int postNum) {
-		String sql = "SELECT reply_num, text, written_time, traveler_num, p_reply_num FROM reply WHERE post_num = ? ORDER BY reply_num DESC";
+	public ArrayList<Reply> getReplies(int postNum) {
+		String sql = "SELECT r.reply_num, r.text, r.written_time, r.traveler_num, t.nickname, NVL(r.p_reply_num, -1) FROM reply r, traveler t WHERE r.post_num = ? AND r.traveler_num = t.num ORDER BY r.reply_num";
 		ArrayList<Reply> list = new ArrayList<Reply>();
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
@@ -73,12 +73,28 @@ public class ReplyDAO {
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				// reply_num, text, written_time, traveler_num, p_reply_num
-				Reply reply = new Reply(rs.getInt(1), rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getInt(5));
+				int rNum = rs.getInt(1);
+				Reply reply = new Reply(rNum, rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getString(5), rs.getInt(6));
 				list.add(reply);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public int calcDepth(int num) {
+		String sql = "SELECT level FROM reply where reply_num = ? START WITH p_reply_num IS NULL CONNECT BY PRIOR reply_num = p_reply_num";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, num);
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1) - 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
 	}
 }

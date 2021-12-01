@@ -7,22 +7,37 @@ public class Reply {
 	private String text;
 	private Date writtenTime;
 	private int travelerNum;
+	private String travelerNickname;
 	private int parentNum;
 	private int postNum;
+	private int depth;
 
 	public Reply() {
-		
+
 	}
 
-	public Reply(int num, String text, Date writtenTime, int travelerNum, int parentNum) {
+	public Reply(int num, String text, Date writtenTime, int travelerNum, String travelerNickname, int parentNum) {
 		super();
 		this.num = num;
 		this.text = text;
 		this.writtenTime = writtenTime;
 		this.travelerNum = travelerNum;
+		this.travelerNickname = travelerNickname;
 		this.parentNum = parentNum;
 	}
-	
+
+	public Reply(int num, String text, Date writtenTime, int travelerNum, String travelerNickname, int parentNum,
+			int depth) {
+		super();
+		this.num = num;
+		this.text = text;
+		this.writtenTime = writtenTime;
+		this.travelerNum = travelerNum;
+		this.travelerNickname = travelerNickname;
+		this.parentNum = parentNum;
+		this.depth = depth;
+	}
+
 	public int getNum() {
 		return num;
 	}
@@ -55,6 +70,14 @@ public class Reply {
 		this.travelerNum = travelerNum;
 	}
 
+	public String getTravelerNickname() {
+		return travelerNickname;
+	}
+
+	public void setTravelerNickname(String travelerNickname) {
+		this.travelerNickname = travelerNickname;
+	}
+
 	public int getParentNum() {
 		return parentNum;
 	}
@@ -69,5 +92,13 @@ public class Reply {
 
 	public void setPostNum(int postNum) {
 		this.postNum = postNum;
+	}
+
+	public int getDepth() {
+		return depth;
+	}
+
+	public void setDepth(int depth) {
+		this.depth = depth;
 	}
 }
