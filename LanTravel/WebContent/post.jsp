@@ -26,12 +26,27 @@
 <link rel="stylesheet" href="styles/post.css" />
 </head>
 <body>
+	<%
+	request.setCharacterEncoding("UTF-8");
+
+	int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
+
+	if (session.getAttribute("userType") != null) {
+		userType = (int) session.getAttribute("userType");
+	}
+	
+	%>
 	<header>
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
+				<%if (userType == 3) {%>
+				<a href="adminMain.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				</a>
+				<%}else{ %>
 				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
 				</a>
+				<%} %>
 			</h1>
 		</div>
 		<!-- menu -->

@@ -38,8 +38,13 @@
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
+				<%if (userType == 3) {%>
+				<a href="adminMain.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				</a>
+				<%}else{ %>
 				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
 				</a>
+				<%} %>
 			</h1>
 		</div>
 		<!-- menu -->
@@ -57,6 +62,10 @@
 					<li class="menu-item"><a href="write.jsp"><i
 							class="fas fa-pen-nib"></i></a></li>
 				<%} %>
+				<% if(userType==3) {%>
+					<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
+					</li>
+				<%} %>
 			</ul>
 		</nav>
 	</header>
@@ -65,6 +74,7 @@
 		<form>
 			<fieldset>
 				<table class="updateTable">
+				<% if(userType==2){%>
 				<% 
 					String nickname;
 					String pw;
@@ -94,6 +104,25 @@
 						<th>이메일</th>
 						<td><%=email %></td>
 					</tr>
+					<%} %>
+				<% if(userType==3){%>
+				<% 
+					String pw;
+					
+					UserDAO userdao = new UserDAO();
+					User user = null;
+					user = userdao.getAdmin(id);
+					pw = user.getPw();
+				%>
+					<tr>
+						<th>아이디</th>
+						<td><%=id %></td>
+					</tr>
+					<tr>
+						<th>패스워드</th>
+						<td><%=pw %></td>
+					</tr>
+					<%} %>
 				</table>
 			</fieldset>
 			<div>
