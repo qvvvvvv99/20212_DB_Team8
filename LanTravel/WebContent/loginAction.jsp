@@ -27,7 +27,6 @@
 				session.setAttribute("id", user.getId());
 				session.setAttribute("userType", 2);
 				Tnum = userDAO.getUserNum(user.getId());
-				System.out.println(Tnum);
 				session.setAttribute("Tnum", Tnum);
 				PrintWriter script = response.getWriter();
 				script.println("<script>");
@@ -51,7 +50,7 @@
 					session.setAttribute("Tnum", Tnum);
 					PrintWriter script = response.getWriter();
 					script.println("<script>");
-					script.println("location.href = 'index.jsp'");
+					script.println("location.href = 'adminMain.jsp'");
 					script.println("</script>");
 				}
 				else if (!result){
