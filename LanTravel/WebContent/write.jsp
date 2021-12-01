@@ -58,7 +58,7 @@
 	<h2>게시물 작성</h2>
 
 	<div class="upload-form">
-		<form method="post" action="writeAction.jsp" enctype="multipart/form-data">
+		<form method="post" action="writeAction.jsp">
 			<table class="uploadTable">
 				<tbody>
 					<tr>
@@ -70,13 +70,13 @@
 								placeholder="해시태그 입력하세요."></textarea></td>
 					</tr>
 					<tr>
-						<td><input type='file' id='btnAtt' multiple required/>
+						<td><input type='file' id='btnAtt'class="ex_file" name="ex_file" onchange="fileUpload()"  multipl required/>
 							<div id='att_zone'
 								data-placeholder='파일을 첨부 하려면 파일 선택 버튼을 클릭하거나 파일을 드래그앤드롭 하세요'></div>
 							</div></td>
 					</tr>
 					<tr>
-						<td>시작날짜 &nbsp <input type="date" name="startDate" onChange="uploadFile()">
+						<td>시작날짜 &nbsp <input type="date" name="startDate">
 							&nbsp &nbsp &nbsp 종료날짜 &nbsp <input type="date" name="endDate">
 						</td>
 					</tr>
@@ -96,10 +96,20 @@
 		<p>Database(COMP322005) Team8 &copy; 2021</p>
 	</footer>
 	<script src="scripts/write.js"></script>
-	<script type="text/javascript">uploadFile(){
-		document.getElentById('btnAtt').files;	
+	<script type="text/javascript">
+	function fileUpload(){
+		var fileInput = document.getElementsByClassName("ex_file");
+
+		for( var i=0; i<fileInput.length; i++ ){
+			if( fileInput[i].files.length > 0 ){
+				for( var j = 0; j < fileInput[i].files.length; j++ ){
+					console.log(fileInput[i].files[j].name); // 파일명 출력
+				}
+			}
+		}
+
 	}
-	</script>
+</script>
 </body>
 
 </html>
