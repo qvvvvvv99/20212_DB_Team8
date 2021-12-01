@@ -49,7 +49,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null; // DB �삤瑜�
+		return null; // DB 오류
 	}
 
 	public int getNextNum() {
@@ -62,7 +62,7 @@ public class PostDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 
 	public ArrayList<Post> getList(int scroll) {
@@ -73,7 +73,6 @@ public class PostDAO {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, getNextNum() - (scroll - 1) * limit);
 			ps.setInt(2, limit);
-			System.out.println(limit);
 			rs = ps.executeQuery();
 			while (rs.next()) {
 				// post_num, view_count, bookmark_count
@@ -108,7 +107,7 @@ public class PostDAO {
 	public int increaseViewCnt(int num) {
 		int viewCount = 0;
 		try {
-			// 議고쉶 �닔 異붿텧
+			// 조회 수 추출
 			String sql = "SELECT view_count FROM post WHERE post_num = ? FOR UPDATE WAIT 5";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, num);
@@ -117,7 +116,7 @@ public class PostDAO {
 				viewCount = rs.getInt(1) + 1;
 			}
 			
-			// 議고쉶 �닔 利앷�
+			// 조회 수 증가
 			sql = "UPDATE post SET view_count = ? WHERE post_num = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, viewCount);
@@ -126,7 +125,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 
 	public int increaseFavoriteCnt(int num) {
@@ -138,7 +137,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 
 	public int decreaseFavoriteCnt(int num) {
@@ -150,10 +149,9 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 	
-	// TODO: �옉�꽦 �븘�슂
 	public int writePost(String startDate, String endDate, String text, int tNum) {
 		String sql = "INSERT into post VALUES(?, TO_DATE(?, 'yyyy-mm-dd'), TO_DATE(?, 'yyyy-mm-dd'), ?, TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss'), ?, 0, 0)";
 		try {
@@ -168,7 +166,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 	
 	public int deletePost(int Pnum) {
