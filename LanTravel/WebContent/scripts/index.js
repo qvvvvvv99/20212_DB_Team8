@@ -51,5 +51,72 @@ window.onscroll = () => {
 	// infinite scroll
 	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
 		alert("you're at the bottom of the page");
+		postListViewFunction();
 	}
 };
+
+const request = new XMLHttpRequest();
+function postListViewFunction() {
+	request.open("Post", "./PostLisViewServlet?scroll=" + encodeURIComponent(document.querySelector("#scroll").innerText), true);
+	document.querySelector("#scroll").innerText = parseInt(document.querySelector("#scroll").innerText) + 1;
+	request.onreadystatechange = postListViewProcess;
+	request.send(null);
+}
+function postListViewProcess() {
+	const postList = document.querySelector("#ajax");
+	if (request.readyState == 4 && request.status == 200) {
+		const object = eval('(' + request.responseText + ')');
+		const result = object.result;
+		console.log(result);
+		for (let i = 0; i < result.length; i++) {
+			const postNum = result[i][0].value;
+			const viewCnt = result[i][1].value;
+			const favoriteCnt = result[i][2].value;
+			
+			li = document.createElement("li");
+			li.classList.add("box");
+			
+			a = document.createElement("a");
+			a.href = "post.jsp?postNum=" + postNum;
+			thumbnail = document.createElement("img");
+			thumbnail.src = "test"; // TODO: ADD
+			a.appendChild(thumbnail);
+			li.appendChild(a);
+			
+			details = document.createElement("div");
+			details.classList.add("details");
+			title = document.createElement("span");
+			title.classList.add("title");
+			title.innerText = "test"; // TODO: ADD
+			details.appendChild(title);
+			
+			
+			cnt = document.createElement("div");
+			cnt.classList.add("cnt");
+			favCnt = document.createElement("div");
+			favCnt.classList.add("fav-cnt");
+			favIcon = document.createElement("i");
+			favIcon.classList.add("fas");
+			favIcon.classList.add("fa-heart");
+			favCntSpan = document.createElement("span");
+			favCntSpan.innerText = favoriteCnt;
+			favCnt.appendChild(favIcon);
+			favCnt.appendChild(favCntSpan);
+			viewCnt = document.createElement("div");
+			viewCnt.classList.add("view-cnt");
+			viewIcon = document.createElement("i");
+			viewIcon.classList.add("fas");
+			viewIcon.classList.add("fa-eye");
+			viewCntSpan = document.createElement("span");
+			viewCntSpan.innerText = viewCnt;
+			viewCnt.appendChild(favIcon);
+			viewCnt.appendChild(favCntSpan);
+			cnt.appendChild(favCnt);
+			cnt.appendChild(viewCnt);
+			details.appendChild(cnt);
+			
+			li.appendChild(details);
+			postList.appendChild(li);
+		}
+	}
+}

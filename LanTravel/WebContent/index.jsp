@@ -41,7 +41,6 @@
 			</h1>
 		</div>
 		<!-- menu -->
-		
 		<nav>
 			<ul class="menu">
 			<% if(userType==1) {%>
@@ -88,7 +87,8 @@
 		</section>
 		<section id="posts">
 			align
-			<ol class="container">
+			<div id="scroll" class="hidden">1</div>
+			<ol class="container" id="ajax">
 				<%
 				int scroll = 1; // temp
 				ArrayList<Post> postList = new PostDAO().getList(scroll);

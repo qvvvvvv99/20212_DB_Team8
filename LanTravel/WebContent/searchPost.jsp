@@ -41,7 +41,6 @@
 			</h1>
 		</div>
 		<!-- menu -->
-		
 		<nav>
 			<ul class="menu">
 			<% if(userType==1) {%>
@@ -90,7 +89,6 @@
 			align
 			<ol class="container">
 				<%
-
 				request.setCharacterEncoding("euc-kr");
 			
 				String sType = request.getParameter("sType");
