@@ -14,6 +14,16 @@
 </head>
 <body>
 	<%
+
+		int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
+	
+		if (session.getAttribute("userType") != null) {
+			userType = (int) session.getAttribute("userType");
+		}
+	
+	%>
+<%if(userType==2) {%>
+	<%
 		String id = null;
 		if(session.getAttribute("id") != null){
 			id = (String) session.getAttribute("id");
@@ -50,6 +60,39 @@
 			script.println("</script>");
 		}
 	%>
-	
+<% }%>
+<%if(userType==3) {%>
+	<%
+		String id = null;
+		if(session.getAttribute("id") != null){
+			id = (String) session.getAttribute("id");
+		}
+		
+		request.setCharacterEncoding("euc-kr");
+		String pw = request.getParameter("pw");
+		
+		User user = new User();
+		
+		user.setId(id);
+		user.setPw(pw);
+		
+		UserDAO userDAO = new UserDAO();
+		int result = userDAO.updateAdmin(user);
+		if (result == 1){
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('회원정보수정이 완료되었습니다.')");
+			script.println("location.href = 'user.jsp'");
+			script.println("</script>");
+		}
+		else if(result == 0){
+			PrintWriter script = response.getWriter();
+			script.println("<script>");
+			script.println("alert('회원정보수정에 실패하였습니다.')");
+			script.println("location.href = 'userUpdate.jsp'");
+			script.println("</script>");
+		}
+	%>
+<% }%>
 </body>
 </html>

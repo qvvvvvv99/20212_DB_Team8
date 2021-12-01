@@ -65,6 +65,34 @@ public class UserDAO {
 		return false;
 	}
 	
+	public boolean loginAdmin(String id, String pw) {
+//		Database db = new Database();
+//		conn = db.getConnection();
+//		stmt = db.getStatement();
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+
+		try {
+			sql = "SELECT num FROM admin WHERE id = ? AND pw = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			ps.setString(2, pw);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				return true;
+			} else {
+				id = null;
+				pw = null;
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public int join(User user) {
 
 		String sql = null;
@@ -143,6 +171,33 @@ public class UserDAO {
 		return user;
 	}
 	
+	public User getAdmin(String id) {	
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		User user = null;
+		
+		try {
+			sql = "SELECT pw FROM admin WHERE id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, id);
+			rs = ps.executeQuery();
+
+			if (rs.next()) {
+				user = new User();
+				user.setId(id);
+				user.setPw(rs.getString(1));
+				return user;
+			} else {
+				return null;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return user;
+	}
+	
 	public int updateTraveler(User user) {	
 		System.out.println(user.getId());
 		System.out.println(user.getPw());
@@ -166,6 +221,25 @@ public class UserDAO {
 			ps.setString(2, user.getEmail());
 			ps.setString(3, user.getNickname());
 			ps.setString(4, user.getId());
+			rs = ps.executeQuery();
+
+			return 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
+	
+	public int updateAdmin(User user) {	
+		String sql = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			sql = "UPDATE admin SET pw = ? WHERE id = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setString(1, user.getPw());
+			ps.setString(2, user.getId());
 			rs = ps.executeQuery();
 
 			return 1;

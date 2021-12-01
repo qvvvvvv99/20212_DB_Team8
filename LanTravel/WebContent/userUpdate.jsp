@@ -69,6 +69,10 @@
 				<li class="menu-item"><a href="write.jsp"><i
 						class="fas fa-pen-nib"></i></a></li>
 			<%} %>
+			<% if(userType==3) {%>
+				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
+				</li>
+			<%} %>
 			</ul>
 		</nav>
 	</header>
@@ -78,6 +82,7 @@
 			<fieldset>
 				<legend>사용자 정보</legend>
 				<table class="updateTable">
+				<%if(userType==2){%>
 				<% 
 					String nickname;
 					String pw;
@@ -107,6 +112,26 @@
 						<th>이메일</th>
 						<td><input type="email" value="<%=email %>" name="email" required /></td>
 					</tr>
+					<% }%>
+					<%if(userType==3){%>
+				<% 
+					String pw;
+					
+					UserDAO userdao = new UserDAO();
+					User user = null;
+					user = userdao.getAdmin(id);
+
+					pw = user.getPw();
+				%>
+					<tr>
+						<th>아이디</th>
+						<td><%=id %></td>
+					</tr>
+					<tr>
+						<th>패스워드</th>
+						<td><input type="password" value="<%=pw %>" name="pw" required /></td>
+					</tr>
+					<% }%>
 				</table>
 			</fieldset>
 			<div>

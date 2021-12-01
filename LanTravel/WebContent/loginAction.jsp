@@ -15,27 +15,53 @@
 </head>
 <body>
 	<%
-
+		request.setCharacterEncoding("euc-kr");
+		String status = request.getParameter("status");
+	
 		UserDAO userDAO = new UserDAO();
 		String Tnum;
-		boolean result = userDAO.loginTraveler(user.getId(), user.getPw());
-		if (result){
-			session.setAttribute("id", user.getId());
-			session.setAttribute("userType", 2);
-			Tnum = userDAO.getUserNum(user.getId());
-			session.setAttribute("Tnum", Tnum);
-			PrintWriter script = response.getWriter();
-			script.println("<script>");
-			script.println("location.href = 'index.jsp'");
-			script.println("</script>");
+		switch(status){
+			case "traveler":
+			boolean result = userDAO.loginTraveler(user.getId(), user.getPw());
+			if (result){
+				session.setAttribute("id", user.getId());
+				session.setAttribute("userType", 2);
+				Tnum = userDAO.getUserNum(user.getId());
+				session.setAttribute("Tnum", Tnum);
+				PrintWriter script = response.getWriter();
+				script.println("<script>");
+				script.println("location.href = 'index.jsp'");
+				script.println("</script>");
+			}
+			else if (!result){
+				PrintWriter script = response.getWriter();
+				script.println("<script>");
+				script.println("alert('로그인에 실패하였습니다.')");
+				script.println("history.back()");
+				script.println("</script>");
+			}
+			break;
+			case "admin":
+				result = userDAO.loginAdmin(user.getId(), user.getPw());
+				if (result){
+					session.setAttribute("id", user.getId());
+					session.setAttribute("userType", 3);
+					Tnum = userDAO.getUserNum(user.getId());
+					session.setAttribute("Tnum", Tnum);
+					PrintWriter script = response.getWriter();
+					script.println("<script>");
+					script.println("location.href = 'index.jsp'");
+					script.println("</script>");
+				}
+				else if (!result){
+					PrintWriter script = response.getWriter();
+					script.println("<script>");
+					script.println("alert('로그인에 실패하였습니다.')");
+					script.println("history.back()");
+					script.println("</script>");
+				}
 		}
-		else if (!result){
-			PrintWriter script = response.getWriter();
-			script.println("<script>");
-			script.println("alert('로그인에 실패하였습니다.')");
-			script.println("history.back()");
-			script.println("</script>");
-		}
+		
 	%>
 </body>
 </html>

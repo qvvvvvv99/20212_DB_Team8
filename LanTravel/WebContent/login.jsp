@@ -50,6 +50,10 @@
 					<li class="menu-item"><a href="write.jsp"><i
 							class="fas fa-pen-nib"></i></a></li>
 				<%} %>
+				<% if(userType==3) {%>
+				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
+				</li>
+			<%} %>
 			</ul>
 		</nav>
 	</header>
