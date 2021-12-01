@@ -286,7 +286,7 @@ public class PostDAO {
 				ps.setInt(3, limit);
 				rs = ps.executeQuery();
 				while (rs.next()) {
-					// post_num, view_count, bookmark_count
+					// post_num, view_count, bookmark_count 
 					Post post = new Post(rs.getInt(1), rs.getInt(2), rs.getInt(3));
 					list.add(post);
 				}
