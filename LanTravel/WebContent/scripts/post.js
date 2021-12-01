@@ -92,15 +92,16 @@ const writeBtns = document.querySelectorAll(".reply-buttons > button.write");
 writeBtns.forEach((writeBtn) =>
 	writeBtn.addEventListener("click", () => {
 		const replyBtns = writeBtn.parentNode;
-		if (replyBtns.parentNode.parentNode.nodeName != "SECTION") {
+		if (replyBtns.parentNode.parentNode.nodeName == "SECTION") {
 			pNum = -1;
 		} else {
-			pNum = writeBtns[1].parentNode.parentNode.parentNode.parentNode.querySelector(".replyNum").innerText;
+			pNum = replyBtns.parentNode.parentNode.parentNode.querySelector("#replyNum").innerText;
 		}
 		text = writeBtn.parentNode.parentNode.querySelector("textarea").value;
 		tNum = 101;	// TODO: ADD
 		postNum = document.querySelector("#postNum").innerText;
 		if (text != "") {
+			console.log("hit");
 			replyWriteFunction(text, pNum, tNum, postNum);
 			replyViewFunction();
 		}

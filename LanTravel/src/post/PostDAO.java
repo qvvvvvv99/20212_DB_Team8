@@ -66,8 +66,8 @@ public class PostDAO {
 	}
 
 	public ArrayList<Post> getList(int scroll) {
-		final int limit = 50;
-		String sql = "SELECT * FROM ( SELECT post_num, view_count, bookmark_count FROM post WHERE post_num < ? ORDER BY post_num DESC ) WHERE ROWNUM <= ?";
+		final int limit = 30;
+		String sql = "SELECT * FROM ( SELECT post_num, view_count, bookmark_count FROM post WHERE post_num < ? ORDER BY post_num DESC ) WHERE ROWNUM BETWEEN 1 AND ?";
 		ArrayList<Post> list = new ArrayList<Post>();
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
@@ -272,7 +272,6 @@ public class PostDAO {
 	}
 	
 	public ArrayList<Post> getSearchList(int scroll, String search, String sType) {
-		System.out.println(sType);
 		final int limit = 30;
 		ArrayList<Post> list = new ArrayList<Post>();
 		switch(sType) {

@@ -30,9 +30,23 @@ public class PostListViewServlet extends HttpServlet {
 		result.append("{\"result\":[");
 		ArrayList<Post> posts = new PostDAO().getList(scr);
 		for (Post post : posts) {
-			result.append("[{\"value\": \"" + post.getNum() + "\"},");
+			int postNum = post.getNum();
+			ArrayList<Picture> pictures = new PictureDAO().getPictures(postNum);
+			String thumbnailSrc = (pictures.size() > 0) ? pictures.get(0).getLink() : "";
+			ArrayList<Location> locations = new LocationDAO().getLocations(postNum);
+			String title = "";
+			int idx = 0;
+			int lastIdx = locations.size() - 1;
+			for (Location location : locations) {
+				title += location.getName() + ((idx < lastIdx) ? ", " : "");
+				idx++;
+			}
+			
+			result.append("[{\"value\": \"" + postNum + "\"},");
 			result.append("{\"value\": \"" + post.getViewCnt() + "\"},");
-			result.append("{\"value\": \"" + post.getBookmarkCnt() + "\"}],");
+			result.append("{\"value\": \"" + post.getBookmarkCnt() + "\"},");
+			result.append("{\"value\": \"" + title + "\"},");
+			result.append("{\"value\": \"" + thumbnailSrc + "\"}],");
 		}
 		result.append("]}");
 		return result.toString();

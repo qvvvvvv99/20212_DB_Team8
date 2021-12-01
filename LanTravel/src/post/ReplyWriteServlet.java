@@ -21,7 +21,6 @@ public class ReplyWriteServlet extends HttpServlet {
 		int pNum = Integer.parseInt(request.getParameter("pNum"));
 		int tNum = Integer.parseInt(request.getParameter("tNum"));
 		String text = request.getParameter("text");
-		
 		new ReplyDAO().writeReply(text, tNum, pNum, postNum);
 	}
 }

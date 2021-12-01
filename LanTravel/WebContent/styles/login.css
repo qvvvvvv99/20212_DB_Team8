@@ -12,8 +12,7 @@
 body {
 	position: relative;
 	font-family: "Spoqa Han Sans", "Noto Sans KR", sans-serif;
-	min-height: 100%;
-	background-color: #0de7bc;
+	min-height: 100vh;
 }
 
 /* header */
@@ -23,10 +22,13 @@ header {
 	justify-content: space-between;
 	top: 0;
 	z-index: 1;
+	width: 100%;
 	height: 80px;
 	align-items: center;
 	padding: 0 72px;
 	background-color: #fff;
+	box-shadow: 0 3px 7px 1px rgb(0 0 0/ 12%);
+	margin-bottom: 32px;
 }
 
 header.scrolled {
@@ -34,7 +36,17 @@ header.scrolled {
 }
 
 header>.logo-area {
+	width: 200px;
 	cursor: pointer;
+}
+
+header>.logo-area>.logo{
+	width: 100%;
+}
+
+header>.logo-area>.logo img{
+	width: 100%;
+	margin-top: 10px;
 }
 
 header>nav>.menu {
@@ -103,7 +115,7 @@ legend {
 	border: none;
 	padding: 10px;
 	width: 260px;
-	background-color: #0de7bc;
+	background-color: #e5e5e5;
 	margin-bottom: 30px;
 	color: white;
 }
@@ -120,7 +132,7 @@ legend {
 /* footer */
 footer {
 	position: absolute;
-	bottom: -358px;
+	bottom: 0;
 	width: 100%;
 	height: 40px;
 	background: #505050;

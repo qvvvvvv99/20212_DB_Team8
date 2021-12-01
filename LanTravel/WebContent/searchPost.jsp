@@ -36,7 +36,7 @@
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
-				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<a href="index.jsp"><img src="images/logo/logo.png"> <span class="hidden">LanTravel</span>
 				</a>
 			</h1>
 		</div>
@@ -63,7 +63,7 @@
 		</nav>
 	</header>
 	<main>
-		<section id="search">
+		<section id="search" style="background-image: url('<%= new PictureDAO().getPictures((int)(Math.random() * 20 + 80)).get(0).getLink() %>')">
 			<form class="search-form" action="searchPost.jsp" method="get">
 				<div class="icon">
 					<i class="fas fa-search"></i>
@@ -86,7 +86,6 @@
 			</form>
 		</section>
 		<section id="posts">
-			align
 			<ol class="container">
 				<%
 				request.setCharacterEncoding("euc-kr");
@@ -94,7 +93,7 @@
 				String sType = request.getParameter("sType");
 				String search = request.getParameter("search");
 				
-				int scroll = 1; // temp
+				int scroll = 1;
 				ArrayList<Post> postList = new PostDAO().getSearchList(scroll, search, sType);
 				for (Post post : postList) {
 					int postNum = post.getNum();

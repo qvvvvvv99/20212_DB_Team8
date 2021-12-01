@@ -48,8 +48,22 @@ header {
 	margin-bottom: 32px;
 }
 
+header.scrolled {
+	box-shadow: 0 3px 7px 1px rgb(0 0 0/ 12%);
+}
+
 header>.logo-area {
+	width: 200px;
 	cursor: pointer;
+}
+
+header>.logo-area>.logo{
+	width: 100%;
+}
+
+header>.logo-area>.logo img{
+	width: 100%;
+	margin-top: 10px;
 }
 
 header>nav>.menu {

@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 
 public class ReplyDAO {
@@ -37,7 +38,7 @@ public class ReplyDAO {
 			System.exit(1);
 		}
 	}
-	
+
 	public String getCurrTime() {
 		String sql = "SELECT SYSDATE FROM DUAL";
 		try {
@@ -50,7 +51,7 @@ public class ReplyDAO {
 		}
 		return null; // DB 오류
 	}
-	
+
 	public int getNextNum() {
 		String sql = "SELECT NVL(MAX(reply_num), 0) FROM reply";
 		try {
@@ -63,7 +64,7 @@ public class ReplyDAO {
 		}
 		return -1; // DB 오류
 	}
-	
+
 	public ArrayList<Reply> getReplies(int postNum) {
 		String sql = "SELECT r.reply_num, r.text, r.written_time, r.traveler_num, t.nickname, NVL(r.p_reply_num, -1) FROM reply r, traveler t WHERE r.post_num = ? AND r.traveler_num = t.num ORDER BY r.reply_num";
 		ArrayList<Reply> list = new ArrayList<Reply>();
@@ -74,7 +75,8 @@ public class ReplyDAO {
 			while (rs.next()) {
 				// reply_num, text, written_time, traveler_num, p_reply_num
 				int rNum = rs.getInt(1);
-				Reply reply = new Reply(rNum, rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getString(5), rs.getInt(6));
+				Reply reply = new Reply(rNum, rs.getString(2), rs.getDate(3), rs.getInt(4), rs.getString(5),
+						rs.getInt(6));
 				list.add(reply);
 			}
 		} catch (SQLException e) {
@@ -82,15 +84,14 @@ public class ReplyDAO {
 		}
 		return list;
 	}
-	
 
 	public Reply getReply(int replyNum) {
 		String sql = "SELECT text, written_time, traveler_num, p_reply_num, post_num FROM reply WHERE reply_num = ?";
-		
+
 		Reply reply = null;
 		int tnum;
 		String nickname = null;
-		
+
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, replyNum);
@@ -102,11 +103,11 @@ public class ReplyDAO {
 				ps = conn.prepareStatement(sql);
 				ps.setInt(1, tnum);
 				ResultSet rs2 = ps.executeQuery();
-				
-				if(rs2.next()) {
+
+				if (rs2.next()) {
 					nickname = rs2.getString(1);
 				}
-				
+
 				reply = new Reply(replyNum, rs.getString(1), rs.getDate(2), rs.getInt(3), nickname, rs.getInt(4), 0);
 			}
 			reply.setPostNum(rs.getInt(5));
@@ -115,7 +116,7 @@ public class ReplyDAO {
 		}
 		return reply;
 	}
-	
+
 	public int deleteReply(int replyNum) {
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -145,57 +146,58 @@ public class ReplyDAO {
 				ps.setInt(1, rnum);
 				rs2 = ps.executeQuery();
 			}
-				sql = "select report_num from record WHERE reply_num = ?";
+			sql = "select report_num from record WHERE reply_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, replyNum);
+			rs = ps.executeQuery();
+
+			rnum = 0;
+
+			while (rs.next()) {
+				rnum = rs.getInt(1);
+
+				sql = "DELETE FROM record WHERE report_num = ?";
 				ps = conn.prepareStatement(sql);
-				ps.setInt(1, replyNum);
-				rs = ps.executeQuery();
+				ps.setInt(1, rnum);
+				rs1 = ps.executeQuery();
 
-				rnum = 0;
-
-				while (rs.next()) {
-					rnum = rs.getInt(1);				
-
-					sql = "DELETE FROM record WHERE report_num = ?";
-					ps = conn.prepareStatement(sql);
-					ps.setInt(1, rnum);
-					rs1 = ps.executeQuery();
-
-					sql = "DELETE FROM report WHERE report_num = ?";
-					ps = conn.prepareStatement(sql);
-					ps.setInt(1, rnum);
-					rs2 = ps.executeQuery();
-				}
-
-				sql = "DELETE FROM reply WHERE p_reply_num = ?";
+				sql = "DELETE FROM report WHERE report_num = ?";
 				ps = conn.prepareStatement(sql);
-				ps.setInt(1, replyNum);
-				rs = ps.executeQuery();
+				ps.setInt(1, rnum);
+				rs2 = ps.executeQuery();
+			}
 
-				sql = "DELETE FROM reply WHERE reply_num = ?";
-				ps = conn.prepareStatement(sql);
-				ps.setInt(1, replyNum);
-				rs = ps.executeQuery();
-				
-				conn.commit();
+			sql = "DELETE FROM reply WHERE p_reply_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, replyNum);
+			rs = ps.executeQuery();
 
-				return 1;
-			
+			sql = "DELETE FROM reply WHERE reply_num = ?";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, replyNum);
+			rs = ps.executeQuery();
+
+			conn.commit();
+
+			return 1;
 
 		} catch (Throwable e) {
-			if(conn != null) {
+			if (conn != null) {
 				try {
 					conn.rollback();
-				}catch (SQLException e1) {
+				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
-			}e.printStackTrace();
-		}finally {
+			}
+			e.printStackTrace();
+		} finally {
 			try {
 				conn.setAutoCommit(true);
-			}catch(SQLException e2) {
+			} catch (SQLException e2) {
 				e2.printStackTrace();
 			}
-		}return 0;
+		}
+		return 0;
 	}
 
 	public int calcDepth(int num) {
@@ -212,16 +214,20 @@ public class ReplyDAO {
 		}
 		return -1; // DB 오류
 	}
-	
+
 	public int writeReply(String text, int tNum, int pNum, int postNum) {
-		String sql = "INSERT into reply VALUES(?, ?, TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss'), ?, ?, ?)";
+		String sql = "INSERT INTO reply VALUES(?, ?, TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss'), ?, ?, ?)";
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, getNextNum());
 			ps.setString(2, text);
 			ps.setString(3, getCurrTime());
 			ps.setInt(4, tNum);
-			ps.setInt(5, pNum);
+			if (pNum == -1) {
+				ps.setNull(5, Types.INTEGER);
+			} else {
+				ps.setInt(5, pNum);
+			}
 			ps.setInt(6, postNum);
 			return ps.executeUpdate();
 		} catch (SQLException e) {

@@ -49,15 +49,14 @@ window.onscroll = () => {
 	}
 
 	// infinite scroll
-	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-		// alert("you're at the bottom of the page");
+	if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
 		postListViewFunction();
 	}
 };
 
 const request = new XMLHttpRequest();
 function postListViewFunction() {
-	request.open("Post", "./PostLisViewServlet?scroll=" + encodeURIComponent(document.querySelector("#scroll").innerText), true);
+	request.open("Post", "./PostListViewServlet?scroll=" + encodeURIComponent(document.querySelector("#scroll").innerText), true);
 	document.querySelector("#scroll").innerText = parseInt(document.querySelector("#scroll").innerText) + 1;
 	request.onreadystatechange = postListViewProcess;
 	request.send(null);
@@ -67,11 +66,12 @@ function postListViewProcess() {
 	if (request.readyState == 4 && request.status == 200) {
 		const object = eval('(' + request.responseText + ')');
 		const result = object.result;
-		console.log(result);
 		for (let i = 0; i < result.length; i++) {
 			const postNum = result[i][0].value;
 			const viewCnt = result[i][1].value;
 			const favoriteCnt = result[i][2].value;
+			const title = result[i][3].value;
+			const thumbnailSrc = result[i][4].value;
 			
 			li = document.createElement("li");
 			li.classList.add("box");
@@ -79,17 +79,17 @@ function postListViewProcess() {
 			a = document.createElement("a");
 			a.href = "post.jsp?postNum=" + postNum;
 			thumbnail = document.createElement("img");
-			thumbnail.src = "test"; // TODO: ADD
+			thumbnail.classList.add("thumbnail");
+			thumbnail.src = thumbnailSrc;
 			a.appendChild(thumbnail);
 			li.appendChild(a);
 			
 			details = document.createElement("div");
 			details.classList.add("details");
-			title = document.createElement("span");
-			title.classList.add("title");
-			title.innerText = "test"; // TODO: ADD
-			details.appendChild(title);
-			
+			titleSpan = document.createElement("span");
+			titleSpan.classList.add("title");
+			titleSpan.innerText = title;
+			details.appendChild(titleSpan);
 			
 			cnt = document.createElement("div");
 			cnt.classList.add("cnt");
@@ -102,17 +102,17 @@ function postListViewProcess() {
 			favCntSpan.innerText = favoriteCnt;
 			favCnt.appendChild(favIcon);
 			favCnt.appendChild(favCntSpan);
-			viewCnt = document.createElement("div");
-			viewCnt.classList.add("view-cnt");
-			viewIcon = document.createElement("i");
-			viewIcon.classList.add("fas");
-			viewIcon.classList.add("fa-eye");
-			viewCntSpan = document.createElement("span");
-			viewCntSpan.innerText = viewCnt;
-			viewCnt.appendChild(favIcon);
-			viewCnt.appendChild(favCntSpan);
+			vCnt = document.createElement("div");
+			vCnt.classList.add("view-cnt");
+			vIcon = document.createElement("i");
+			vIcon.classList.add("fas");
+			vIcon.classList.add("fa-eye");
+			vCntSpan = document.createElement("span");
+			vCntSpan.innerText = viewCnt;
+			vCnt.appendChild(vIcon);
+			vCnt.appendChild(vCntSpan);
 			cnt.appendChild(favCnt);
-			cnt.appendChild(viewCnt);
+			cnt.appendChild(vCnt);
 			details.appendChild(cnt);
 			
 			li.appendChild(details);

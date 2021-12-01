@@ -42,10 +42,10 @@
 		<div class="logo-area">
 			<h1 class="logo">
 				<%if (userType == 3) {%>
-				<a href="adminMain.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<a href="adminMain.jsp"><img src="images/logo/logo.png"> <span class="hidden">LanTravel</span>
 				</a>
 				<%}else{ %>
-				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<a href="index.jsp"><img src="images/logo/logo.png"> <span class="hidden">LanTravel</span>
 				</a>
 				<%} %>
 			</h1>

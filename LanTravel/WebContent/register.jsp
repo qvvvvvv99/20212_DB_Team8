@@ -31,25 +31,25 @@
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
-				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<a href="index.jsp"><img src="images/logo/logo.png"> <span class="hidden">LanTravel</span>
 				</a>
 			</h1>
 		</div>
 		<!-- menu -->
 		<nav>
 			<ul class="menu">
-				<% if(userType==1) {%>
-					<li class="menu-item"><a href="login.jsp"><i
-							class="fas fa-sign-in-alt"></i></a></li>
-				<%} %>
-				<% if(userType==2) {%>
-					<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
-					</li>
-					<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
-					</li>
-					<li class="menu-item"><a href="write.jsp"><i
-							class="fas fa-pen-nib"></i></a></li>
-				<%} %>
+			<% if(userType==1) {%>
+				<li class="menu-item"><a href="login.jsp"><i
+						class="fas fa-sign-in-alt"></i></a></li>
+			<%} %>
+			<% if(userType==2) {%>
+				<li class="menu-item"><a href="#"><i class="fas fa-heart"></i></a>
+				</li>
+				<li class="menu-item"><a href="user.jsp"><i class="fas fa-user"></i></a>
+				</li>
+				<li class="menu-item"><a href="write.jsp"><i
+						class="fas fa-pen-nib"></i></a></li>
+			<%} %>
 			</ul>
 		</nav>
 	</header>

@@ -37,25 +37,30 @@
 	if (session.getAttribute("userType") != null) {
 		userType = (int) session.getAttribute("userType");
 	}
-	
 	%>
 	<header>
 		<!-- logo -->
 		<div class="logo-area">
 			<h1 class="logo">
-				<%if (userType == 3) {%>
-				<a href="adminMain.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<%
+				if (userType == 3) {
+				%>
+				<a href="adminMain.jsp"><img src="images/logo/logo.png"> <span class="hidden">LanTravel</span>
 				</a>
-				<%}else{ %>
-				<a href="index.jsp"> <span>LanTravel</span> <!-- logo image 추가 후 span에 class="hidden" 추가-->
+				<%
+				} else {
+				%>
+				<a href="index.jsp"><img src="images/logo/logo.png"> <span class="hidden">LanTravel</span>
 				</a>
-				<%} %>
+				<%
+				}
+				%>
 			</h1>
 		</div>
 		<!-- menu -->
 		<nav>
 			<ul class="menu">
-				<% if(userType==1) {%>
+			<% if(userType==1) {%>
 				<li class="menu-item"><a href="login.jsp"><i
 						class="fas fa-sign-in-alt"></i></a></li>
 			<%} %>
@@ -92,15 +97,16 @@
 		post.setViewCnt(post.getViewCnt() + 1); // 조회 수 증가
 		%>
 		<article class="post">
+			<div id="postNum" class="hidden"><%=postNum%></div>
 			<section class="slide">
-			<%
-			ArrayList<Picture> pictures = new PictureDAO().getPictures(postNum);
-			%>
+				<%
+				ArrayList<Picture> pictures = new PictureDAO().getPictures(postNum);
+				%>
 				<ul class="pictures">
 					<%
 					for (Picture picture : pictures) {
 					%>
-					<li><img src=<%= picture.getLink() %> alt="" /></li>
+					<li><img src=<%=picture.getLink()%> alt="" /></li>
 					<%
 					}
 					%>
@@ -122,47 +128,52 @@
 				<p><%=post.getText()%></p>
 			</section>
 			<section class="replies">
-			<%
-			ArrayList<Reply> replies = new ReplyDAO().getReplies(postNum);
-			%>
-				<h3>댓글 <%= replies.size() %>개</h3>
+				<%
+				ArrayList<Reply> replies = new ReplyDAO().getReplies(postNum);
+				%>
+				<h3>
+					댓글
+					<%=replies.size()%>개
+				</h3>
 				<div class="my-reply">
 					<textarea placeholder="댓글 작성" name="reply-text" id="reply-text"
 						maxlength="4000"></textarea>
 					<div class="reply-buttons">
 						<button class="cancel">취소</button>
-						<button class="write" onclick="writeReply();">작성</button>
+						<button class="write">작성</button>
 					</div>
 				</div>
-				<%
-				for (Reply reply : replies) {
-					int rNum = reply.getNum();
-					int depth = new ReplyDAO().calcDepth(rNum);
-
-				%>
-				<div class="reply" style="margin-left: <%= 30 * depth %>px;">
+				<div class="replyList" id="ajax">
 					<%
-					if (depth > 0) {
+					for (Reply reply : replies) {
+						int rNum = reply.getNum();
+						int depth = new ReplyDAO().calcDepth(rNum);
 					%>
-					<div class="indentation">└</div>
+					<div class="reply" style="margin-left: <%=30 * depth%>px;">
+						<div id="replyNum" class="hidden"><%=rNum%></div>
+						<%
+						if (depth > 0) {
+						%>
+						<div class="indentation">└</div>
+						<%
+						}
+						%>
+						<div class="reply-head">
+							<div class="reply-writer"><%=reply.getTravelerNickname()%></div>
+						</div>
+						<div class="reply-body">
+							<p><%=reply.getText()%></p>
+						</div>
+						<div class="reply-tail">
+							<div class="reply-time"><%=reply.getWrittenTime()%></div>
+							<button class="reply-btn">답글</button>
+							<button class="report-btn open-report-modal">신고</button>
+						</div>
+					</div>
 					<%
 					}
 					%>
-					<div class="reply-head">
-						<div class="reply-writer"><%= reply.getTravelerNickname() %></div>
-					</div>
-					<div class="reply-body">
-						<p><%= reply.getText() %></p>
-					</div>
-					<div class="reply-tail">
-						<div class="reply-time"><%= reply.getWrittenTime() %></div>
-						<button class="reply-btn">답글</button>
-						<button class="report-btn open-report-modal">신고</button>
-					</div>
 				</div>
-				<%
-				}
-				%>
 			</section>
 		</article>
 		<article class="detail">
@@ -205,29 +216,34 @@
 				</div>
 			</section>
 			<!--  -->
-			<%if (userType==3){ %>
+			<%
+			if (userType == 3) {
+			%>
 			<form>
-  				<input type='button' value='삭제하기' onclick="location.href='postDeleteAction.jsp';"/>
-				</form>
-			<%} %>
+				<input type='button' value='삭제하기'
+					onclick="location.href='postDeleteAction.jsp';" />
+			</form>
+			<%
+			}
+			%>
 			<!--  -->
 			<section class="post-info">
 				<div class="tags">
-				<%
-				ArrayList<Tag> tags = new TagDAO().getTags(postNum);
-				for (Tag tag : tags) {
-				%>
-					<div class="tag"><%= tag.getName() %></div>
-				<%
-				}
-				%>
+					<%
+					ArrayList<Tag> tags = new TagDAO().getTags(postNum);
+					for (Tag tag : tags) {
+					%>
+					<div class="tag"><%=tag.getName()%></div>
+					<%
+					}
+					%>
 				</div>
 				<div class="written">
-				<%
-				User user = new User();
-				user = new UserDAO().getUser(post.getTravelerNum());
-				%>
-					<a class="writer"><%= user.getNickname() %></a>
+					<%
+					User user = new User();
+					user = new UserDAO().getUser(post.getTravelerNum());
+					%>
+					<a class="writer"><%=user.getNickname()%></a>
 					<div class="written-time"><%=post.getWrittenTime()%></div>
 				</div>
 			</section>
