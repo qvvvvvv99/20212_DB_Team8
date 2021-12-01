@@ -60,6 +60,7 @@ public class LocationDAO {
 	
 	public int writePostLocation(PostDAO post, String name, String country, String city) {
 		String sql = "INSERT into post_locations VALUES(?, ?, ?, ?)";
+		System.out.println("2 : "+name + " " + country + " " + city);
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, post.getNextNum()-1);
