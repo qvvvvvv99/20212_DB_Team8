@@ -198,30 +198,30 @@ main>.post>.replies .my-reply>.reply-buttons>button.write:hover {
 	background-color: #9e9ea7;
 }
 
-main>.post>.replies>.reply {
+main>.post>.replies>.replyList>.reply {
 	position: relative;
 	margin-bottom: 16px;
 }
 
-main>.post>.replies>.reply>*:not(:last-child) {
+main>.post>.replies>.replyList>.reply>*:not(:last-child) {
 	margin-bottom: 5px;
 }
 
-main>.post>.replies>.reply>.reply-head {
+main>.post>.replies>.replyList>.reply>.reply-head {
 	display: flex;
 	gap: 8px;
 }
 
-main>.post>.replies>.reply>.reply-head>.reply-writer {
+main>.post>.replies>.replyList>.reply>.reply-head>.reply-writer {
 	font-weight: 700;
 	font-size: 13px;
 }
 
-main>.post>.replies>.reply>.reply-body>p {
+main>.post>.replies>.replyList>.reply>.reply-body>p {
 	font-size: 14px;
 }
 
-main>.post>.replies>.reply>.reply-tail {
+main>.post>.replies>.replyList>.reply>.reply-tail {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 8px;
@@ -229,12 +229,12 @@ main>.post>.replies>.reply>.reply-tail {
 	margin-bottom: 8px;
 }
 
-main>.post>.replies>.reply>.reply-tail>.reply-time {
+main>.post>.replies>.replyList>.reply>.reply-tail>.reply-time {
 	font-size: 13px;
 	color: #505050;
 }
 
-main>.post>.replies>.reply>.reply-tail>button {
+main>.post>.replies>.replyList>.reply>.reply-tail>button {
 	border-width: 0;
 	background-color: transparent;
 	border-radius: 8px;
@@ -242,15 +242,15 @@ main>.post>.replies>.reply>.reply-tail>button {
 	padding: 2px 4px;
 }
 
-main>.post>.replies>.reply>.reply-tail>button:hover {
+main>.post>.replies>.replyList>.reply>.reply-tail>button:hover {
 	background-color: #ddd;
 }
 
-main>.post>.replies>.reply>.reply-tail>button:active {
+main>.post>.replies>.replyList>.reply>.reply-tail>button:active {
 	background-color: #9e9ea7;
 }
 
-main>.post>.replies>.reply>.indentation {
+main>.post>.replies>.replyList>.reply>.indentation {
 	position: absolute;
 	left: -30px;
 	color: #9e9ea7;

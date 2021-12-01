@@ -48,7 +48,7 @@ public class ReportDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 	
 	public ArrayList<Report> getList(int scroll) {

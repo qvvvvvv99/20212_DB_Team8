@@ -83,6 +83,7 @@
 		post.setViewCnt(post.getViewCnt() + 1); // 조회 수 증가
 		%>
 		<article class="post">
+			<div id="postNum" class="hidden"><%= postNum %></div>
 			<section class="slide">
 			<%
 			ArrayList<Picture> pictures = new PictureDAO().getPictures(postNum);
@@ -122,38 +123,40 @@
 						maxlength="4000"></textarea>
 					<div class="reply-buttons">
 						<button class="cancel">취소</button>
-						<button class="write" onclick="writeReply();">작성</button>
+						<button class="write">작성</button>
 					</div>
 				</div>
+				<div class="replyList" id="ajax">
 				<%
 				for (Reply reply : replies) {
 					int rNum = reply.getNum();
 					int depth = new ReplyDAO().calcDepth(rNum);
-					System.out.println(depth);
 				%>
-				<div class="reply" style="margin-left: <%= 30 * depth %>px;">
-					<%
-					if (depth > 0) {
-					%>
-					<div class="indentation">└</div>
-					<%
-					}
-					%>
-					<div class="reply-head">
-						<div class="reply-writer"><%= reply.getTravelerNickname() %></div>
+					<div class="reply" style="margin-left: <%= 30 * depth %>px;">
+						<div class="replyNum hidden"><%= rNum %></div>
+						<%
+						if (depth > 0) {
+						%>
+						<div class="indentation">└</div>
+						<%
+						}
+						%>
+						<div class="reply-head">
+							<div class="reply-writer"><%= reply.getTravelerNickname() %></div>
+						</div>
+						<div class="reply-body">
+							<p><%= reply.getText() %></p>
+						</div>
+						<div class="reply-tail">
+							<div class="reply-time"><%= reply.getWrittenTime() %></div>
+							<button class="reply-btn">답글</button>
+							<button class="report-btn open-report-modal">신고</button>
+						</div>
 					</div>
-					<div class="reply-body">
-						<p><%= reply.getText() %></p>
-					</div>
-					<div class="reply-tail">
-						<div class="reply-time"><%= reply.getWrittenTime() %></div>
-						<button class="reply-btn">답글</button>
-						<button class="report-btn open-report-modal">신고</button>
-					</div>
-				</div>
 				<%
 				}
 				%>
+				</div>
 			</section>
 		</article>
 		<article class="detail">

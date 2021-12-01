@@ -48,7 +48,7 @@ public class ReplyDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null; // DB �삤瑜�
+		return null; // DB 오류
 	}
 	
 	public int getNextNum() {
@@ -61,7 +61,7 @@ public class ReplyDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // DB �삤瑜�
+		return -1; // DB 오류
 	}
 	
 	public ArrayList<Reply> getReplies(int postNum) {
@@ -208,6 +208,23 @@ public class ReplyDAO {
 				return rs.getInt(1) - 1;
 			}
 		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
+	}
+	
+	public int writeReply(String text, int tNum, int pNum, int postNum) {
+		String sql = "INSERT into reply VALUES(?, ?, TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss'), ?, ?, ?)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, getNextNum());
+			ps.setString(2, text);
+			ps.setString(3, getCurrTime());
+			ps.setInt(4, tNum);
+			ps.setInt(5, pNum);
+			ps.setInt(6, postNum);
+			return ps.executeUpdate();
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return -1; // DB 오류
