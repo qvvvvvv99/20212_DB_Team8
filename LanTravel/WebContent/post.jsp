@@ -176,6 +176,13 @@
 					</section>
 				</div>
 			</section>
+			<!--  -->
+			<%if (userType==3){ %>
+			<form>
+  				<input type='button' value='삭제하기' onclick="location.href='postDeleteAction.jsp';"/>
+				</form>
+			<%} %>
+			<!--  -->
 			<section class="post-info">
 				<div class="tags">
 				<%

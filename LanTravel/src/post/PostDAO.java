@@ -49,7 +49,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null; // DB 오류
+		return null; // DB �삤瑜�
 	}
 
 	public int getNextNum() {
@@ -62,7 +62,7 @@ public class PostDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return -1; // DB 오류
+		return -1; // DB �삤瑜�
 	}
 
 	public ArrayList<Post> getList(int scroll) {
@@ -108,7 +108,7 @@ public class PostDAO {
 	public int increaseViewCnt(int num) {
 		int viewCount = 0;
 		try {
-			// 조회 수 추출
+			// 議고쉶 �닔 異붿텧
 			String sql = "SELECT view_count FROM post WHERE post_num = ? FOR UPDATE WAIT 5";
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, num);
@@ -117,7 +117,7 @@ public class PostDAO {
 				viewCount = rs.getInt(1) + 1;
 			}
 			
-			// 조회 수 증가
+			// 議고쉶 �닔 利앷�
 			sql = "UPDATE post SET view_count = ? WHERE post_num = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setInt(1, viewCount);
@@ -126,7 +126,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB 오류
+		return -1; // DB �삤瑜�
 	}
 
 	public int increaseFavoriteCnt(int num) {
@@ -138,7 +138,7 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB 오류
+		return -1; // DB �삤瑜�
 	}
 
 	public int decreaseFavoriteCnt(int num) {
@@ -150,10 +150,10 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB 오류
+		return -1; // DB �삤瑜�
 	}
 	
-	// TODO: 작성 필요
+	// TODO: �옉�꽦 �븘�슂
 	public int writePost(String startDate, String endDate, String text, int tNum) {
 		String sql = "INSERT into post VALUES(?, TO_DATE(?, 'yyyy-mm-dd'), TO_DATE(?, 'yyyy-mm-dd'), ?, TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss'), ?, 0, 0)";
 		try {
@@ -168,6 +168,108 @@ public class PostDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return -1; // DB 오류
+		return -1; // DB �삤瑜�
+	}
+	
+	public int deletePost(int Pnum) {
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		ResultSet rs1 = null;
+		ResultSet rs2 = null;
+		String sql = null;
+
+		try {
+			conn.setAutoCommit(false);
+			sql = "select report_num from record WHERE reply_num in (select reply_num from reply where post_num = ?)";
+			ps = conn.prepareStatement(sql);
+			ps.setInt(1, Pnum);
+			rs = ps.executeQuery();
+
+			int rnum = 0;
+
+			while (rs.next()) {
+				rnum = rs.getInt(1);
+
+				sql = "DELETE FROM record WHERE report_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, rnum);
+				rs1 = ps.executeQuery();
+
+				sql = "DELETE FROM report WHERE report_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, rnum);
+				rs2 = ps.executeQuery();
+			}
+				
+				
+				sql = "DELETE FROM reply WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM rating WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM post_pictures WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM post_locations WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+
+				sql = "DELETE FROM hashtag WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+
+				sql = "select report_num from record WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+
+				rnum = 0;
+
+				while (rs.next()) {
+					rnum = rs.getInt(1);
+
+					sql = "DELETE FROM record WHERE report_num = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, rnum);
+					rs1 = ps.executeQuery();
+
+					sql = "DELETE FROM report WHERE report_num = ?";
+					ps = conn.prepareStatement(sql);
+					ps.setInt(1, rnum);
+					rs2 = ps.executeQuery();
+				}
+
+				sql = "DELETE FROM post WHERE post_num = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setInt(1, Pnum);
+				rs = ps.executeQuery();
+				
+				conn.commit();
+
+				return 1;
+		}catch (Throwable e) {
+			if(conn != null) {
+				try {
+					conn.rollback();
+				}catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}e.printStackTrace();
+		}finally {
+			try {
+				conn.setAutoCommit(true);
+			}catch(SQLException e2) {
+				e2.printStackTrace();
+			}
+		} return 0;
 	}
 }
