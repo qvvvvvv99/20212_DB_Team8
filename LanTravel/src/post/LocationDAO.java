@@ -57,4 +57,19 @@ public class LocationDAO {
 		}
 		return list;
 	}
+	
+	public int writePostLocation(PostDAO post, String name, String country, String city) {
+		String sql = "INSERT into post_locations VALUES(?, ?, ?, ?)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, post.getNextNum()-1);
+			ps.setString(2, name);
+			ps.setString(3, country);
+			ps.setString(4, city);
+			return ps.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
+	}
 }

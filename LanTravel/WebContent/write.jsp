@@ -62,7 +62,7 @@
 			<table class="uploadTable">
 				<tbody>
 					<tr>
-						<td><textarea name="content" cols="80" rows="4"
+						<td><textarea name="text" cols="80" rows="4"
 								placeholder="게시글을 입력하세요."></textarea></td>
 					</tr>
 					<tr>
@@ -83,7 +83,7 @@
 					<tr>
 						<td>국가명 &nbsp <input type="text" name="country">
 							&nbsp &nbsp &nbsp 도시명 &nbsp <input type="text" name="city">
-							&nbsp &nbsp &nbsp 장소명 &nbsp <input type="text" name="place"
+							&nbsp &nbsp &nbsp 장소명 &nbsp <input type="text" name="name"
 							required>
 						</td>
 					</tr>

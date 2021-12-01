@@ -2,13 +2,17 @@
 	pageEncoding="UTF-8"%>
 
 <%@ page import = "post.PostDAO"%>
+<%@ page import = "post.LocationDAO"%>
+<%@ page import = "post.TagDAO"%>
 <%@ page import = "java.io.PrintWriter"%>
 <% request.setCharacterEncoding("UTF-8");%>
 
 <jsp:useBean id = "post" class = "post.Post" scope = "page" />
-<jsp:setProperty name = "post" property = "startDate" />
-<jsp:setProperty name = "post" property = "content" />
-<jsp:setProperty name = "post" property = "endDate" />
+<jsp:setProperty name = "post" property = "text" />
+<jsp:useBean id = "location" class = "post.Location" scope = "page" />
+<jsp:setProperty name = "location" property = "country" /> 
+<jsp:setProperty name = "location" property = "city" /> 
+<jsp:setProperty name = "location" property = "name" /> 
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,17 +25,30 @@
 		request.setCharacterEncoding("UTF-8");
 	
 		// 세션에 값이 담겨있는지 체크
-		int userNum = 0;
-		if(session.getAttribute("userNum") != null){
-			userNum = (int)session.getAttribute("userNum");	
+		int Tnum = 0;
+		if(session.getAttribute("Tnum") != null){
+			Tnum = (int)session.getAttribute("Tnum");
 		}
 		PostDAO postDAO = new PostDAO();
-		String startDate = "TO_DATE(" + post.getStartDate()+", 'YYYY-MM-DD')";
-		String endDate = "TO_DATE(" + post.getEndDate()+", 'YYYY-MM-DD')";
-		int res = postDAO.writePost(startDate, endDate, post.getText(), userNum);
+		String sDate = request.getParameter("startDate");
+		String eDate = request.getParameter("endDate");
+		int res = postDAO.writePost(sDate, eDate, post.getText(), Tnum);
+		
+		LocationDAO locationDAO = new LocationDAO();
+		int resLocation = locationDAO.writePostLocation(postDAO, location.getName(), location.getCountry(), location.getCity());
+		
+		String allhash = request.getParameter("hash");
+		if(allhash != null){
+			 String[] hashAry = allhash.split(" ") ;
+			 for(int i=0; i < hashAry.length; i++){
+				 TagDAO tagDAO = new TagDAO();
+				 hashAry[i] = hashAry[i].replace("#", "");
+		         tagDAO.writeTag(postDAO, hashAry[i]);
+		     }
+		}
 		
 		// DB 오류
-		if(res == -1){
+		if(res == -1 || resLocation == -1){
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('게시글 작성에 실패하였습니다.')");
@@ -43,7 +60,7 @@
 			PrintWriter script = response.getWriter();
 			script.println("<script>");
 			script.println("alert('게시글 작성 성공')");
-			script.println("location.href = 'post.jsp?postNum='+post.getNum()");
+			script.println("location.href = 'index.jsp'");
 			script.println("</script>");
 		}
 	%>

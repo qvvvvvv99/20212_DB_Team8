@@ -40,7 +40,7 @@ public class PostDAO {
 	}
 
 	public String getCurrTime() {
-		String sql = "SELECT NOW()";
+		String sql = "SELECT SYSDATE FROM DUAL";
 		try {
 			rs = stmt.executeQuery(sql);
 			if (rs.next()) {
@@ -155,7 +155,7 @@ public class PostDAO {
 	
 	// TODO: 작성 필요
 	public int writePost(String startDate, String endDate, String text, int tNum) {
-		String sql = "INSERT into post VALUE(?, ?, ?, ?, ?, ?, 0, 0)";
+		String sql = "INSERT into post VALUES(?, TO_DATE(?, 'yyyy-mm-dd'), TO_DATE(?, 'yyyy-mm-dd'), ?, TO_DATE(?, 'yyyy-mm-dd hh24:mi:ss'), ?, 0, 0)";
 		try {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setInt(1, getNextNum());
@@ -164,6 +164,7 @@ public class PostDAO {
 			ps.setString(4, text);
 			ps.setString(5, getCurrTime());
 			ps.setInt(6, tNum);
+			return ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

@@ -107,21 +107,21 @@ public class UserDAO {
 			ps.setString(1, user.getId());
 			rs = ps.executeQuery();
 			
-			if(rs.next()) return -1; //¾ÆÀÌµð Áßº¹
+			if(rs.next()) return -1; //ï¿½ï¿½ï¿½Ìµï¿½ ï¿½ßºï¿½
 			
 			sql = "SELECT * FROM traveler WHERE nickname = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, user.getNickname());
 			rs = ps.executeQuery();
 			
-			if(rs.next()) return -2; //´Ð³×ÀÓ Áßº¹
+			if(rs.next()) return -2; //ï¿½Ð³ï¿½ï¿½ï¿½ ï¿½ßºï¿½
 			
-			// tuple °³¼ö count
+			// tuple ï¿½ï¿½ï¿½ï¿½ count
 			sql = "SELECT COUNT(*) FROM traveler";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 
-			// tnum ÁöÁ¤
+			// tnum ï¿½ï¿½ï¿½ï¿½
 			if (rs.next()) {
 				tnum = rs.getInt(1) + 1;
 			}
@@ -249,24 +249,24 @@ public class UserDAO {
 		return 0;
 	}
 	
-	public String getUserNum(String id) {
+	public int getUserNum(String id) {
 		String sql = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
 		
 		try {
-			sql = "SELECT nickname FROM traveler WHERE nickname = ?";
+			sql = "SELECT num FROM traveler WHERE id = ?";
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, id);
 			rs = ps.executeQuery();
 
 			if (rs.next()) {
-				return rs.getString(1);
+				return rs.getInt(1);
 			}
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return null;
+		return 0;
 	}
 }

@@ -38,6 +38,19 @@ public class TagDAO {
 		}
 	}
 	
+	public int getNextHashNum() {
+		String sql = "SELECT NVL(MAX(tag_id), 0) FROM hashtag";
+		try {
+			rs = stmt.executeQuery(sql);
+			if (rs.next()) {
+				return rs.getInt(1) + 1;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return -1; // DB 오류
+	}
+	
 	public ArrayList<Tag> getTags(int postNum) {
 		String sql = "SELECT tag_id, tag_name FROM hashtag WHERE post_num = ?";
 		ArrayList<Tag> list = new ArrayList<Tag>();
@@ -55,5 +68,20 @@ public class TagDAO {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public void writeTag(PostDAO post, String tag) {
+		String sql = "INSERT into hashtag  VALUES(?, ?, ?)";
+		try {
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setInt(1, post.getNextNum()-1);
+			ps.setInt(2, getNextHashNum());
+			ps.setString(3, tag);
+			ps.executeUpdate();
+			return;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return; // DB 오류
 	}
 }

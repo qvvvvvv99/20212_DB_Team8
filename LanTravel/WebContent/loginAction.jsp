@@ -19,7 +19,7 @@
 		String status = request.getParameter("status");
 	
 		UserDAO userDAO = new UserDAO();
-		String Tnum;
+		int Tnum;
 		switch(status){
 			case "traveler":
 			boolean result = userDAO.loginTraveler(user.getId(), user.getPw());
@@ -27,6 +27,7 @@
 				session.setAttribute("id", user.getId());
 				session.setAttribute("userType", 2);
 				Tnum = userDAO.getUserNum(user.getId());
+				System.out.println(Tnum);
 				session.setAttribute("Tnum", Tnum);
 				PrintWriter script = response.getWriter();
 				script.println("<script>");
