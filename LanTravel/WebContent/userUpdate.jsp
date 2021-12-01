@@ -24,7 +24,6 @@
 
 		int userType = 1; // 1: Guest, 2: Traveler, 3: Admin
 		String id = null;
-		int Tnum = 0;
 	
 		if (session.getAttribute("userType") != null) {
 			userType = (int) session.getAttribute("userType");
@@ -33,9 +32,7 @@
 		if (session.getAttribute("id") != null) {
 			id = (String) session.getAttribute("id");
 		}
-		if(session.getAttribute("Tnum") != null){
-			Tnum = (int)session.getAttribute("Tnum");
-		}
+	
 	%>
 	
 	<%
@@ -98,7 +95,7 @@
 					
 					UserDAO userdao = new UserDAO();
 					User user = null;
-					user = userdao.getUser(Tnum);
+					user = userdao.getUser(id);
 					
 					nickname = user.getNickname();
 					pw = user.getPw();
